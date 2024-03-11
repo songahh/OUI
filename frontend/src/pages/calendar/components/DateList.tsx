@@ -5,8 +5,11 @@ const DateListWrapper = styled.div`
   box-sizing: border-box;
   flex-direction: rows;
   width: 100%;
+  font-weight: bold;
   justify-content: space-around;
   margin-top: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #000;
 `
 
 const DateList = () => {
