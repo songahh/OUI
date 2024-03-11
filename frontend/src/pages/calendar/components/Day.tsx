@@ -7,11 +7,9 @@ const DayWrapper = styled.div<{ index: number }>`
   box-sizing: border-box;
   width: 100%;
   height: 200px;
-  border: 1px solid #DEDCEE;
+  border-bottom: 2px solid #000;
   padding: 10px 5px;
-  border-radius:7px;
-  margin: 2px;
-  gap: 9px;
+  font-size: 20px;
   color: 
   ${( props ) => props.index === 0 ? 'red' : ( props.index === 6 ? 'blue': 'black' )}
 `

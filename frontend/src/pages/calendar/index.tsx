@@ -2,7 +2,6 @@ import { addDays, addMonths, format, subMonths } from 'date-fns'
 import { DateList, DayList }  from './components'
 import { LeftIcon, RightIcon } from 'src/components'
 import { useEffect } from 'react'
-import useStore from './store'
 import { useQuery } from 'react-query'
 import useDate from 'src/util/date'
 import styled from 'styled-components'
@@ -32,7 +31,6 @@ const CalendarHeaderWrapper = styled.div`
 
 const Calendar = () => {
 
-    const{ isMonth, updateIsMonth } = useStore()
 
   const { currentMonth, setCurrentMonth, calculateDateRange } = useDate()
   const { startDate, endDate } = calculateDateRange()
@@ -47,15 +45,7 @@ const Calendar = () => {
 
   const movePrevMonth = () =>{ setCurrentMonth( subMonths( currentMonth, 1) ) }
   const moveNextMonth = () => { setCurrentMonth( addMonths( currentMonth, 1) ) }
-  const onMoveHandler = () => { 
-    updateIsMonth() 
-  }
-  
-  const param = {
-    startDate: `${ format( days[0], 'yyyy-MM-dd' )}`,
-    endDate: `${ format( days[ days.length-1 ], 'yyyy-MM-dd')}`,
-  }
- 
+
 
   return(
           <CalendarWrapper>
