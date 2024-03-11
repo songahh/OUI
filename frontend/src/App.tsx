@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { Suspense, useEffect, useState } from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
