@@ -1,7 +1,7 @@
 import { useRouter } from '../hooks'
 
 export const routes = [
-    
+    { path: 'calendar' }
 
 ]
 
