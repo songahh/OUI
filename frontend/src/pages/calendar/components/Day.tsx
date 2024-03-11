@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { MyModal }  from '../components'
 import styled from 'styled-components'
 
 const DayWrapper = styled.div<{ index: number }>`
@@ -18,10 +19,16 @@ const DayWrapper = styled.div<{ index: number }>`
 const Day = ( props: DayProps ) =>{
 
     const { index, day } = props
+
+    const listTodo = () =>{
+
+    }
     
     return(
         <DayWrapper index={ index }>
+            <button onClick={ listTodo }>
             { format( day, 'd' ) }
+            </button>
         </DayWrapper>
     )
 }
