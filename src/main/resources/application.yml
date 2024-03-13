@@ -14,6 +14,15 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
+  jwt:
+    secret: ${JWT_KEY}
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          kakao:
+#            client-id: ${KAKAO_CLIENT_ID}
+#            client-secret: ${KAKAO_CLIENT_SECRET}
 social:
   kakao:
     id: ${KAKAO_CLIENT_ID}
@@ -26,8 +35,7 @@ server:
     encoding:
       charset: utf-8
       force: true
-
-#  data:
-#    redis:
-#      host: ${REDIS_HOST}
-#      port: ${REDIS_PORT}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
