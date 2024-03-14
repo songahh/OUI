@@ -1,3 +1,6 @@
-import Canvas from './Canvas';
+import Tab from './Tab';
+import TextboxContent from './TextboxContent';
+import ImageContent from './ImageContent';
+import DrawingContent from './DrawingContent';
 
-export { Canvas };
+export { Tab, TextboxContent, ImageContent, DrawingContent };
