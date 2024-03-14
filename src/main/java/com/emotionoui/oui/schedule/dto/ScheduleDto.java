@@ -1,11 +1,10 @@
-package com.emotionoui.oui.calendar.dto;
+package com.emotionoui.oui.schedule.dto;
 
 
 import com.emotionoui.oui.calendar.entity.Schedule;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Builder

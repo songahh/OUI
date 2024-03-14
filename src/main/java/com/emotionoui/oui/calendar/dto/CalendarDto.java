@@ -27,7 +27,7 @@ public class CalendarDto {
     private List<ScheduleDto> scheduleList;
 
 
-    public CalendarDto of(Emotion emotion) {
+    public static CalendarDto of(Emotion emotion) {
 
         List<ScheduleDto> temp = emotion.getMember().getScheduleList().stream()
                 .map(schedule -> ScheduleDto.builder()

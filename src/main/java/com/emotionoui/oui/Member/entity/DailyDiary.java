@@ -1,11 +1,9 @@
-package com.emotionoui.oui.calendar.entity;
+package com.emotionoui.oui.Member.entity;
 
 
-import com.emotionoui.oui.Member.entity.Diary;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 
 @Entity
 @Getter
@@ -33,5 +31,6 @@ public class DailyDiary {
     public DailyDiary(Diary diary, String mongoId){
         this.diary = diary;
         this.mongoId = mongoId;
+        diary.getDailyDiaryList().add(this);
     }
 }

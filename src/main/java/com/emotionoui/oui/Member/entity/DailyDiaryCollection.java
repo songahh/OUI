@@ -1,4 +1,4 @@
-package com.emotionoui.oui.calendar.entity;
+package com.emotionoui.oui.Member.entity;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

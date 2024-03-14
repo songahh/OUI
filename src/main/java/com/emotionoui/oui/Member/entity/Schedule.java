@@ -1,4 +1,4 @@
-package com.emotionoui.oui.calendar.entity;
+package com.emotionoui.oui.Member.entity;
 
 
 import jakarta.persistence.*;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity

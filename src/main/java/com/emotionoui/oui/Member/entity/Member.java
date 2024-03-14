@@ -1,12 +1,9 @@
-package com.emotionoui.oui.calendar.entity;
+package com.emotionoui.oui.Member.entity;
 
-import com.emotionoui.oui.Member.entity.FcmInfo;
-import com.emotionoui.oui.Member.entity.MemberAlarm;
-import com.emotionoui.oui.Member.entity.MemberDiary;
-import com.emotionoui.oui.Member.entity.Preference;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;

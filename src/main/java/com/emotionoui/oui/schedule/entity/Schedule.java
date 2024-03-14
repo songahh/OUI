@@ -1,6 +1,7 @@
-package com.emotionoui.oui.calendar.entity;
+package com.emotionoui.oui.schedule.entity;
 
 
+import com.emotionoui.oui.calendar.entity.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity
@@ -47,6 +47,5 @@ public class Schedule {
         this.content = content;
         this.date = date;
         this.isDeleted = isDeleted;
-        member.getScheduleList().add(this);
     }
 }
