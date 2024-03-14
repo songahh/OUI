@@ -9,7 +9,6 @@ const TodoListWrapper = styled.div`
   justify-content: space-around;
   margin-top: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #000;
 `
 
 const TodoList = () => {
