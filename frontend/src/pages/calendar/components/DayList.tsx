@@ -1,4 +1,7 @@
+import { format } from 'date-fns';
 import { Day } from '../components';
+import { useQuery } from 'react-query';
+
 import styled from 'styled-components'
 
 
@@ -27,13 +30,23 @@ const DayList = ( props ) => {
       i % 7 === 0  && cal.push([])
       cal[ cal.length - 1 ].push( list[i] )
   }
+
+  const param = {
+    startDate: `${ format( list[0], 'yyyy-MM-dd' )}`,
+    endDate: `${ format( list[ list.length-1 ], 'yyyy-MM-dd' )}`,
+  }
   
+  // const { data: myCalednar } = useQuery<MyCalendarType[]>([ 'MyCalendar', param ], () => getMyCalendar( param ))
+
+
   return(
     <DayListWrapper>
       { cal?.map(( day, index ) => (
           <WeekWrapper key={ index }>
             { day?.map(( day, index ) => (
-                  <Day day= { day } index={ index } key={ index } />
+                  <Day day= { day } index={ index } key={ index } 
+                  // myCalendar={ myCalendar }
+                  />
             ))}
           </WeekWrapper>
       ))}

@@ -4,6 +4,7 @@ import { DateList, DayList, MyModal }  from './components'
 import { useNavigate } from 'react-router-dom'
 import { LeftIcon, RightIcon } from 'src/components'
 import { useQuery } from 'react-query'
+import useStore from './store';
 import { createPortal } from 'react-dom'
 import useDate from 'src/util/date'
 import styled from 'styled-components'
@@ -32,22 +33,22 @@ const CalendarHeaderWrapper = styled.div`
 `
 
 const ModalBackground = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 400;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 400;
 `
-
+    
 const Modal = styled.div`
-    width: 100%;
-    height: 50%;
-    background-color: #FFF;
-    position: fixed;
-    bottom: 0;
-    box-shadow: 0px -3px 0px 0px rgba(211, 211, 211, 0.2);
-    border-radius: 10px 10px 0 0;
+  width: 100%;
+  height: 50%;
+  background-color: #FFF;
+  position: fixed;
+  bottom: 0;
+  box-shadow: 0px -3px 0px 0px rgba(211, 211, 211, 0.2);
+  border-radius: 10px 10px 0 0;
 `
 
 const Calendar = () => {
@@ -56,16 +57,12 @@ const Calendar = () => {
 
   const { currentMonth, setCurrentMonth, calculateDateRange } = useDate()
   const { startDate, endDate } = calculateDateRange()
-  const [ isModalOpened, setIsModalOpened ] = useState<boolean>( false )
+  const { isModalOpened, updateModal} = useStore()
 
   const html = document.querySelector( 'html' )
 
-  const openModal = () => {
-     setIsModalOpened( !isModalOpened )
-      html?.classList.add( 'scroll-locked' )
-  }
   const closeModal = () => {
-      setIsModalOpened( !isModalOpened )
+      updateModal()
       html?.classList.remove( 'scroll-locked' )
   }
 
@@ -96,8 +93,6 @@ const Calendar = () => {
   const movePrevMonth = () =>{ setCurrentMonth( subMonths( currentMonth, 1) ) }
   const moveNextMonth = () => { setCurrentMonth( addMonths( currentMonth, 1) ) }
 
-
-
   return(
           <CalendarWrapper>
             <CalendarHeaderWrapper>
@@ -105,22 +100,17 @@ const Calendar = () => {
               <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
               <RightIcon size= { 20 } onClick={ moveNextMonth }/>
             </CalendarHeaderWrapper>
-            <button onClick={ openModal }>
-        모달창 오픈!
-        </button>
         { 
           isModalOpened 
-          && createPortal(
+          && 
             <ModalPortal onClose={ closeModal }>
               <Modal><MyModal></MyModal></Modal>
-            </ModalPortal>,
-            document.body )
+            </ModalPortal>
         }
             <DateList/>
             <DayList list = { days }/>
             <button onClick={ move }>!!!</button>
           </CalendarWrapper>
-        
   )
 }
 
