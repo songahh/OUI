@@ -1,9 +1,9 @@
 package com.emotionoui.oui.calendar.entity;
 
-import com.emotionoui.oui.Member.entity.FcmInfo;
 import com.emotionoui.oui.Member.entity.MemberAlarm;
 import com.emotionoui.oui.Member.entity.MemberDiary;
 import com.emotionoui.oui.Member.entity.Preference;
+import com.emotionoui.oui.schedule.entity.Schedule;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -38,9 +38,6 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<MemberDiary> memberDiaryList = new ArrayList<>();
 
-    @Setter
-    @OneToOne(mappedBy = "member")
-    private FcmInfo fcmInfo;
 
     private String email;
     private String img;
@@ -54,7 +51,8 @@ public class Member {
     private Integer isDeleted;
 
     @Builder
-    public Member(String email, String nickname, String password, Integer isDeleted){
+    public Member(int id,String email, String nickname, String password, Integer isDeleted){
+        this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;

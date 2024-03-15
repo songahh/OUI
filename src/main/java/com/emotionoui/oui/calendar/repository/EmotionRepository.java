@@ -13,8 +13,9 @@ import java.util.List;
 @Repository
 public interface EmotionRepository extends JpaRepository<Emotion, Integer> {
 
-    @Query("SELECT e FROM Emotion e WHERE DATE(e.date)=:date "+
-            "AND (e.member.id =: memberId )")
+//    @Query("SELECT e FROM Emotion e WHERE DATE(e.date)=:date "+
+//            "AND (e.member.id =: memberId )")
+    @Query("SELECT e FROM Emotion e")
     List<Emotion> findByMyCalendar(@Param("date") LocalDateTime date, @Param("memberId") Integer memberId);
 
 }

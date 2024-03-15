@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,22 +31,23 @@ public class Schedule {
 
     private String content;
 
-    private LocalDateTime date;
+    private LocalDate date;
 
     @CreatedDate
     @LastModifiedDate
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "is_deleted")
     private Integer isDeleted;
 
     @Builder
-    public Schedule(Member member, String title, String content, LocalDateTime date, Integer isDeleted) {
+    public Schedule(Member member, String title, String content, LocalDate date, Integer isDeleted, LocalDateTime createdAt) {
         this.member = member;
         this.title = title;
         this.content = content;
         this.date = date;
+        this.createdAt = createdAt;
         this.isDeleted = isDeleted;
     }
 }

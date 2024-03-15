@@ -1,5 +1,6 @@
 package com.emotionoui.oui.Member.entity;
 
+import com.emotionoui.oui.calendar.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

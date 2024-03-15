@@ -1,11 +1,11 @@
 package com.emotionoui.oui.calendar.dto;
 
 
-import com.emotionoui.oui.calendar.entity.Schedule;
+import com.emotionoui.oui.schedule.entity.Schedule;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -21,7 +21,7 @@ public class ScheduleDto {
     private String content;
 
     @JsonProperty("date")
-    private LocalDateTime date;
+    private LocalDate date;
 
     public ScheduleDto of(Schedule schedule){
 

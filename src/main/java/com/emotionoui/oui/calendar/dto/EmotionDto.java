@@ -1,19 +1,11 @@
 package com.emotionoui.oui.calendar.dto;
 
 
-import com.emotionoui.oui.calendar.entity.DailyDiary;
 import com.emotionoui.oui.calendar.entity.Emotion;
-import com.emotionoui.oui.calendar.entity.Member;
-import com.emotionoui.oui.calendar.entity.Schedule;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Builder
 public class EmotionDto {
