@@ -4,6 +4,7 @@ import 'react-spring-bottom-sheet/dist/style.css'
 import { Tab, TextboxContent, ImageContent, DrawingContent } from './components';
 import { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
+import { SaveIcon } from 'src/components';
 
 const Container = styled.div`
     width: 100vw;
@@ -25,7 +26,7 @@ const Content = styled.div`
     padding: 10px;
 `;
 
-const Diary = () => {
+const DiaryWrite = () => {
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
     
@@ -40,27 +41,29 @@ const Diary = () => {
     useEffect(() => {
         // 캔버스 생성
         const newCanvas = new fabric.Canvas(canvasRef.current, {
-            width: 650,
-            height: 800,
+            width: 680,
+            height: 850,
             backgroundColor: '#FFFEFC'
         });
+
+        fabric.Object.prototype.set({
+            cornerSize: 7,
+            cornerStyle: 'rect',
+            transparentCorners: false,
+            cornerColor: '#CDCDCD',
+            borderColor: '#CDCDCD',
+          });
+
         setCanvas(newCanvas);
 
         // 텍스트박스 추가
         const textbox = new fabric.Textbox('', {
             left: 50,
             top: 50,
-            width: 100,
-            height: 100,
+            width: 200,
             fontSize: 16,
             fontFamily: selectedFont,
             padding: 10,
-            cornerSize: 7, 
-            cornerStyle: 'rect', 
-            transparentCorners: false, 
-            cornerColor: '#CDCDCD', 
-            borderColor: '#CDCDCD',
-            editingBorderColor: '#CDCDCD',
         });
         newCanvas.add(textbox);
         
@@ -88,7 +91,7 @@ const Diary = () => {
                 disablePenTool();
                 disableTextbox();
         }
-    }, [activeTool]);
+    }, [ activeTool ]);
 
     useEffect(() => {
         if (!canvas || !textboxRef.current) return;
@@ -98,7 +101,7 @@ const Diary = () => {
             activeObject.set('textAlign', textAlign);
             canvas.renderAll();
         }
-    }, [textAlign]);
+    }, [ textAlign ]);
 
     // 활성화된 텍스트박스의 폰트 변경
     useEffect(() => {
@@ -109,7 +112,23 @@ const Diary = () => {
             activeObject.set('fontFamily', selectedFont);
             canvas.renderAll();
         }
-    }, [selectedFont, canvas]);
+    }, [ selectedFont ]);
+
+    useEffect(() => {
+        if(!canvas || !textboxRef.current) return;
+
+        const pen = canvas.freeDrawingBrush;
+        pen.color = penColor;
+        canvas.renderAll();
+    }, [ penColor ])
+    
+    useEffect(() => {
+        if(!canvas || !textboxRef.current) return;
+
+        const pen = canvas.freeDrawingBrush;
+        pen.width = penWidth;
+        canvas.renderAll();
+    }, [ penWidth ])
 
     // 텍스트박스 선택 활성화 핸들러
     const handleTextboxTool = () => {
@@ -137,11 +156,13 @@ const Diary = () => {
     
     // 폰트 변경 핸들러
     const handleFontChange = (event) => {
+        canvas.setActiveObject(textboxRef.current);
         setSelectedFont(event.target.value);
     };
 
     // 텍스트 굵기 핸들러
     const handleFontWeight = () => {
+        canvas.setActiveObject(textboxRef.current);
         const activeObject = canvas.getActiveObject();
         if (activeObject && activeObject.type === 'textbox') {
             activeObject.set('fontWeight', activeObject.get('fontWeight') === 'normal'? 'bold' : 'normal');
@@ -151,12 +172,15 @@ const Diary = () => {
 
     // 텍스트 정렬
     const handleTextAlign = (position: string) => {
+        canvas.setActiveObject(textboxRef.current);
         setTextAlign(position);
     }
 
     // 텍스트 색상
     const handleFontColor = (event: any) => {
+        canvas.setActiveObject(textboxRef.current);
         setFontColor(event.target.value);
+        
         const activeObject = canvas.getActiveObject();
         if (activeObject && activeObject.type === 'textbox') {
             activeObject.set('fill', fontColor);
@@ -167,26 +191,53 @@ const Diary = () => {
     // 펜 굵기
     const handlePenWidth = (event: any) => {
         setPenWidth(parseInt(event.target.value, 10) || 1);
-        const pen = canvas.freeDrawingBrush;
-        pen.width = penWidth;
-        canvas.renderAll();
     }
 
     // 펜 색상
     const handlePenColor = (event: any) => {
         setPenColor(event.target.value);
-        const pen = canvas.freeDrawingBrush;
-        pen.color = penColor;
-        canvas.renderAll();
+    } 
+
+    // 저장
+    const saveDiary = () => {
+        // string으로 전달
+        const diaryToJSON = canvas.toJSON();
+        const jsonToString = JSON.stringify(diaryToJSON);
+        console.log(jsonToString);
     }
+
+    // 이미지 업로드 핸들러
+    const handleImageUpload = (file: File) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+        const imgElement = document.createElement('img');
+        imgElement.src = event.target.result as string;
+        imgElement.onload = () => {
+            const maxWidth = 150;
+            const scaleFactor = maxWidth / imgElement.width; 
+
+            const imgInstance = new fabric.Image(imgElement, {
+            left: 300,
+            top: 400,
+            scaleX: scaleFactor,
+            scaleY: scaleFactor,
+            angle: 0,
+            opacity: 1.0,
+            });
+            canvas.add(imgInstance);
+        };
+        };
+        reader.readAsDataURL(file);
+    };
 
     return (
         <Container>
+            <SaveIcon onClick={ saveDiary }/>
             <canvas style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
             <BottomSheet 
                 open={true}
                 blocking={false}
-                snapPoints={({ minHeight, maxHeight }) => [minHeight, maxHeight * 0.3]}
+                snapPoints={({ minHeight }) => [ minHeight * 0.9 ]}
                 header={
                     <Header>
                         <Tab value="텍스트" onClick={() => setActiveTool("textbox")} disabled={ activeTool === "textbox" }/>
@@ -208,7 +259,7 @@ const Diary = () => {
                         />
                     )}
                     {activeTool === "image" && (
-                        <ImageContent />
+                        <ImageContent onImageUpload={handleImageUpload} />
                     )}
                     {activeTool === "drawing" && (
                         <DrawingContent 
@@ -224,4 +275,4 @@ const Diary = () => {
     );
 };
 
-export default Diary;
+export default DiaryWrite;
