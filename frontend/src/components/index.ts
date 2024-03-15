@@ -1,3 +1,4 @@
 import PalleteIcon from "./PalleteIcon";
+import SaveIcon from "./SaveIcon";
 
-export { PalleteIcon };
+export { PalleteIcon, SaveIcon };
