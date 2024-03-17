@@ -6,28 +6,29 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.sql.Date;
+import java.util.Date; // java.sql.Date 대신 java.util.Date 사용
 
+@Component
 public class JwtUtil {
     private Key key;
 
-    public void JWTUtil(@Value("${spring.jwt.secret}") String secret) {
-
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
         byte[] byteSecretKey = Decoders.BASE64.decode(secret);
         key = Keys.hmacShaKeyFor(byteSecretKey); // 객체 key 생성
     }
 
-    //member email 검증
+    // Member email 검증
     public String getEmail(String token) {
-        //sigingkey 부분이 유효성 검증하는 부분
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("email", String.class);
     }
 
-
-    //토큰 만료 일자 검증
+    // 토큰 만료 일자 검증
     public Boolean isExpired(String token) {
         boolean expired;
         try {
@@ -38,17 +39,8 @@ public class JwtUtil {
         return expired;
     }
 
-    //토큰 유효여부 확인
-    public void checkValid(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        } catch (ExpiredJwtException e) {
-        }
-    }
-
-    //토큰 생성
+    // 토큰 생성
     public String createJwt(String email, Long expiredMs) {
-
         Claims claims = Jwts.claims();
         claims.put("email", email);
 
@@ -59,4 +51,5 @@ public class JwtUtil {
                 .signWith(key, SignatureAlgorithm.HS256) //암호화
                 .compact();
     }
+
 }

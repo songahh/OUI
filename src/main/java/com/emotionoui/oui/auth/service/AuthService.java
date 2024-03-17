@@ -1,11 +1,13 @@
 package com.emotionoui.oui.auth.service;
 
 import com.emotionoui.oui.auth.dto.res.KakaoLoginRes;
+import com.emotionoui.oui.auth.jwt.JwtTokenProvider;
 import com.emotionoui.oui.member.dto.Member;
 import com.emotionoui.oui.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -22,23 +25,30 @@ import java.time.LocalDateTime;
 
 @Service
 public class AuthService {
-    @Value("${social.kakao.id}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String REST_API_KEY;
-    @Value("${social.kakao.redirect}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String REDIRECT_URL;
-    @Value("${social.kakao.secret}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
     private String CLIENT_SECRET;
 
-    @Autowired
-    private MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserDetailsService userDetailsService;
 
-    public void kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    @Autowired
+    public AuthService(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userDetailsService = userDetailsService;
+    }
+
+
+    public KakaoLoginRes kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. 인가코드로 엑세스토큰 가져오기
         String accessToken = getAccessToken(code);
         // 2. 엑세스토큰으로 유저정보 가져오기
         KakaoLoginRes kakaoLoginRes = getKakaoMemberInfo(accessToken);
-        // 3. 유저확인 & 회원가입
-        System.out.println(kakaoMemberCheckAndRegister(kakaoLoginRes));
+
+        return kakaoLoginRes;
     }
 
     // #1 - 인가코드로 엑세스토큰 가져오기
@@ -115,22 +125,22 @@ public class AuthService {
         System.out.println("email: " + email);
         return new KakaoLoginRes(email);
     }
-    // #3.  가입된 유저확인 & 회원가입
-    private String kakaoMemberCheckAndRegister(KakaoLoginRes kakaoLoginRes) {
 
-        String email = kakaoLoginRes.getEmail();
-        // 나중에 랜덤으로 던져줘야 함
-        String memberNickname = "싸피다람쥐";
-        LocalDateTime regdate = LocalDateTime.now();
 
-        Member kakaoMember = memberRepository.findByEmail(email).orElse(null);
-
-        // 가입되지 않은 회원이라면 회원가입
-        if(kakaoMember == null) {
-            kakaoMember = new Member(email, memberNickname, regdate);
-            memberRepository.save(kakaoMember);
-            return "새로운 회원이므로 회원가입";
+    public String generateNewAccessToken(String refreshToken) throws Exception {
+        // refreshToken의 유효성을 검증합니다.
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new IllegalArgumentException("리프레시 토큰이 유효하지 않습니다.");
         }
-        return "이미 가입된 회원이므로 자동로그인 진행";
+
+        // refreshToken에서 사용자 이름(이메일 등)을 추출합니다.
+        String email = jwtTokenProvider.getEmailFromToken(refreshToken);
+
+        // 사용자 이름으로 사용자 정보를 불러옵니다.
+        // 이 과정에서 사용자가 존재하지 않으면 UsernameNotFoundException을 발생시킵니다.
+        userDetailsService.loadUserByUsername(email);
+
+        // 새로운 accessToken을 생성합니다.
+        return jwtTokenProvider.createAccessToken(email);
     }
 }
