@@ -24,11 +24,11 @@ const HeaderItem = styled.div`
 `;
 
 const Header = ({ children }) => {
-    const items = React.Children.toArray(children).map((child, index) => (
-      <HeaderItem key={index}>{child}</HeaderItem>
+    const items = React.Children.toArray( children ).map(( child, index ) => (
+      <HeaderItem key={ index }>{ child }</HeaderItem>
     ));
   
-    return <HeaderWrapper>{items}</HeaderWrapper>;
+    return <HeaderWrapper>{ items }</HeaderWrapper>;
   };
 
 export default Header;
