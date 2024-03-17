@@ -1,9 +1,7 @@
 package com.emotionoui.oui.common.entity;
 
 import com.emotionoui.oui.calendar.entity.Emotion;
-import com.emotionoui.oui.common.entity.MemberAlarm;
-import com.emotionoui.oui.common.entity.MemberDiary;
-import com.emotionoui.oui.common.entity.Preference;
+import com.emotionoui.oui.survey.entity.Preference;
 import com.emotionoui.oui.schedule.entity.Schedule;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;

@@ -1,7 +1,6 @@
 package com.emotionoui.oui.schedule.controller;
 
 
-import com.emotionoui.oui.schedule.dto.req.ChangeScheduleReq;
 import com.emotionoui.oui.schedule.dto.req.ScheduleReq;
 import com.emotionoui.oui.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;

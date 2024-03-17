@@ -50,6 +50,7 @@ public class ScheduleService {
 
     }
 
+    // 일정 삭제 - isDelete 수정
     @Transactional
     public void deleteSchedules(Integer scheduleId ,@RequestBody ScheduleReq scheduleReq) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(ScheduleNotFoundException::new);
