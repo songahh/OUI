@@ -1,5 +1,16 @@
-
 spring:
+  encoding: UTF-8
+  config:
+    import:
+      - optional:file:.env[.properties]
+  server:
+    port: 8080
+    servlet:
+      context-path: /
+      encoding:
+        charset: UTF-8
+        force: true
+
   servlet:
     multipart:
       max-file-size: 50MB
@@ -13,30 +24,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-  data:
-#    mongodb:
-#      host: localhost
-#      port: 27017
-#      database: diary
-#      username: mongodb
-#      password: diary1234
-#      authentication-database: admin
-  datasource:
-    url: jdbc:mariadb://j10a506.p.ssafy.io:3308/oui?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
-    username: root
-    password: mariadb
-    driver-class-name: org.mariadb.jdbc.Driver
 
-cloud:
-  aws:
-    s3:
-      bucket: emotionoui
-      base-url: https://emotionoui.s3.ap-northeast-2.amazonaws.com/
-    credentials:
-      access-key: AKIAQHA7BQHUSTSFNZ77
-      secret-key: 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
-    region:
-      static: ap-northeast-2
-      auto: false
-    stack:
-      auto: false
+  datasource:
+    url: ${MARIADB_URL}
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
