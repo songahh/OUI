@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import Slider from "react-slick";
-import styled from "styled-components";
 import { Card } from "src/pages/main/components/Card";
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
 import { Header } from "src/components/control/Header";
 import { BottomNavi } from "src/components/control/BottomNavi";
 import { Drawer } from "src/components/control/Drawer";
 import { Button } from "src/components";
 import { CustomModal } from "./components/Modal";
+import Slider from "react-slick";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import styled from "styled-components";
 
-const SliderWrapper = styled(Slider)`
+const SliderWrapper = styled( Slider )`
   
 
   .slick-track{
@@ -49,12 +49,12 @@ const Main = () => {
     speed: 500,
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ isModalOpen, setIsModalOpen ] = useState( false );
   
-  const openModal = () => setIsModalOpen(true);
+  const openModal = () => setIsModalOpen( true );
   const closeModal = () => {
     console.log( '모달 닫기!!!!!!' );
-    setIsModalOpen(false);
+    setIsModalOpen( false );
   }
 
   const [cards, setCards] = useState([
@@ -66,15 +66,15 @@ const Main = () => {
   ]);
 
 
-  const addCard = ( props:addProps ) => { // 카드 추가 완료 후후
+  const addCard = ( props:addProps ) => { // 카드 추가 완료
     console.log(props);
-    const { title, key, members  } = props;
+    const { title, key, members } = props;
 
     const newCardNumber = cards.length; 
-    const newCards = cards.slice(0, -1); 
+    const newCards = cards.slice( 0, -1 ); 
     const newCard = { id: newCardNumber, buttonText: `${ key }`, type: "card" };
-    const addButtonCard = cards[cards.length - 1]; 
-    setCards([...newCards, newCard, addButtonCard]);
+    const addButtonCard = cards[ cards.length - 1 ]; 
+    setCards([ ...newCards, newCard, addButtonCard ]);
     console.log( '추가 완료!!!!!' );
     closeModal();
   };
@@ -91,10 +91,10 @@ const Main = () => {
     <hr></hr>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <div className="slider-container" style={{ minHeight: '100%', minWidth: '100%' }}>      
-        <SliderWrapper {...settings}>
-        {cards.map((card, index) => (
+        <SliderWrapper { ...settings }>
+        {cards.map(( card, index ) => (
           <div key={index}>
-            <Card buttonText={card.buttonText} onClick={card.type === "addButton" ? openModal : undefined} />
+            <Card buttonText={ card.buttonText } onClick={ card.type === "addButton" ? openModal : undefined } />
           </div>
         ))}
           <Card></Card>

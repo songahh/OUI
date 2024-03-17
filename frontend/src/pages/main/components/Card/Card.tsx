@@ -13,11 +13,11 @@ const CardWrapper = styled.div<CardWrapperProps>`
   width: 20vh;
   height: 40vh;
   background-size : 100% 100%;
-  ${(props) => props.hasButtonText && `
+  ${( props ) => props.hasButtonText && `
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background-image:url( ${process.env.PUBLIC_URL + '/images/ya.jpg'} )
+    background-image:url( ${ process.env.PUBLIC_URL + '/images/ya.jpg' } )
   `}
 
 `;
@@ -49,8 +49,8 @@ const Card = ( props:CardProps ) => {
   const { buttonText, onClick } = props
 
   return (
-    <CardWrapper onClick={onClick} hasButtonText={!!buttonText}>
-      <CardButton>{buttonText}</CardButton>
+    <CardWrapper onClick={ onClick } hasButtonText={ !!buttonText }>
+      <CardButton>{ buttonText }</CardButton>
     </CardWrapper>
   );
 };

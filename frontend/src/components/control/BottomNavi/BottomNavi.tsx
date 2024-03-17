@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -9,13 +8,15 @@ import styled from 'styled-components';
 
 const BottomNaviWrapper = styled( BottomNavigation )`
     background-color: transparent;
-    position: fixed;
-    bottom: 0;
-    left: 0; 
-    right: 0;
-    width: 100%;
     display: flex;
     justify-content: space-between;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 1024px;
+    width: 100%;
+
 `;
 
 export default function BottomNavi() {
