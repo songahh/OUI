@@ -4,6 +4,9 @@ export const routes = [
     { path: 'calendar' },
     { path: 'home' },
     { path: 'main' },
+    { path: 'mypage' },
+    { path: 'login' },
+    { path: 'research'},
 ]
 
 const lazyModules = routes?.map( ( { path, dynamicPath } ) => useRouter( path, dynamicPath ) )
