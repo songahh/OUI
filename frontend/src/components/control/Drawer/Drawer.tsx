@@ -14,7 +14,16 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import styled from 'styled-components';
 
+const BottomWrapper = styled(Bottom)`
+    max-width: 1024px;
+    width: 100%;
+    display: flex;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+` 
 
 const Drawer = () => {
     const [ open, setOpen ] = React.useState(false);
@@ -24,7 +33,7 @@ const Drawer = () => {
     };
   
     const DrawerList = (
-      <Box sx={{ width: 250 }} role="presentation">
+      <Box sx={{ maxWidth: '1024px' }} role="presentation">
         <List>
           {['Inbox', 'Starred', 'Send email', 'Drafts'].map(( text, index ) => (
             <ListItem key={ text } disablePadding>
@@ -56,16 +65,13 @@ const Drawer = () => {
     
     return(
         <div>
-        <Button btType='hamburger' name="temp"  onButtonClick={ toggleDrawer(true) } ></Button>
-        <Bottom anchor={'bottom'} open={open} onClose={ toggleDrawer(false) } onOpen={toggleDrawer( true )} >
-        <IconButton
-      onClick={ toggleDrawer(false) }
-      sx={{ position: 'absolute', right: 8, top: 8, zIndex: 1 }} 
-    >
-      <CloseIcon /> {/* IconButton 내부에는 아이콘 컴포넌트만 포함 */}
-    </IconButton>
-            { DrawerList }
-        </Bottom>
+          <Button btType='hamburger' name="temp"  onButtonClick={ toggleDrawer(true) } ></Button>
+          <BottomWrapper anchor={'bottom'} open={open} onClose={ toggleDrawer(false) } onOpen={toggleDrawer( true )} >
+            <IconButton onClick={ toggleDrawer(false) } sx={{ position: 'absolute', right: 8, top: 8, zIndex: 1 }} >
+              <CloseIcon /> 
+            </IconButton>
+                { DrawerList }
+          </BottomWrapper>
         </div>   
     );
 
