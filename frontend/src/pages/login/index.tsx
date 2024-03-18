@@ -19,7 +19,7 @@ const Login = () => {
 
     return(
         <LoginWrapper>
-            <a href={KAKAO_AUTH_URI}><img src='/images/kakao.png' /></a>
+            <a href={KAKAO_AUTH_URI}><img src='src/asset/images/kakao.png' /></a>
         </LoginWrapper>
     );
 }
