@@ -26,6 +26,12 @@ ChartJS.register(
     Legend
 );
 
+const SwitchWrapper = styled(Switch)`
+    display: flex;
+    // justify-contents: flex-end;
+    margin-left: auto;
+`;
+
 const Analysis = () => {
 
     const data = {
@@ -48,7 +54,7 @@ const Analysis = () => {
                 <Button></Button>
                 <Button></Button>
             </Header>
-            <Switch></Switch>
+            <SwitchWrapper></SwitchWrapper>
             <div>
                 <Line data={data} />
                 <Line data={data} />
