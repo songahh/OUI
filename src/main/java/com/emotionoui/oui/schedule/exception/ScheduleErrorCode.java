@@ -1,5 +1,6 @@
 package com.emotionoui.oui.schedule.exception;
 
+
 import com.emotionoui.oui.common.exception.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

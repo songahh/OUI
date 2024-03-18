@@ -1,7 +1,7 @@
 package com.emotionoui.oui.schedule.service;
 
+import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.schedule.dto.req.ScheduleReq;
-import com.emotionoui.oui.common.entity.Member;
 import com.emotionoui.oui.schedule.entity.Schedule;
 import com.emotionoui.oui.schedule.exception.ScheduleNotFoundException;
 import com.emotionoui.oui.schedule.repository.ScheduleRepository;
@@ -33,7 +33,7 @@ public class ScheduleService {
     // 회원 일정 수정
     @Transactional
     public void updateSchedules(Integer scheduleId ,@RequestBody ScheduleReq scheduleReq) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(ScheduleNotFoundException::new);
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(IllegalArgumentException::new);
 
 //        scheduleRepository.deleteByScheduleId(scheduleId);
 //        scheduleRepository.flush();

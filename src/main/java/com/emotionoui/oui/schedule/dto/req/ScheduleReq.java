@@ -1,6 +1,6 @@
 package com.emotionoui.oui.schedule.dto.req;
 
-import com.emotionoui.oui.common.entity.Member;
+import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.schedule.entity.Schedule;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -24,7 +24,7 @@ public class ScheduleReq {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate date;
 
-    public Schedule toEntity(Member member,String title, String content,LocalDate date) {
+    public Schedule toEntity(Member member, String title, String content, LocalDate date) {
         return Schedule.builder()
                 .member(member)
                 .title(title)

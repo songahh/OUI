@@ -24,9 +24,18 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-
   datasource:
     url: ${MARIADB_URL}
     username: ${MARIADB_USERNAME}
     password: ${MARIADB_PASSWORD}
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: diary
+      username: ${MONGODB_USERNAME}
+      password: ${MONGODB_PASSWORD}
+      authentication-database: admin
+
     driver-class-name: org.mariadb.jdbc.Driver

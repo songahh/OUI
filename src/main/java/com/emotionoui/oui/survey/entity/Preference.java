@@ -1,7 +1,6 @@
 package com.emotionoui.oui.survey.entity;
 
-
-import com.emotionoui.oui.common.entity.Member;
+import com.emotionoui.oui.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +21,6 @@ public class Preference {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "preference_id")
     private Integer preferenceId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -33,6 +32,7 @@ public class Preference {
     @LastModifiedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
 
     @Column(name = "is_deleted")
     private Integer isDeleted;

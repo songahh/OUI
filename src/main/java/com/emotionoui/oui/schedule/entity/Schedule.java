@@ -1,7 +1,6 @@
 package com.emotionoui.oui.schedule.entity;
 
-
-import com.emotionoui.oui.common.entity.Member;
+import com.emotionoui.oui.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +22,7 @@ public class Schedule {
     @Column(name = "schedule_id")
     private Integer scheduleId;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -33,10 +33,12 @@ public class Schedule {
 
     private LocalDate date;
 
+
     @CreatedDate
     @LastModifiedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
 
     @Column(name = "is_deleted")
     private Integer isDeleted;
@@ -56,11 +58,13 @@ public class Schedule {
     @Builder
     public Schedule(Integer scheduleId, Member member, String title, String content, LocalDate date, Integer isDeleted, LocalDateTime createdAt) {
         this.scheduleId = scheduleId;
+
         this.member = member;
         this.title = title;
         this.content = content;
         this.date = date;
         this.createdAt = createdAt;
         this.isDeleted = isDeleted;
+
     }
 }

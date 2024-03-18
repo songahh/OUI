@@ -1,7 +1,7 @@
 package com.emotionoui.oui.calendar.entity;
 
-import com.emotionoui.oui.common.entity.DailyDiary;
-import com.emotionoui.oui.common.entity.Member;
+import com.emotionoui.oui.diary.entity.DailyDiary;
+import com.emotionoui.oui.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,7 +42,7 @@ public class Emotion {
         this.dailyDiary = dailyDiary;
         this.date = date;
         this.emotion = emotion.getEmotion();
-        member.getEmotionList().add(this);
-        dailyDiary.setEmotion(this);
+//        member.getEmotionList().add(this);
+//        dailyDiary.setEmotion(this);
     }
 }

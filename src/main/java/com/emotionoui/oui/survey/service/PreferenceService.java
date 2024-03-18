@@ -1,6 +1,6 @@
 package com.emotionoui.oui.survey.service;
 
-import com.emotionoui.oui.common.entity.Member;
+import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.survey.dto.req.PreferenceReq;
 import com.emotionoui.oui.survey.repository.PreferenceRepository;
 import lombok.RequiredArgsConstructor;
