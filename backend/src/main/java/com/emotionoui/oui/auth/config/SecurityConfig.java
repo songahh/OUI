@@ -44,9 +44,12 @@ public class SecurityConfig {
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable());
         http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/**").permitAll() // 일단 모든페이지에서 접근가능하게 함
+                        .anyRequest().authenticated());
+        http
                 .addFilterBefore(new JwtFilter(jwtTokenProvider, jwtUtil, memberRepository),
                         UsernamePasswordAuthenticationFilter.class);
-
 
         SecurityFilterChain chain = http.build();
         return chain;

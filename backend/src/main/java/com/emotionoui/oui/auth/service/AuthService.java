@@ -36,7 +36,13 @@ public class AuthService {
         this.userDetailsService = userDetailsService;
     }
 
-
+    /**
+     * 카카오에서 유저 정보(email) 받아오기
+     * @param code
+     * @param response
+     * @return
+     * @throws JsonProcessingException
+     */
     public KakaoLoginRes kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. 인가코드로 엑세스토큰 가져오기
         String accessToken = getAccessToken(code);
@@ -59,7 +65,7 @@ public class AuthService {
         params.add("client_id", REST_API_KEY);
         params.add("redirect_uri", REDIRECT_URL);
         params.add("code", code);
-        params.add("client_secret", CLIENT_SECRET); //필수는 아니지만 보안강화 할떄 필요함
+        params.add("client_secret", CLIENT_SECRET);
 
         // POST 요청 보내기
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
@@ -106,7 +112,6 @@ public class AuthService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
-//        System.out.println("jsonNode: " + jsonNode); // 무슨 값이 들어오는지 확인
 
         // jsonNode 체크후 필요한 정보(email) 가져오기
         String email = (jsonNode.get("kakao_account").get("email") != null) ?
@@ -121,19 +126,28 @@ public class AuthService {
         return new KakaoLoginRes(email);
     }
 
-
+    /**
+     * refreshToken 검증 (유효하지 않다면 새로운 accessToken 발급)
+     * @param refreshToken
+     * @return
+     * @throws Exception
+     */
     public String generateNewAccessToken(String refreshToken) throws Exception {
-        // refreshToken의 유효성을 검증합니다.
+        // refreshToken의 유효성 검증.
         if (!jwtTokenProvider.validateToken(refreshToken)) {
             throw new IllegalArgumentException("리프레시 토큰이 유효하지 않습니다.");
         }
 
-        // refreshToken에서 사용자 이름(이메일 등)을 추출합니다.
+        // refreshToken에서 사용자 이메일 추출.
         String email = jwtTokenProvider.getEmailFromToken(refreshToken);
 
-        // 사용자 이름으로 사용자 정보를 불러옵니다.
-        // 이 과정에서 사용자가 존재하지 않으면 UsernameNotFoundException을 발생시킵니다.
-        userDetailsService.loadUserByUsername(email);
+        // 사용자 이메일로 사용자 정보를 불러옴.
+        try{
+            userDetailsService.loadUserByUsername(email);
+        }catch (Exception e){
+            // 사용자가 존재하지 않으면 UsernameNotFoundException을 발생시킴.
+            System.out.println("사용자가 존재하지 않습니다.");
+        }
 
         // 새로운 accessToken을 생성합니다.
         return jwtTokenProvider.createAccessToken(email);

@@ -1,5 +1,6 @@
 package com.emotionoui.oui.member.controller;
 
+import com.emotionoui.oui.auth.redis.RedisService;
 import com.emotionoui.oui.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/member")
 public class MemberController {
 
+    private final RedisService redisService;
+
     /**
      * 회원정보 가져오기
      * @param member
@@ -21,6 +24,10 @@ public class MemberController {
      */
     @GetMapping
     public ResponseEntity<Member> getMember(@AuthenticationPrincipal Member member){
+        // 만약 탈퇴한 회원이라면 예외처리
+        if(member.getIsDeleted()==1){
+            System.out.println("탈퇴한 회원입니다.");
+        }
 
         Member member1 = Member.builder()
                 .email(member.getEmail())

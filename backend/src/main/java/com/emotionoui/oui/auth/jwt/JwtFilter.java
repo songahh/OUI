@@ -28,12 +28,21 @@ public class JwtFilter extends GenericFilterBean {
         this.memberRepository = memberRepository;
     }
 
+    /**
+     * 헤더에 담겨 온 accessToken으로 사용자 정보 생성
+     * @param request
+     * @param response
+     * @param filterChain
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
 System.out.println("JwtFilter.doFilter - 헤더에 담겨 온 accessToken : "+token);
-        // 토큰이 존재하고, 만료되지 않았다면
+
+        // 토큰이 존재하고, 유효하다면
         if (token != null && jwtTokenProvider.validateToken(token)) {
             Authentication auth = jwtTokenProvider.getAuthentication(token);
 System.out.println("JwtFilter.doFilter - member의 정보 : "+ auth);
@@ -55,9 +64,9 @@ System.out.println("JwtFilter.doFilter - member의 정보 : "+ auth);
             Authentication authToken = new UsernamePasswordAuthenticationToken(member, null, member.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authToken);
-
+        // 엑세스 토큰이 만료되었다면 리프레시 토큰 요청
         }else{
-            System.out.println("예외처리");
+            System.out.println("만료된 토큰이야!");
         }
 
 

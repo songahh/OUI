@@ -2,6 +2,7 @@ package com.emotionoui.oui.auth.controller;
 
 import com.emotionoui.oui.auth.dto.res.KakaoLoginRes;
 import com.emotionoui.oui.auth.jwt.JwtTokenProvider;
+import com.emotionoui.oui.auth.redis.RedisService;
 import com.emotionoui.oui.auth.service.AuthService;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.repository.MemberRepository;
@@ -20,12 +21,12 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
-public class KakaoController {
+public class AuthController {
 
-    @Autowired
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisService redisService;
 
     /**
      * kakao에서 email 정보 받아오기
@@ -47,15 +48,22 @@ public class KakaoController {
         // accesstoken, refreshToken 쿠키에 담기
         jwtTokenProvider.createAccessTokenCookie(accessToken, response);
         jwtTokenProvider.createRefreshTokenCookie(refreshToken, response);
-        //헤더에 accessToken 담기
 
         // 가입된 유저 확인 & 회원가입
         System.out.println("KakaoController.kakaoLogin -가입된 유저 확인 & 회원가입 : "+kakaoMemberCheckAndRegister(kakaoLoginRes));
 
+        // redis에 토큰 저장
+        String key = kakaoLoginRes.getEmail();
+        redisService.setValues(key, refreshToken);
+
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
-    // #3.  가입된 유저확인 & 회원가입
+    /**
+     *  가입된 유저확인 & 회원가입
+     * @param kakaoLoginRes
+     * @return
+     */
     private String kakaoMemberCheckAndRegister(KakaoLoginRes kakaoLoginRes) {
 
         String email = kakaoLoginRes.getEmail();
@@ -75,7 +83,7 @@ public class KakaoController {
     }
 
     /**
-     * 리프레시 토큰 만료 검사 후 만료되었으면 액세스 토큰 발급
+     * 리프레시 토큰 만료 검사 후 유효하면 액세스 토큰 발급
      * @param request
      * @param response
      * @return
@@ -85,7 +93,6 @@ public class KakaoController {
         // 쿠키에서 refresh token 추출
         String refreshToken = null;
         Cookie[] cookies = request.getCookies();
-        System.out.println("cookies: "+request.getCookies().toString());
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("refreshToken")) {
@@ -101,11 +108,13 @@ public class KakaoController {
 
         // refreshToken 검증 및 새로운 accessToken 생성 로직
         try {
-            // authService의 generateNewAccessToken 메서드를 호출하여 새로운 accessToken을 얻습니다.
+            // authService의 generateNewAccessToken 메서드를 호출하여 새로운 accessToken을 발급
             String newAccessToken = authService.generateNewAccessToken(refreshToken);
 
             // 새로운 accessToken을 쿠키에 담아서 반환하는 메소드를 호출합니다.
             jwtTokenProvider.createAccessTokenCookie(newAccessToken, response);
+
+            // redis에 있던 refreshToken 갱신
 
             // 성공적으로 새로운 accessToken을 생성하고 쿠키에 담았으니, 상태 메시지만 응답 본문에 포함하여 반환
             return ResponseEntity.ok().body("New access token has been issued and set in cookie.");

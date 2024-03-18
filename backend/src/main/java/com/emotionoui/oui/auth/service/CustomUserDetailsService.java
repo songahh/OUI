@@ -1,5 +1,6 @@
-package com.emotionoui.oui.auth.dto;
+package com.emotionoui.oui.auth.service;
 
+import com.emotionoui.oui.auth.dto.CustomUserDetails;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
