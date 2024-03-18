@@ -99,62 +99,67 @@ class PlylistCrawler:
             return
         
         self.plylist_id = set(self.plylist_id_df["plylist_id"].tolist())
+        error_id = set()
         #plylist_id_list = ["511794885"]
         for ply_id in tqdm(self.plylist_id):
-            driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.options)
-            start_index = 1
-            curr_url = PlylistCrawler.__make_ply_next_url(ply_id)
-            #print(f"{curr_url} \"{start_index}\"")
-            driver.get(curr_url)
-
-            WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "song_name"))
-            )
-        
-            # 제목
-            time.sleep(1)
-            title = driver.find_element(By.CLASS_NAME, "song_name").text            
-            self.plylist_title[ply_id] = title
-            #print(title)
-
-            # 좋아요 수
-            like_cnt = driver.find_element(By.CLASS_NAME, "cnt").text
-            self.like_cnt[ply_id] = like_cnt
-            #print(like_cnt)
-
-            # 업데이트 날짜
-            updt_date = driver.find_element(By.CLASS_NAME, "date").text
-            self.updt_date[ply_id] = updt_date.split(" ")[0]
-            
-            # 태그 리스트
-            tag_list = [x.text[1:] for x in driver.find_elements(By.CLASS_NAME, "tag_item")]
-            self.tags[ply_id] = tag_list
-            
-            song_cnt = int(driver.find_element(By.CLASS_NAME, "sum").text[1:-1])
-            curr_song_list = []
-            for idx in range(1, song_cnt+1, 50):
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.TAG_NAME, "tbody"))
-                )
-                song_list_body = driver.find_element(By.TAG_NAME, "tbody")
-                song_list = song_list_body.find_elements(By.CLASS_NAME, "input_check")
-
-                for song in song_list:
-                    curr_song_list.append(song.get_attribute("value"))
-                
-                if idx + 50 >= song_cnt+1:
-                    break
-                
-                driver.quit()
+            try:
                 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.options)
-                curr_url = PlylistCrawler.__make_ply_next_page(ply_id, idx+50)
-                #print(f"\"{idx+50}\"")
+                start_index = 1
+                curr_url = PlylistCrawler.__make_ply_next_url(ply_id)
+                #print(f"{curr_url} \"{start_index}\"")
                 driver.get(curr_url)
-            #print(len(curr_song_list))
-            self.songs[ply_id] = curr_song_list
-            driver.quit()
-    
+                
+                WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "song_name"))
+                )
+            
+                # 제목
+                time.sleep(1)
+                title = driver.find_element(By.CLASS_NAME, "song_name").text            
+                self.plylist_title[ply_id] = title
+                #print(title)
+
+                # 좋아요 수
+                like_cnt = driver.find_element(By.CLASS_NAME, "cnt").text
+                self.like_cnt[ply_id] = like_cnt
+                #print(like_cnt)
+
+                # 업데이트 날짜
+                updt_date = driver.find_element(By.CLASS_NAME, "date").text
+                self.updt_date[ply_id] = updt_date.split(" ")[0]
+                
+                # 태그 리스트
+                tag_list = [x.text[1:] for x in driver.find_elements(By.CLASS_NAME, "tag_item")]
+                self.tags[ply_id] = tag_list
+                
+                song_cnt = int(driver.find_element(By.CLASS_NAME, "sum").text[1:-1])
+                curr_song_list = []
+                for idx in range(1, song_cnt+1, 50):
+                    WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.TAG_NAME, "tbody"))
+                    )
+                    song_list_body = driver.find_element(By.TAG_NAME, "tbody")
+                    song_list = song_list_body.find_elements(By.CLASS_NAME, "input_check")
+
+                    for song in song_list:
+                        curr_song_list.append(song.get_attribute("value"))
+                    
+                    if idx + 50 >= song_cnt+1:
+                        break
+                    
+                    driver.quit()
+                    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.options)
+                    curr_url = PlylistCrawler.__make_ply_next_page(ply_id, idx+50)
+                    #print(f"\"{idx+50}\"")
+                    driver.get(curr_url)
+                #print(len(curr_song_list))
+                self.songs[ply_id] = curr_song_list
+                driver.quit()
+            except:
+                error_id.add(ply_id)
+                continue
         print("크롤링 종료")
+        print(f"error_id: {error_id}")
         self.__export_plylst_to_csv()
 
     def __export_id_to_csv(self):
@@ -166,8 +171,11 @@ class PlylistCrawler:
 
         data = []
         for ply_id in self.plylist_id:
-            row = {"id": ply_id, "tags":self.tags[ply_id], "songs":self.songs[ply_id], "like_cnt":self.like_cnt[ply_id], "updt_date":self.updt_date[ply_id], "plylist_title":self.plylist_title[ply_id]}
-            data.append(row)
+            try:
+                row = {"id": ply_id, "tags":self.tags[ply_id], "songs":self.songs[ply_id], "like_cnt":self.like_cnt[ply_id], "updt_date":self.updt_date[ply_id], "plylist_title":self.plylist_title[ply_id]}
+                data.append(row)
+            except:
+                continue
 
         plylist_df=pd.DataFrame(data)
         plylist_df.to_csv(self.plylst_path, index=False)
