@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import routers from './pages/router'
 import { StyledEngineProvider } from '@mui/material/styles';
+import useStore from './store'
 import styled from 'styled-components';
 
 
@@ -23,7 +24,6 @@ function App() {
   const [ router ] = useState( createBrowserRouter( routers ))
 
   return (
-  
     <QueryClientProvider client={ queryClient }> {/* QueryClientProvider 추가 */}
       <Suspense>
         <StyledEngineProvider injectFirst>

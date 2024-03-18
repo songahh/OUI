@@ -1,7 +1,8 @@
 import { useRouter } from '../hooks'
 
 export const routes = [
-    
+    { path: 'calendar' },
+    { path: 'home' },
     { path: 'main' },
 ]
 
@@ -10,7 +11,7 @@ const lazyModules = routes?.map( ( { path, dynamicPath } ) => useRouter( path, d
 lazyModules.unshift( {
     path: '/',
     lazy: async () => {
-        const module = await import( `./main` )
+        const module = await import( `./calendar` )
         return {
             Component: module.default
         }
