@@ -1,5 +1,11 @@
 package com.emotionoui.oui.member.dto;
 
+import com.emotionoui.oui.alarm.entity.FcmInfo;
+import com.emotionoui.oui.calendar.entity.Emotion;
+import com.emotionoui.oui.member.entity.MemberAlarm;
+import com.emotionoui.oui.member.entity.MemberDiary;
+import com.emotionoui.oui.schedule.entity.Schedule;
+import com.emotionoui.oui.survey.entity.Preference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,7 +14,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,7 +25,7 @@ import java.util.Collection;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="member")
+@Table(name="MEMBER")
 public class Member implements UserDetails {
 
     @Id
@@ -79,6 +87,25 @@ public class Member implements UserDetails {
     public boolean isEnabled() {
         return isDeleted == 0;
     }
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberAlarm> memberAlarmList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Preference> preferenceList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Schedule> scheduleList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Emotion> emotionList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberDiary> memberDiaryList = new ArrayList<>();
+
+    @Setter
+    @OneToOne(mappedBy = "member")
+    private FcmInfo fcmInfo;
 
     public Member(String email, String nickname, LocalDateTime regdate) {
         this.email = email;

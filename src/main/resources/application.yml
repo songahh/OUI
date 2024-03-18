@@ -3,18 +3,33 @@ spring:
   config:
     import:
       - optional:file:.env[.properties]
-  datasource:
-    url: ${DB_URL}
-    username: ${USER_NAME}
-    password: ${USER_PASSWORD}
-    driver-class-name: org.mariadb.jdbc.Driver
+  server:
+    port: 8080
+    servlet:
+      context-path: /
+      encoding:
+        charset: UTF-8
+        force: true
+    data:
+      redis:
+        host: ${REDIS_HOST}
+        port: ${REDIS_PORT}
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
   jpa:
+    hibernate:
+      ddl-auto: update #create update none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    format_sql: true
+    use_sql_comments: true
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
-
+        dialect: org.hibernate.dialect.MySQLDialect
   security:
     oauth2:
       client:
@@ -33,31 +48,24 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-
+  #social:
+  #  kakao:
+  #    id: ${KAKAO_CLIENT_ID}
+  #    secret: ${KAKAO_CLIENT_SECRET}
+  #    redirect: ${KAKAO_REDIRECT_URL}
+  datasource:
+    url: ${MARIADB_URL}
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: diary
+      username: ${MONGODB_USERNAME}
+      password: ${MONGODB_PASSWORD}
+      authentication-database: admin
 jwt:
   header: Authorization
   secret: ${JWT_KEY}
-
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          kakao:
-#            client-id: ${KAKAO_CLIENT_ID}
-#            client-secret: ${KAKAO_CLIENT_SECRET}
-#social:
-#  kakao:
-#    id: ${KAKAO_CLIENT_ID}
-#    secret: ${KAKAO_CLIENT_SECRET}
-#    redirect: ${KAKAO_REDIRECT_URL}
-server:
-  port: 8080
-  servlet:
-    context-path: /
-    encoding:
-      charset: utf-8
-      force: true
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
