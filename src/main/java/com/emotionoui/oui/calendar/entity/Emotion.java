@@ -19,7 +19,7 @@ public class Emotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "emotion_id")
-    private Integer id;
+    private Integer emotionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -36,11 +36,12 @@ public class Emotion {
     private String emotion;
 
     @Builder
-    public Emotion(Member member, DailyDiary dailyDiary, LocalDateTime date, String emotion) {
+    public Emotion(Member member, DailyDiary dailyDiary, LocalDateTime date, Emotion emotion) {
+        this.emotionId = emotion.getEmotionId();
         this.member = member;
         this.dailyDiary = dailyDiary;
         this.date = date;
-        this.emotion = emotion;
+        this.emotion = emotion.getEmotion();
         member.getEmotionList().add(this);
         dailyDiary.setEmotion(this);
     }

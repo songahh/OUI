@@ -1,4 +1,4 @@
-package com.emotionoui.oui.calendar.dto;
+package com.emotionoui.oui.calendar.dto.res;
 
 
 import com.emotionoui.oui.schedule.entity.Schedule;
@@ -6,10 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Builder
 public class ScheduleDto {
+
+    @JsonProperty("schedule")
+    private  Integer scheduleId;
 
     @JsonProperty("member_id")
     private Integer memberId;

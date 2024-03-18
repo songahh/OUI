@@ -1,4 +1,4 @@
-package com.emotionoui.oui.calendar.dto;
+package com.emotionoui.oui.calendar.dto.res;
 
 import com.emotionoui.oui.calendar.entity.Emotion;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Builder
-public class CalendarDto {
+public class MyCalendarRes {
 
     @JsonProperty("member_id")
     private Integer memberId;
@@ -27,7 +27,7 @@ public class CalendarDto {
     private List<ScheduleDto> scheduleList;
 
 
-    public static CalendarDto of(Emotion emotion) {
+    public static MyCalendarRes of(Emotion emotion) {
 
         List<ScheduleDto> temp = emotion.getMember().getScheduleList().stream()
                 .map(schedule -> ScheduleDto.builder()
@@ -37,7 +37,7 @@ public class CalendarDto {
                 .collect(Collectors.toList());
 
 
-        return CalendarDto.builder()
+        return MyCalendarRes.builder()
                 .memberId(emotion.getMember().getId())
                 .dailyDiaryId(emotion.getDailyDiary().getId())
                 .date(emotion.getDate())

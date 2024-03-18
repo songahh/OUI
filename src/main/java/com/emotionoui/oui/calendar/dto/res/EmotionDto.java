@@ -1,4 +1,4 @@
-package com.emotionoui.oui.calendar.dto;
+package com.emotionoui.oui.calendar.dto.res;
 
 
 import com.emotionoui.oui.calendar.entity.Emotion;
@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 
 @Builder
 public class EmotionDto {
+
+    @JsonProperty("emotion_id")
+    private Integer emotionId;
 
     @JsonProperty("member_id")
     private Integer memberId;
@@ -25,6 +28,7 @@ public class EmotionDto {
     public EmotionDto of(Emotion emotion){
 
         return  EmotionDto.builder()
+                .emotionId(emotion.getEmotionId())
                 .memberId(emotion.getMember().getId())
                 .dailyDiaryId(emotion.getDailyDiary().getId())
                 .date(emotion.getDate())

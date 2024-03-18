@@ -1,17 +1,15 @@
 package com.emotionoui.oui.calendar.controller;
 
 
-import com.emotionoui.oui.calendar.dto.CalendarDto;
+import com.emotionoui.oui.calendar.dto.req.MyCalendarReq;
+import com.emotionoui.oui.calendar.dto.res.MyCalendarRes;
 import com.emotionoui.oui.calendar.service.CalendarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -27,12 +25,16 @@ public class CalendarController {
     private final CalendarService calendarService;
 
     @GetMapping("/my")
-    public ResponseEntity<?> searchMyCalendar(@RequestParam(name="date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime date){
+    public ResponseEntity<?> searchMyCalendar(@RequestParam(name="date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date){
 
-        LocalDateTime monthYear = LocalDateTime.of(date.getYear(), date.getMonth(), 1, 0, 0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
 
-        List<CalendarDto> calendar = calendarService.findByMyCalendar(1, monthYear);
-        return new ResponseEntity<>(calendar, HttpStatus.OK);
+        Integer year = calendar.get(Calendar.YEAR);
+        Integer month = calendar.get(Calendar.MONTH);
+
+        List<MyCalendarRes> myCalendar = calendarService.findByMyCalendar(1, 2024, 3);
+        return new ResponseEntity<>(myCalendar, HttpStatus.OK);
 
     }
 }
