@@ -1,4 +1,5 @@
 import React from 'react';
+import ya from 'src/asset/images/ya.jpg'
 import styled from 'styled-components';
 
 const CardWrapper = styled.div<CardWrapperProps>`
@@ -17,7 +18,7 @@ const CardWrapper = styled.div<CardWrapperProps>`
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background-image:url( ${ process.env.PUBLIC_URL + '/images/ya.jpg' } )
+    background-image:url( ${ya} )
   `}
 
 `;
