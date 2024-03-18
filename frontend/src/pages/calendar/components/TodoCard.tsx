@@ -1,6 +1,7 @@
 import { format } from 'date-fns'
 import { useNavigate } from 'react-router-dom'
 import { LeftIcon, RightIcon } from 'src/components'
+import useStore from '../store'
 import styled from 'styled-components'
 
 const TodoWrapper = styled.div<{ color: string }>`
@@ -35,10 +36,12 @@ const TodoCard = ( props: TodoCardProps ) =>{
 
     const navigator = useNavigate();
 
+    const { modalContent, setModalContent } = useStore();
+
     const { color } = props
 
     const editTodo = () =>{
-        navigator( '/todo' )
+        setModalContent()
     }
     
     const deletTodo = () =>{

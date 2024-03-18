@@ -2,7 +2,6 @@ import { useRouter } from '../hooks'
 
 export const routes = [
     { path: 'calendar' },
-    { path: 'todo' },
     { path: 'home' }
 
 ]
