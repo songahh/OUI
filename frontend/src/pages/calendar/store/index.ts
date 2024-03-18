@@ -5,7 +5,10 @@ const useStore = create<Model>(( set, get ) => ({
   updateModal: () => set(( state ) => ({ isModalOpened: !state.isModalOpened })),
 
   clickDate: new Date,
-  updateDate: ( date ) => set(( state ) => ({ clickDate: date })),
+  updateDate: ( date ) => set(() => ({ clickDate: date })),
+  
+  modalContent: false,
+  setModalContent: () => set(( state ) => ({ modalContent: !state.modalContent}))
 }))
 
 export interface Model{
@@ -13,6 +16,8 @@ export interface Model{
   updateModal: () => void
   clickDate: Date
   updateDate: ( date: Date ) => void
+  modalContent: boolean
+  setModalContent: () => void
 }
  
 export default useStore;

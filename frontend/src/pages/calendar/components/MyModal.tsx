@@ -3,7 +3,7 @@ import useStore from "../store"
 import TodoList from "./TodoList"
 import { LeftIcon, RightIcon } from 'src/components'
 import { format } from "date-fns"
-import Todo from "../../todo"
+import Todo from "../todo"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
