@@ -1,8 +1,12 @@
 import { createGlobalStyle } from 'styled-components';
-import DoveMayo from '../fonts/DoveMayo.woff';
-import DoveMayoBold from '../fonts/DoveMayo_Bold.woff';
-import IMHyeMin from '../fonts/IMHyeMin.woff';
-import IMHyeMinBold from '../fonts/IMHyeMin_Bold.woff';
+import DoveMayo from '../asset/fonts/DoveMayo.woff';
+import DoveMayoBold from '../asset/fonts/DoveMayo_Bold.woff';
+import IMHyeMin from '../asset/fonts/IMHyeMin.woff';
+import IMHyeMinBold from '../asset/fonts/IMHyeMin_Bold.woff';
+import Cafe24Supermagic from '../asset/fonts/Cafe24Supermagic.woff';
+import Cafe24SupermagicBold from '../asset/fonts/Cafe24Supermagic_Bold.woff';
+import HakgyoansimGaeulsopung from '../asset/fonts/HakgyoansimGaeulsopung.woff';
+import HakgyoansimGaeulsopungBold from '../asset/fonts/HakgyoansimGaeulsopung_Bold.woff';
 
 const GlobalStyle = createGlobalStyle`
       @font-face {
@@ -28,6 +32,30 @@ const GlobalStyle = createGlobalStyle`
             src: local('IMHyeMinBold'), local('IMHyeMinBold');
             font-style: normal;
             src: url(${IMHyeMinBold}) format('woff');
+      }
+      @font-face {
+            font-family: 'Cafe24Supermagic';
+            src: local('Cafe24Supermagic'), local('Cafe24Supermagic');
+            font-style: normal;
+            src: url(${Cafe24Supermagic}) format('woff');
+      }
+      @font-face {
+            font-family: 'Cafe24SupermagicBold';
+            src: local('Cafe24SupermagicBold'), local('Cafe24SupermagicBold');
+            font-style: normal;
+            src: url(${Cafe24SupermagicBold}) format('woff');
+      }
+      @font-face {
+            font-family: 'HakgyoansimGaeulsopung';
+            src: local('HakgyoansimGaeulsopung'), local('HakgyoansimGaeulsopung');
+            font-style: normal;
+            src: url(${HakgyoansimGaeulsopung}) format('woff');
+      }
+      @font-face {
+            font-family: 'HakgyoansimGaeulsopungBold';
+            src: local('HakgyoansimGaeulsopungBold'), local('HakgyoansimGaeulsopungBold');
+            font-style: normal;
+            src: url(${HakgyoansimGaeulsopungBold}) format('woff');
       }
 `
 
