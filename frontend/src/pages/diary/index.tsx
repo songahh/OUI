@@ -186,11 +186,13 @@ const DiaryWrite = () => {
     // 텍스트 색상
     const handleFontColor = (event: any) => {
         canvas.setActiveObject(textboxRef.current);
-        setFontColor(event.target.value);
+
+        const color = event.target.value;
+        setFontColor(color);
         
         const activeObject = canvas.getActiveObject();
         if (activeObject && activeObject.type === 'textbox') {
-            activeObject.set('fill', fontColor);
+            activeObject.set('fill', color);
             canvas.renderAll();
         }
     }
@@ -252,7 +254,7 @@ const DiaryWrite = () => {
         }
         return false; // 아무것도 삭제되지 않았음을 반환
     }
- 
+
     // 객체 선택 시 삭제 버튼 추가
     useEffect(() => {
         if (!canvas) return;
