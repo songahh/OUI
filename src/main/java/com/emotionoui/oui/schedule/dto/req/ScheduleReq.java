@@ -1,6 +1,6 @@
 package com.emotionoui.oui.schedule.dto.req;
 
-import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.dto.Member;
 import com.emotionoui.oui.schedule.entity.Schedule;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;

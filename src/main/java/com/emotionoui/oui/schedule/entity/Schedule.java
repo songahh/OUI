@@ -1,6 +1,6 @@
 package com.emotionoui.oui.schedule.entity;
 
-import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.dto.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

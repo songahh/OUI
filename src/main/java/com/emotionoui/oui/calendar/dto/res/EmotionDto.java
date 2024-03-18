@@ -29,7 +29,7 @@ public class EmotionDto {
 
         return  EmotionDto.builder()
                 .emotionId(emotion.getEmotionId())
-                .memberId(emotion.getMember().getId())
+                .memberId(emotion.getMember().getMemberId())
                 .dailyDiaryId(emotion.getDailyDiary().getId())
                 .date(emotion.getDate())
                 .emotion(emotion.getEmotion())

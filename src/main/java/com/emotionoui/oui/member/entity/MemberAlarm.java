@@ -2,6 +2,7 @@ package com.emotionoui.oui.member.entity;
 
 import com.emotionoui.oui.alarm.entity.Alarm;
 import com.emotionoui.oui.diary.entity.Diary;
+import com.emotionoui.oui.member.dto.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -50,7 +51,7 @@ public class MemberAlarm {
         this.diary = diary;
         this.isDeleted = isDeleted;
         alarm.getMemberAlarmList().add(this);
-        member.getMemberAlarmList().add(this);
+//        member.getMemberAlarmList().add(this);
         diary.getMemberAlarmList().add(this);
     }
 }

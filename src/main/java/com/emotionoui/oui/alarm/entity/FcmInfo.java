@@ -1,6 +1,6 @@
 package com.emotionoui.oui.alarm.entity;
 
-import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.dto.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,6 +31,6 @@ public class FcmInfo {
         this.member = member;
         this.deviceId = deviceId;
         this.token = token;
-        member.setFcmInfo(this);
+//        member.setFcmInfo(this);
     }
 }

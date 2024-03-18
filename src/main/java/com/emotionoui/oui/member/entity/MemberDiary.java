@@ -1,6 +1,7 @@
 package com.emotionoui.oui.member.entity;
 
 import com.emotionoui.oui.diary.entity.Diary;
+import com.emotionoui.oui.member.dto.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -50,6 +51,6 @@ public class MemberDiary {
         this.diary = diary;
         this.member = member;
         diary.getMemberDiaryList().add(this);
-        member.getMemberDiaryList().add(this);
+//        member.getMemberDiaryList().add(this);
     }
 }

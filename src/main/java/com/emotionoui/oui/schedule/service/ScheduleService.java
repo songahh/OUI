@@ -1,6 +1,6 @@
 package com.emotionoui.oui.schedule.service;
 
-import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.dto.Member;
 import com.emotionoui.oui.schedule.dto.req.ScheduleReq;
 import com.emotionoui.oui.schedule.entity.Schedule;
 import com.emotionoui.oui.schedule.exception.ScheduleNotFoundException;
@@ -23,11 +23,11 @@ public class ScheduleService {
     @Transactional
     public int saveSchedules(@RequestBody ScheduleReq scheduleReq) {
 //        Member member = memberRepository.findById(scheduleRequest.getMemberId()).orElseThrow(UserNotFoundException::new);
-            Member member = Member.builder().id(1).build();
+            Member member = Member.builder().memberId(1).build();
         scheduleRepository.save(scheduleReq.toEntity(
                                 member, scheduleReq.getTitle(), scheduleReq.getContent(),
                                 scheduleReq.getDate()));
-        return member.getId();
+        return member.getMemberId();
     }
 
     // 회원 일정 수정

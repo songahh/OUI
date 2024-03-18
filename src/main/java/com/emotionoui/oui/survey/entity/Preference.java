@@ -1,6 +1,6 @@
 package com.emotionoui.oui.survey.entity;
 
-import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.dto.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -48,6 +48,6 @@ public class Preference {
         this.type = type;
         this.createdAt = createdAt;
         this.isDeleted = isDeleted;
-        member.getPreferenceList().add(this);
+//        member.getPreferenceList().add(this);
     }
 }

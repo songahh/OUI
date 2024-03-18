@@ -28,7 +28,7 @@ public class ScheduleDto {
     public ScheduleDto of(Schedule schedule){
 
         return  ScheduleDto.builder()
-                .memberId(schedule.getMember().getId())
+                .memberId(schedule.getMember().getMemberId())
                 .title(schedule.getTitle())
                 .content(schedule.getContent())
                 .date(schedule.getDate())

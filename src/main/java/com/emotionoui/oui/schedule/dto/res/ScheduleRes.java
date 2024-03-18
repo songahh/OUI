@@ -25,7 +25,7 @@ public class ScheduleRes {
     public ScheduleRes of(Schedule schedule){
 
         return  ScheduleRes.builder()
-                .memberId(schedule.getMember().getId())
+                .memberId(schedule.getMember().getMemberId())
                 .title(schedule.getTitle())
                 .content(schedule.getContent())
                 .date(schedule.getDate())
