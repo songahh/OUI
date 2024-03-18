@@ -1,10 +1,17 @@
 import { fabric } from 'fabric';
 import { BottomSheet } from 'react-spring-bottom-sheet'
 import 'react-spring-bottom-sheet/dist/style.css'
+import { SaveIcon } from 'src/components';
 import { Tab, TextboxContent, ImageContent, DrawingContent } from './components';
 import { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import { SaveIcon } from 'src/components';
+import { createGlobalStyle } from 'styled-components';
+
+const GlobalStyle = createGlobalStyle`
+    [data-rsbs-scroll="true"] {
+        overflow: hidden !important;
+    }
+`;
 
 const Container = styled.div`
     width: 100vw;
@@ -31,7 +38,7 @@ const DiaryWrite = () => {
     const textboxRef = useRef(null);
     
     const [ canvas, setCanvas ] = useState(null);
-    const [ activeTool, setActiveTool ] = useState("select");
+    const [ activeTool, setActiveTool ] = useState("textbox");
     const [ selectedFont, setSelectedFont ] = useState("Dovemayo");
     const [ textAlign, setTextAlign ] = useState("left");
     const [ fontColor, setFontColor ] = useState("#000000");
@@ -52,7 +59,7 @@ const DiaryWrite = () => {
             transparentCorners: false,
             cornerColor: '#CDCDCD',
             borderColor: '#CDCDCD',
-          });
+        });
 
         setCanvas(newCanvas);
 
@@ -68,6 +75,7 @@ const DiaryWrite = () => {
         newCanvas.add(textbox);
         
         textboxRef.current = textbox; // 텍스트박스 ref 설정
+        newCanvas.setActiveObject(textbox);
         
         // 언마운트 시 캔버스 정리
         return () => {
@@ -103,7 +111,6 @@ const DiaryWrite = () => {
         }
     }, [ textAlign ]);
 
-    // 활성화된 텍스트박스의 폰트 변경
     useEffect(() => {
         if (!canvas || !textboxRef.current) return;
 
@@ -130,37 +137,37 @@ const DiaryWrite = () => {
         canvas.renderAll();
     }, [ penWidth ])
 
-    // 텍스트박스 선택 활성화 핸들러
+    // 텍스트박스 선택 활성화
     const handleTextboxTool = () => {
         canvas.isDrawingMode = false;
         canvas.setActiveObject(textboxRef.current);
         canvas.renderAll();
     }
 
-    // 텍스트박스 선택 비활성화 핸들러
+    // 텍스트박스 선택 비활성화
     const disableTextbox = () => {
         canvas.discardActiveObject();
         canvas.renderAll();
     } 
 
-    // 펜 활성화 핸들러
+    // 펜 활성화
     const handlePenTool = () => {
         canvas.freeDrawingBrush.width = penWidth;
         canvas.isDrawingMode = true;
     };
 
-    // 펜 비활성화 핸들러
+    // 펜 비활성화
     const disablePenTool = () => {
         canvas.isDrawingMode = false;
     }
     
-    // 폰트 변경 핸들러
+    // 폰트 변경
     const handleFontChange = (event) => {
         canvas.setActiveObject(textboxRef.current);
         setSelectedFont(event.target.value);
     };
 
-    // 텍스트 굵기 핸들러
+    // 텍스트 굵기
     const handleFontWeight = () => {
         canvas.setActiveObject(textboxRef.current);
         const activeObject = canvas.getActiveObject();
@@ -206,26 +213,27 @@ const DiaryWrite = () => {
         console.log(jsonToString);
     }
 
-    // 이미지 업로드 핸들러
+    // 이미지 업로드
     const handleImageUpload = (file: File) => {
         const reader = new FileReader();
         reader.onload = (event) => {
-        const imgElement = document.createElement('img');
-        imgElement.src = event.target.result as string;
-        imgElement.onload = () => {
-            const maxWidth = 150;
-            const scaleFactor = maxWidth / imgElement.width; 
+            const imgElement = document.createElement('img');
+            imgElement.src = event.target.result as string;
+            imgElement.onload = () => {
+                const maxWidth = 150;
+                const scaleFactor = maxWidth / imgElement.width; 
 
-            const imgInstance = new fabric.Image(imgElement, {
-            left: 300,
-            top: 400,
-            scaleX: scaleFactor,
-            scaleY: scaleFactor,
-            angle: 0,
-            opacity: 1.0,
-            });
-            canvas.add(imgInstance);
-        };
+                const imgInstance = new fabric.Image(imgElement, {
+                    left: 300,
+                    top: 400,
+                    scaleX: scaleFactor,
+                    scaleY: scaleFactor,
+                    angle: 0,
+                    opacity: 1.0,
+                });
+                canvas.add(imgInstance);
+                canvas.setActiveObject(imgInstance);
+            };
         };
         reader.readAsDataURL(file);
     };
@@ -234,10 +242,15 @@ const DiaryWrite = () => {
         <Container>
             <SaveIcon onClick={ saveDiary }/>
             <canvas style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
-            <BottomSheet 
+            <GlobalStyle />
+            <BottomSheet
                 open={true}
                 blocking={false}
-                snapPoints={({ minHeight }) => [ minHeight * 0.9 ]}
+                defaultSnap={({ minHeight }) => minHeight * 0 + 75 }
+                snapPoints={({ minHeight, maxHeight }) => [
+                    minHeight * 0 + 75,
+                    maxHeight * 0 + 300,
+                ]}
                 header={
                     <Header>
                         <Tab value="텍스트" onClick={() => setActiveTool("textbox")} disabled={ activeTool === "textbox" }/>
@@ -266,7 +279,7 @@ const DiaryWrite = () => {
                             penWidth={ penWidth }
                             handlePenWidth={ handlePenWidth }
                             penColor={ penColor } 
-                            handlePenColor={ handlePenColor }   
+                            handlePenColor={ handlePenColor }
                         />
                     )}
                 </Content>                                
