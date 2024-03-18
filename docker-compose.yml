@@ -1,0 +1,28 @@
+version: "4.27.2"
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: ouiMongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongodb
+      MONGO_INITDB_ROOT_PASSWORD: diary1234
+      MONGO_INITDB_DATABASE: oui
+  mariadb:
+    image: mariadb:10.11.6
+    container_name: ouiMariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/lib/var/mysql
+    environment:
+      MARIADB_DATABASE: oui
+      MARIADB_USER: mariadb
+      MARIADB_PASSWORD: diary1234
+      MARIADB_ROOT_PASSWORD: mariadb
+      TZ: Asia/Seoul
+volumes:
+  mariadb-data:

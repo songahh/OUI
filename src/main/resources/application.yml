@@ -1,4 +1,16 @@
 spring:
+  encoding: UTF-8
+  config:
+    import:
+      - optional:file:.env[.properties]
+  server:
+    port: 8080
+    servlet:
+      context-path: /
+      encoding:
+        charset: UTF-8
+        force: true
+
   servlet:
     multipart:
       max-file-size: 50MB
@@ -12,16 +24,18 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    url: ${MARIADB_URL}
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
+
   data:
     mongodb:
       host: localhost
       port: 27017
       database: diary
-      username: ${MONGO_USER_NAME}
-      password: ${MONGO_USER_PASSWORD}
+      username: ${MONGODB_USERNAME}
+      password: ${MONGODB_PASSWORD}
       authentication-database: admin
-  datasource:
-    url: ${MARIA_URL}
-    username: ${MARIA_USER_NAME}
-    password: ${MARIA_USER_PASSWORD}
+
     driver-class-name: org.mariadb.jdbc.Driver

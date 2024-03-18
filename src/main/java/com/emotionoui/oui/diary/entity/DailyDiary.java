@@ -1,6 +1,7 @@
 package com.emotionoui.oui.diary.entity;
 
 
+import com.emotionoui.oui.calendar.entity.Emotion;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,17 +27,17 @@ public class DailyDiary {
     @Column(name="mongo_id")
     private String mongoId;
 
-    @Setter
-    @OneToOne(mappedBy = "dailyDiary")
-    private Emotion emotion;
-
-    @CreatedDate
-    @LastModifiedDate
-    @Column(name = "created_at")
-    private LocalDateTime created_at;
-
-    @Column(name = "is_deleted")
-    private Integer isDeleted;
+//    @Setter
+//    @OneToOne(mappedBy = "dailyDiary")
+//    private Emotion emotion;
+//
+//    @CreatedDate
+//    @LastModifiedDate
+//    @Column(name = "created_at")
+//    private LocalDateTime created_at;
+//
+//    @Column(name = "is_deleted")
+//    private Integer isDeleted;
 
     @Builder
     public DailyDiary(Diary diary, String mongoId){

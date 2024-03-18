@@ -30,7 +30,7 @@ public class DailyDiaryCollection {
 
     @Builder
     public DailyDiaryCollection(String id, Integer diaryId, String content, Integer isDeleted){
-        this.id = new ObjectId(id);
+//        this.id = new ObjectId(id);
         this.diaryId = diaryId;
         this.content = content;
         this.isDeleted = isDeleted;

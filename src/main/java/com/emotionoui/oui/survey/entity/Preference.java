@@ -1,6 +1,5 @@
 package com.emotionoui.oui.survey.entity;
 
-
 import com.emotionoui.oui.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,26 +20,33 @@ public class Preference {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "preference_id")
-    private Integer id;
-
+    private Integer preferenceId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Column(name = "type")
     private String type;
 
     @CreatedDate
     @LastModifiedDate
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
+
 
     @Column(name = "is_deleted")
     private Integer isDeleted;
 
+    public void changeIsDelete(){
+        this.isDeleted = 1;
+    }
+
     @Builder
-    public Preference(Member member, String type, Integer isDeleted) {
+    public Preference(Integer preferenceId, Member member, String type, LocalDateTime createdAt, Integer isDeleted) {
+        this.preferenceId = preferenceId;
         this.member = member;
         this.type = type;
+        this.createdAt = createdAt;
         this.isDeleted = isDeleted;
         member.getPreferenceList().add(this);
     }

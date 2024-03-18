@@ -1,7 +1,7 @@
 package com.emotionoui.oui.member.entity;
 
 import com.emotionoui.oui.alarm.entity.FcmInfo;
-import com.emotionoui.oui.diary.entity.Emotion;
+import com.emotionoui.oui.calendar.entity.Emotion;
 import com.emotionoui.oui.schedule.entity.Schedule;
 import com.emotionoui.oui.survey.entity.Preference;
 import jakarta.persistence.*;
@@ -54,7 +54,8 @@ public class Member {
     private Integer isDeleted;
 
     @Builder
-    public Member(String email, String nickname, String password, Integer isDeleted){
+    public Member(Integer id, String email, String nickname, String password, Integer isDeleted){
+        this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;

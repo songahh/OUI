@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -22,7 +23,7 @@ public class DiaryController {
 
     // 일기 게시글 작성하기
     @PostMapping
-    public ResponseEntity<?> createDailyDiary(@RequestBody CreateDailyDiaryReq req) throws IOException {
+    public ResponseEntity<?> createDailyDiary(@RequestBody CreateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
         // 작성자가 필요함
         return new ResponseEntity<String>(diaryService.createDailyDiary(req), HttpStatus.OK);
     }
