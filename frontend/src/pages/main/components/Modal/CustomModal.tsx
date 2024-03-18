@@ -6,6 +6,10 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import diary1 from 'src/asset/images/diary1.png'
+import diary2 from 'src/asset/images/diary2.png'
+import diary3 from 'src/asset/images/diary3.png'
+import diary4 from 'src/asset/images/diary4.png'
 import styled from "styled-components";
 
 
@@ -114,10 +118,10 @@ const CustomModal = ( props:ModalProps ) => {
           </div>
             <h3>다이어리 표지</h3>
             <BoxWrapper>
-            {[ 'diary1.png', 'diary2.png', 'diary3.png', 'diary4.png' ].map(( diaryImage, index ) => (
+            {[ diary1, diary2, diary3, diary4 ].map(( diaryImage, index ) => (
             <img
             key={index}
-            src={`${ process.env.PUBLIC_URL }/images/${ diaryImage }`}
+            src={ diaryImage }
             alt={`Diary ${ index + 1 }`}
             onClick={() => handleSelection( index )}
             style={{
