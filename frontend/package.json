@@ -33,6 +33,7 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.22.3",
     "react-scripts": "5.0.1",
+    "sonarqube": "^0.0.1",
     "styled-components": "^6.1.8",
     "typescript": "^5.4.2",
     "web-vitals": "^2.1.4",
@@ -63,10 +64,13 @@
     ]
   },
   "devDependencies": {
-    "@types/react-router-dom": "^5.3.3"
+
+    "@types/react-router-dom": "^5.3.3",
+    "sonarqube-scanner": "^3.3.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0"
+    
   }
 }
