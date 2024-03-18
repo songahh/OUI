@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -86,6 +87,7 @@ public class KakaoController {
         // 쿠키에서 refresh token 추출
         String refreshToken = null;
         Cookie[] cookies = request.getCookies();
+        System.out.println("cookies: "+request.getCookies().toString());
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("refreshToken")) {
