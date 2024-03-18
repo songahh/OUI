@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '../Button';
 import {
   Box,
-  Drawer as MuiDrawer,
+  SwipeableDrawer as Bottom, 
   List,
   Divider,
   ListItem,
@@ -57,7 +57,7 @@ const Drawer = () => {
     return(
         <div>
         <Button btType='hamburger' name="temp"  onButtonClick={ toggleDrawer(true) } ></Button>
-        <MuiDrawer open={open} onClose={ toggleDrawer(false) }>
+        <Bottom anchor={'bottom'} open={open} onClose={ toggleDrawer(false) } onOpen={toggleDrawer( true )} >
         <IconButton
       onClick={ toggleDrawer(false) }
       sx={{ position: 'absolute', right: 8, top: 8, zIndex: 1 }} 
@@ -65,7 +65,7 @@ const Drawer = () => {
       <CloseIcon /> {/* IconButton 내부에는 아이콘 컴포넌트만 포함 */}
     </IconButton>
             { DrawerList }
-        </MuiDrawer>
+        </Bottom>
         </div>   
     );
 
