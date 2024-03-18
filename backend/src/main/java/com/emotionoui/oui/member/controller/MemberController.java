@@ -1,6 +1,6 @@
 package com.emotionoui.oui.member.controller;
 
-import com.emotionoui.oui.member.dto.Member;
+import com.emotionoui.oui.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +19,17 @@ public class MemberController {
      * @param member
      * @return
      */
-    @GetMapping("/email")
-    public ResponseEntity<Member> getMemberEmail(@AuthenticationPrincipal Member member){
-        System.out.println(member.getMemberId());
+    @GetMapping
+    public ResponseEntity<Member> getMember(@AuthenticationPrincipal Member member){
 
-        return new ResponseEntity<>(member, HttpStatus.OK);
+        Member member1 = Member.builder()
+                .email(member.getEmail())
+                .memberId(member.getMemberId())
+                .img(member.getImg())
+                .regdate(member.getRegdate())
+                .nickname(member.getNickname())
+            .build();
+
+        return new ResponseEntity<>(member1, HttpStatus.OK);
     }
 }
-//memberId: int
-//memberEmail: String
-//memberNickname: String
-//memberPassword: String
-//regDate: LocalDateTime,
-//memberImg: file
-//}

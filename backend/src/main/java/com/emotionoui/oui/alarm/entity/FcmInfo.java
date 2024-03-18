@@ -1,6 +1,6 @@
 package com.emotionoui.oui.alarm.entity;
 
-import com.emotionoui.oui.member.dto.Member;
+import com.emotionoui.oui.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

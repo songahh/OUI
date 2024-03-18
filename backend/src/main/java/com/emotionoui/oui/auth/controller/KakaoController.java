@@ -3,7 +3,7 @@ package com.emotionoui.oui.auth.controller;
 import com.emotionoui.oui.auth.dto.res.KakaoLoginRes;
 import com.emotionoui.oui.auth.jwt.JwtTokenProvider;
 import com.emotionoui.oui.auth.service.AuthService;
-import com.emotionoui.oui.member.dto.Member;
+import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.Cookie;
@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -44,15 +42,15 @@ public class KakaoController {
         // 받아온 email로 jwt access, refresh 토큰 만들기
         String accessToken = jwtTokenProvider.createAccessToken(kakaoLoginRes.getEmail());
         String refreshToken = jwtTokenProvider.createRefreshToken(kakaoLoginRes.getEmail());
-        System.out.println(accessToken);
-        System.out.println(refreshToken);
+        System.out.println("KakaoController.kakaoLogin- accessToken : "+accessToken);
+        System.out.println("KakaoController.kakaoLogin- accessToken : "+refreshToken);
         // accesstoken, refreshToken 쿠키에 담기
         jwtTokenProvider.createAccessTokenCookie(accessToken, response);
         jwtTokenProvider.createRefreshTokenCookie(refreshToken, response);
         //헤더에 accessToken 담기
 
         // 가입된 유저 확인 & 회원가입
-        System.out.println(kakaoMemberCheckAndRegister(kakaoLoginRes));
+        System.out.println("KakaoController.kakaoLogin -가입된 유저 확인 & 회원가입 : "+kakaoMemberCheckAndRegister(kakaoLoginRes));
 
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
