@@ -24,6 +24,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @RestController
 public class AuthController {
@@ -40,7 +41,7 @@ public class AuthController {
      * @param response
      * @return
      */
-    @GetMapping("/kakao")
+    @GetMapping("/login/kakao")
     public ResponseEntity<Void> kakaoLogin(@RequestParam String code, HttpServletResponse response) {
         try {
             // 카카오에서 사용자 email 받아오기
@@ -73,7 +74,7 @@ public class AuthController {
      * @param member
      * @return
      */
-    @GetMapping("/auth/logout")
+    @GetMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal Member member) {
         // 레디스에서 리프레시토큰 삭제
         String key = RedisPrefix.REFRESH_TOKEN.prefix() + member.getEmail();
@@ -90,8 +91,16 @@ public class AuthController {
     private void kakaoMemberCheckAndRegister(KakaoLoginRes kakaoLoginRes) {
 
         String email = kakaoLoginRes.getEmail();
-        // 나중에 랜덤으로 던져줘야 함
-        String memberNickname = email;
+        // nickname은 처음에는 email에서 뒷부분 뺀 걸로 설정해주자.
+        int stop = 0;
+        for(int i = 0; i<email.length(); i++){
+            if(email.charAt(i)=='@'){
+                stop = i;
+                break;
+            }
+        }
+        System.out.println(stop);
+        String memberNickname = email.substring(0,stop);
         LocalDateTime regdate = LocalDateTime.now();
 
         Member kakaoMember = memberRepository.findByEmail(email).orElse(null);
@@ -110,7 +119,7 @@ public class AuthController {
      * @param response
      * @return
      */
-    @PostMapping("/auth/token")
+    @PostMapping("/token")
     public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         // 쿠키에서 refreshToken 추출
         String refreshToken = null;
@@ -163,7 +172,6 @@ public class AuthController {
      * @return
      */
     @Transactional
-    @PutMapping("/auth")
     public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal Member member){
         // redis에서 삭제
         String key = RedisPrefix.REFRESH_TOKEN.prefix() + member.getEmail();

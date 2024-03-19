@@ -13,9 +13,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 
-public class JwtFilter extends GenericFilterBean {
+public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtUtil jwtUtil;
@@ -36,15 +38,16 @@ public class JwtFilter extends GenericFilterBean {
      * @throws ServletException
      */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String requestURI = httpRequest.getRequestURI();
 
-        String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
+        System.out.println("여기가 필터 시작부분");
+        String requestURI = request.getRequestURI();
+
+        String token = jwtTokenProvider.resolveToken(request);
 
         // 로그인 페이지의 경로와 일치할 경우 필터링 과정을 건너뜁니다.
-        if ("/".equals(requestURI) && token == null) {
+        if (("/".equals(requestURI) || "/login".equals(requestURI))) {
             System.out.println("로그인 화면으로 갈 때..");
             filterChain.doFilter(request, response);
             return;
