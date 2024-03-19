@@ -72,13 +72,11 @@
     ]
   },
   "devDependencies": {
-
     "@types/react-router-dom": "^5.3.3",
     "sonarqube-scanner": "^3.3.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0"
-    
   }
 }
