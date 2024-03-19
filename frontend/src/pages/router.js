@@ -8,6 +8,8 @@ export const routes = [
     { path: 'mypage' },
     { path: 'login' },
     { path: 'research'},
+    { path: 'analysis'},
+    { path: 'kakao' , dynamicPath: 'auth/login/kakao'},
 ]
 
 const lazyModules = routes?.map( ( { path, dynamicPath } ) => useRouter( path, dynamicPath ) )
