@@ -64,6 +64,7 @@ public class DiaryServiceImpl implements DiaryService{
         DailyDiary dailyDiary = DailyDiary.builder()
                 .diary(diary)
                 .mongoId(document.getId().toString())
+                .dailyDate(req.getDailyDate())
                 .build();
 
         // 마리아디비에 dailyDiary 정보(몽고디비ID 포함) 저장하기
@@ -212,10 +213,14 @@ public class DiaryServiceImpl implements DiaryService{
 
 
     public EmotionClass searchEmotion(String dailyId){
-        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.getEmotion(dailyId);
-        log.info("다이어리아이디 못 들고오나요? : " +dailyDiaryCollection.getDiaryId());
-        log.info("Angry 정도는? " + String.valueOf(dailyDiaryCollection.getEmotion().getAngry()));
-        //return dailyDiaryMongoRepository.getEmotion(dailyId);
-        return null;
+        return dailyDiaryMongoRepository.findEmotionByDailyId(dailyId).getEmotion();
+    }
+
+    public MusicClass searchMusic(String dailyId){
+        return dailyDiaryMongoRepository.findMusicByDailyId(dailyId).getMusic();
+    }
+
+    public String searchComment(String dailyId){
+        return dailyDiaryMongoRepository.findCommentByDailyId(dailyId).getComment();
     }
 }

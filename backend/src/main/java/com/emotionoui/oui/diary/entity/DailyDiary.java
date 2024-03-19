@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -23,6 +24,9 @@ public class DailyDiary {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="diary_id")
     private Diary diary;
+
+    @Column(name="daily_date")
+    private Date dailyDate;
 
     @Column(name="mongo_id")
     private String mongoId;
@@ -40,9 +44,10 @@ public class DailyDiary {
 //    private Integer isDeleted;
 
     @Builder
-    public DailyDiary(Diary diary, String mongoId){
-        //this.diary = diary;
+    public DailyDiary(Diary diary, String mongoId, Date dailyDate){
+        this.diary = diary;
         this.mongoId = mongoId;
-        //diary.getDailyDiaryList().add(this);
+        this.dailyDate = dailyDate;
+        diary.getDailyDiaryList().add(this);
     }
 }
