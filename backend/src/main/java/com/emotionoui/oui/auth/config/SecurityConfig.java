@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable());
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/static/**", "/**", "/").permitAll()
+                        .requestMatchers("/static/**", "/**", "/login","/").permitAll()
                         .anyRequest().authenticated());
         http
                 .addFilterBefore(new JwtFilter(jwtTokenProvider, jwtUtil, memberRepository),
