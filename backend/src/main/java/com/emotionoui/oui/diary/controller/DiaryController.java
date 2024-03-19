@@ -24,8 +24,13 @@ public class DiaryController {
 
     // 일기 게시글 작성하기
     @PostMapping
-    public ResponseEntity<?> createDailyDiary(CreateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
+    public ResponseEntity<?> createDailyDiary(@RequestBody CreateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
         // 작성자가 필요함
+
+//        log.info("다이어리왔음? " + String.valueOf(req.getDiaryId()));
+//        log.info("다이어리왔음? " + req.getDailyContent());
+//        return new ResponseEntity<String>("1", HttpStatus.OK);
+
         return new ResponseEntity<String>(diaryService.createDailyDiary(req), HttpStatus.OK);
     }
 
