@@ -1,5 +1,7 @@
 package com.emotionoui.oui.diary.entity;
 
+import com.emotionoui.oui.diary.dto.EmotionClass;
+import com.emotionoui.oui.diary.dto.MusicClass;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,10 @@ public class DailyDiaryCollection {
     private String comment;
 
     private Integer isDeleted;
+
+    private EmotionClass emotion;
+
+    private MusicClass music;
 
     @Builder
     public DailyDiaryCollection(String id, Integer diaryId, String content, Integer isDeleted){
