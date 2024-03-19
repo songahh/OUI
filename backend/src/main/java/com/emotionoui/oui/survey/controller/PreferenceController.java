@@ -18,6 +18,7 @@ public class PreferenceController {
 
     private final PreferenceService preferenceService;
 
+    // 선호 등록
     @PostMapping("/preference")
     public ResponseEntity<?> savePreference(@RequestBody PreferenceReq preferenceReq){
         preferenceService.savePreference(preferenceReq);

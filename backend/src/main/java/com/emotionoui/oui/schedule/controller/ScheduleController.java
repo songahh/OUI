@@ -15,6 +15,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
+    // 일정 등록
     @PostMapping("/my")
     public ResponseEntity<?> saveSchedules(@RequestBody ScheduleReq scheduleReq) {
 
@@ -22,6 +23,7 @@ public class ScheduleController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // 일정 수정
     @PutMapping("/my/{scheduleId}")
     public ResponseEntity<?> updateSchedule(@RequestBody ScheduleReq scheduleReq,
                                             @PathVariable(value= "scheduleId") Integer scheduleId){
@@ -29,6 +31,7 @@ public class ScheduleController {
         return ResponseEntity.noContent().build();
     }
 
+    //일정 삭제 - isDelete 변경
     @PutMapping("/my/{scheduleId}/delete")
     public ResponseEntity<?> deleteSchedule(@RequestBody ScheduleReq scheduleReq,
                                             @PathVariable(value= "scheduleId") Integer scheduleId){
