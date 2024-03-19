@@ -12,6 +12,11 @@ const DateListWrapper = styled.div`
   border-bottom: 2px solid #000;
 `
 
+// const Date = styled.div<{ index: number }>`
+//   color: 
+//   ${( props ) => props.index === 0 ? 'red' : ( props.index === 6 ? 'blue': 'black' )}
+// `
+
 const DateList = () => {
 
   const date = [ 'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'  ]

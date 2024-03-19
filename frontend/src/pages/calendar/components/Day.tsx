@@ -3,7 +3,7 @@ import useStore from '../store'
 import tmp1 from 'src/asset/images/tmp1.png'
 import styled from 'styled-components'
 
-const DayWrapper = styled.div<{ index: number }>`
+const DayWrapper = styled.div`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -12,8 +12,6 @@ const DayWrapper = styled.div<{ index: number }>`
   border-bottom: 2px solid #000;
   padding: 10px 5px;
   font-size: 20px;
-  color: 
-  ${( props ) => props.index === 0 ? 'red' : ( props.index === 6 ? 'blue': 'black' )}
 `
 
 const DayClick = styled.button`
@@ -31,6 +29,23 @@ const EmotionWrapper = styled.div`
     height: 50%;    
 `
 
+const TodoWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+`
+
+const TodoItemWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin:2px;
+    background-color: #DEDCEE;
+    border-radius: 10px;
+    text-align: center;
+`
+
 
 const Day = ( props: DayProps ) =>{
 
@@ -38,6 +53,8 @@ const Day = ( props: DayProps ) =>{
     // const myLists = myCalendar?.filter(( list ) => list.datetime.substring(5, 10) === format( day, 'MM-dd' ))
 
     const { updateDate, updateModal } = useStore()
+
+    const todos = ["Test1", 'Test2', 'Test3', "test4"]
 
     function listTodo (e, date): void{
         console.log(date)
@@ -47,7 +64,7 @@ const Day = ( props: DayProps ) =>{
 
     
     return(
-        <DayWrapper index={ index }>
+        <DayWrapper>
             
             <DayClick onClick={ (e) => listTodo(e, day) }>
             { format( day, 'd' ) }
@@ -69,6 +86,16 @@ const Day = ( props: DayProps ) =>{
             <EmotionWrapper>
                 <img src={ tmp1 } alt='' style={{ height: '100%' }}/>
             </EmotionWrapper>
+            <TodoWrapper>
+
+            {
+                todos.slice(0, 2).map((todo, index) => (
+                    <TodoItemWrapper key={index}>
+                      {todo}
+                    </TodoItemWrapper>
+                  ))
+            }
+            </TodoWrapper>
         </DayWrapper>
     )
 }
