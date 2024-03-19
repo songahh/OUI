@@ -4,5 +4,5 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface MusicService {
 
-    String searchMusicByArtistNameAndSongName(String artistName, String songName) throws JsonProcessingException;
+    String searchMusicURI(String artistName, String songName);
 }

@@ -24,6 +24,7 @@ public class OuiApplication {
     public void getSpotifyCredential(){
         log.info("[OuiApplication/getSpotifyCredential] request access token");
         spotifyCredential.clientCredentials_sync();
+        musicService.searchMusicURI("TWS (투어스)", "첫 만남은 계획대로 되지 않아");
     }
 
 }
