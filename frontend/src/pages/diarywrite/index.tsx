@@ -1,8 +1,9 @@
 import { fabric } from 'fabric';
 import { BottomSheet } from 'react-spring-bottom-sheet'
 import 'react-spring-bottom-sheet/dist/style.css'
-import { SaveIcon } from 'src/components';
-import { Tab, TextboxContent, ImageContent, DrawingContent } from './components';
+import { SaveIcon, BackIcon } from 'src/components';
+import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from './components';
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -14,16 +15,22 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
+const Header = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px;
+`
+
 const Container = styled.div`
-    width: 100vw;
-    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: #F9F3EE;
 `;
 
-const Header = styled.div`
+const BottomSheetHeader = styled.div`
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -45,12 +52,13 @@ const DiaryWrite = () => {
     const [ fontColor, setFontColor ] = useState("#000000");
     const [ penColor, setPenColor ] = useState('#000000');
     const [ penWidth, setPenWidth ] = useState(5);
+    const [ selectedDate, setSelectedDate ] = useState('');
     
     useEffect(() => {
         // 캔버스 생성
         const newCanvas = new fabric.Canvas(canvasRef.current, {
-            width: 680,
-            height: 850,
+            width: 950,
+            height: 1100,
             backgroundColor: '#FFFEFC'
         });
 
@@ -208,26 +216,6 @@ const DiaryWrite = () => {
         setPenColor(event.target.value);
     } 
 
-    // 저장
-    const saveDiary = () => {
-        // string으로 전달
-        const diaryToString = JSON.stringify(canvas.toJSON());
-
-        const url = 'http://localhost:8080/diary';
-        axios({
-            url,
-            method: 'POST',
-            data: {
-                diaryId: 1,
-                // dailyDate,
-                dailyContent: diaryToString,
-            },
-        })
-        .then((resp) => {
-            console.log(resp);
-        });
-    }
-
     // 이미지 업로드
     const handleImageUpload = (file: File) => {
         const reader = new FileReader();
@@ -345,9 +333,41 @@ const DiaryWrite = () => {
         setActiveTool('eraser');
     };
 
+    const navigator = useNavigate();
+
+    const handleDateChange = (date: string) => {
+        setSelectedDate(date);
+    };
+
+    
+    // 저장
+    const saveDiary = () => {
+        // string으로 전달
+        const diaryToString = JSON.stringify(canvas.toJSON());
+        console.log(selectedDate);
+
+        // const url = 'http://localhost:8080/diary';
+        // axios({
+        //     url,
+        //     method: 'POST',
+        //     data: {
+        //         diaryId: 1,
+        //         dailyDate: selectedDate,
+        //         dailyContent: diaryToString,
+        //     },
+        // })
+        // .then((resp) => {
+        //     console.log(resp);
+        // });
+    }
+
     return (
         <Container>
-            <SaveIcon onClick={ saveDiary }/>
+            <Header>
+                <BackIcon onClick={ () => { navigator('/diary') } }/>
+                <DateSelect onDateChange={ handleDateChange }/>
+                <SaveIcon onClick={ saveDiary }/>
+            </Header>
             <canvas style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
             <GlobalStyle />
             <BottomSheet
@@ -359,12 +379,12 @@ const DiaryWrite = () => {
                     maxHeight * 0 + 360,
                 ]}
                 header={
-                    <Header>
+                    <BottomSheetHeader>
                         <Tab value="텍스트" onClick={() => setActiveTool("textbox")} disabled={ activeTool === "textbox" }/>
                         <Tab value="이미지" onClick={() => setActiveTool("image")} disabled={ activeTool === "image" }/>
                         <Tab value="그리기" onClick={() => setActiveTool("drawing")} disabled={ activeTool === "drawing" }/>
                         <Tab value="지우개" onClick={ handleEraserTool } disabled={ activeTool === "eraser" }/>
-                    </Header>
+                    </BottomSheetHeader>
                 }
             >
                 <Content>
