@@ -1,10 +1,7 @@
 package com.emotionoui.oui.calendar.controller;
 
 
-import com.emotionoui.oui.calendar.dto.res.CalendarScheduleDto;
-import com.emotionoui.oui.calendar.dto.res.CalendarDiaryDto;
-import com.emotionoui.oui.calendar.dto.res.MyCalendarRes;
-import com.emotionoui.oui.calendar.dto.res.ShareCalendarRes;
+import com.emotionoui.oui.calendar.dto.res.*;
 import com.emotionoui.oui.calendar.service.CalendarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,4 +82,28 @@ public class CalendarController {
 
         return new ResponseEntity<>(shareCalendarRes, HttpStatus.OK);
     }
+
+//    @GetMapping("{diaryId}/day")
+//    public ResponseEntity<?> searchDailyDiary(@PathVariable(value= "diaryId") Integer diaryId,
+//                                              @RequestParam(name="date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date){
+//
+//        ArrayList<MyCalendarRes> dailyDiaries = new ArrayList<>();
+//
+//        // findmemberbyId 로 멤버 다 찾고 for문 돌리면서 shareCalendarRes의 calendarResList에 넣기
+//        List<Integer> tmpMember = new ArrayList<>();
+//        tmpMember.add(1);
+//        tmpMember.add(2);
+//
+//        for(Integer i : tmpMember){
+//            List<CalendarDailyDiaryRes> dailyDiaries = calendarService.find(i, date);
+//
+//
+//        }
+//
+//
+//        CalendarDailyDiaryRes calendarDailyDiaryRes = CalendarDailyDiaryRes.builder()
+//                .build();
+//
+//        return new ResponseEntity<>(calendarDailyDiaryRes, HttpStatus.OK);
+//    }
 }
