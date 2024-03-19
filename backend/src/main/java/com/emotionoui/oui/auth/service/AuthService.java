@@ -1,6 +1,9 @@
 package com.emotionoui.oui.auth.service;
 
 import com.emotionoui.oui.auth.dto.res.KakaoLoginRes;
+import com.emotionoui.oui.auth.exception.KakaoGetMemberException;
+import com.emotionoui.oui.auth.exception.KakaoGetTokenException;
+import com.emotionoui.oui.auth.exception.MemberNotFoundException;
 import com.emotionoui.oui.auth.jwt.JwtTokenProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -53,7 +56,7 @@ public class AuthService {
     }
 
     // #1 - 인가코드로 엑세스토큰 가져오기
-    private String getAccessToken(String code) throws JsonProcessingException {
+    private String getAccessToken(String code){
 
         // 헤더에 Content-type 지정
         HttpHeaders headers = new HttpHeaders();
@@ -67,23 +70,27 @@ public class AuthService {
         params.add("code", code);
         params.add("client_secret", CLIENT_SECRET);
 
-        // POST 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
-                entity,
-                String.class
-        );
+        try {
+            // POST 요청 보내기
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.exchange(
+                    "https://kauth.kakao.com/oauth/token",
+                    HttpMethod.POST,
+                    entity,
+                    String.class
+            );
 
-        // response에서 엑세스토큰 가져오기
-        String tokenJson = response.getBody();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(tokenJson);
-        String accessToken = jsonNode.get("access_token").asText();
+            // response에서 엑세스토큰 가져오기
+            String tokenJson = response.getBody();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(tokenJson);
+            String accessToken = jsonNode.get("access_token").asText();
 
-        return accessToken;
+            return accessToken;
+        }catch (Exception e){
+            throw new KakaoGetTokenException(e);
+        }
     }
 
     // #2. 엑세스토큰으로 유저정보 가져오기
@@ -93,37 +100,42 @@ public class AuthService {
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        // GET 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> kakaoMemberInfoRequest = new HttpEntity<>(headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://kapi.kakao.com/v2/user/me",
-                HttpMethod.GET,
-                kakaoMemberInfoRequest,
-                String.class
-        );
+        try{
+            // GET 요청 보내기
+            HttpEntity<MultiValueMap<String, String>> kakaoMemberInfoRequest = new HttpEntity<>(headers);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.exchange(
+                    "https://kapi.kakao.com/v2/user/me",
+                    HttpMethod.GET,
+                    kakaoMemberInfoRequest,
+                    String.class
+            );
 
-        // HTTP 응답 상태 코드 검사
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new IllegalStateException("카카오 API 요청에 실패했습니다. 상태 코드: " + response.getStatusCode());
+            // HTTP 응답 상태 코드 검사
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new IllegalStateException("카카오 API 요청에 실패했습니다. 상태 코드: " + response.getStatusCode());
+            }
+
+            String responseBody = response.getBody();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+            // jsonNode 체크후 필요한 정보(email) 가져오기
+            String email = (jsonNode.get("kakao_account").get("email") != null) ?
+                    jsonNode.get("kakao_account").get("email").asText() : null;
+
+            // 이메일 정보가 없으면 예외 발생시킴
+            if (email==null) {
+                throw new IllegalStateException("이메일 정보가 없습니다. 이메일은 필수 동의 항목입니다.");
+            }
+
+//            System.out.println("email: " + email);
+            return new KakaoLoginRes(email);
+        }catch (Exception e){
+           throw new KakaoGetMemberException(e);
+
         }
-
-        String responseBody = response.getBody();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(responseBody);
-
-        // jsonNode 체크후 필요한 정보(email) 가져오기
-        String email = (jsonNode.get("kakao_account").get("email") != null) ?
-                jsonNode.get("kakao_account").get("email").asText() : null;
-
-        // 이메일 정보가 없으면 예외 발생시킴
-        if (email==null) {
-            throw new IllegalStateException("이메일 정보가 없습니다. 이메일은 필수 동의 항목입니다.");
-        }
-
-        System.out.println("email: " + email);
-        return new KakaoLoginRes(email);
     }
 
     /**
@@ -145,8 +157,8 @@ public class AuthService {
         try{
             userDetailsService.loadUserByUsername(email);
         }catch (Exception e){
-            // 사용자가 존재하지 않으면 UsernameNotFoundException을 발생시킴.
-            System.out.println("사용자가 존재하지 않습니다.");
+            // 사용자가 존재하지 않으면 MemberNotFoundException 발생시킴.
+            throw new MemberNotFoundException(e);
         }
 
         // 새로운 accessToken을 생성합니다.
