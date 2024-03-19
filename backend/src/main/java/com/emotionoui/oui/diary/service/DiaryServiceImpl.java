@@ -126,6 +126,9 @@ public class DiaryServiceImpl implements DiaryService{
         try {
             // 감정분석 결과를 몽고디비에 넣기
             // 이부분 송아 spotify 값 넣는 식으로 가야함 ㅇ0ㅇ
+
+
+
             MusicClass musicClass = objectMapper.readValue(musicString, MusicClass.class);
 
             document.setMusic(musicClass);
