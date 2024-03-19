@@ -4,6 +4,7 @@ import 'react-spring-bottom-sheet/dist/style.css'
 import { SaveIcon } from 'src/components';
 import { Tab, TextboxContent, ImageContent, DrawingContent } from './components';
 import { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
 
@@ -68,7 +69,7 @@ const DiaryWrite = () => {
             left: 50,
             top: 50,
             width: 100,
-            fontSize: 16,
+            fontSize: 24,
             fontFamily: selectedFont,
             padding: 10,
         });
@@ -210,9 +211,21 @@ const DiaryWrite = () => {
     // 저장
     const saveDiary = () => {
         // string으로 전달
-        const diaryToJSON = canvas.toJSON();
-        const jsonToString = JSON.stringify(diaryToJSON);
-        console.log(jsonToString);
+        const diaryToString = JSON.stringify(canvas.toJSON());
+        console.log(diaryToString);
+
+        // const url = 'http://j10a506.p.ssafy.io/diary';
+        // axios({
+        //     url,
+        //     method: 'POST',
+        //     data: {
+        //         diaryId: 1,
+        //         content: diaryToString,
+        //     },
+        // })
+        // .then((resp) => {
+        //     console.log(resp);
+        // });
     }
 
     // 이미지 업로드
@@ -227,7 +240,7 @@ const DiaryWrite = () => {
 
                 const imgInstance = new fabric.Image(imgElement, {
                     left: 300,
-                    top: 400,
+                    top: 300,
                     scaleX: scaleFactor,
                     scaleY: scaleFactor,
                     angle: 0,
@@ -239,6 +252,27 @@ const DiaryWrite = () => {
         };
         reader.readAsDataURL(file);
     };
+
+    // 스티커 추가
+    const handleSticker = (value: string) => {
+        const imgElement = document.createElement('img');
+        imgElement.src = value;
+        imgElement.onload = () => {
+            const maxWidth = 150;
+            const scaleFactor = maxWidth / imgElement.width; 
+
+            const imgInstance = new fabric.Image(imgElement, {
+                left: 300,
+                top: 300,
+                scaleX: scaleFactor,
+                scaleY: scaleFactor,
+                angle: 0,
+                opacity: 1.0,
+            });
+            canvas.add(imgInstance);
+            canvas.setActiveObject(imgInstance);
+        };
+    }
 
     function deleteObject(eventData: MouseEvent, transformData: fabric.Transform, x: number, y: number): boolean {
         const canvas = transformData.target.canvas;
@@ -322,7 +356,7 @@ const DiaryWrite = () => {
                 defaultSnap={({ maxHeight }) => maxHeight * 0 + 300 }
                 snapPoints={({ minHeight, maxHeight }) => [
                     minHeight * 0 + 75,
-                    maxHeight * 0 + 300,
+                    maxHeight * 0 + 360,
                 ]}
                 header={
                     <Header>
@@ -346,7 +380,7 @@ const DiaryWrite = () => {
                         />
                     )}
                     {(activeTool === "image") && (
-                        <ImageContent onImageUpload={ handleImageUpload } />
+                        <ImageContent onImageUpload={ handleImageUpload } handleSticker={ handleSticker }/>
                     )}
                     {(activeTool === "drawing" || activeTool === "eraser") && (
                         <DrawingContent 

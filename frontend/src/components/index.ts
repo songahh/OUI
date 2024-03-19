@@ -1,5 +1,5 @@
-import PalleteIcon from "./PalleteIcon";
-import SaveIcon from "./SaveIcon";
+import PalleteIcon from "./icon/PalleteIcon";
+import SaveIcon from "./icon/SaveIcon";
 
 export { PalleteIcon, SaveIcon };
 export * from './icon'
