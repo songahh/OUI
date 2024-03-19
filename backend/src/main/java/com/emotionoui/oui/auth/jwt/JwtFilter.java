@@ -38,8 +38,17 @@ public class JwtFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String requestURI = httpRequest.getRequestURI();
+
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
-        //특정 url 통과하도록
+
+        // 로그인 페이지의 경로와 일치할 경우 필터링 과정을 건너뜁니다.
+        if ("/".equals(requestURI) && token == null) {
+            System.out.println("로그인 화면으로 갈 때..");
+            filterChain.doFilter(request, response);
+            return;
+        }
 
 System.out.println("JwtFilter.doFilter - 헤더에 담겨 온 accessToken : "+token);
         // 토큰이 존재하고, 유효하다면
@@ -67,7 +76,7 @@ System.out.println("JwtFilter.doFilter - email: "+email);
         else{ // 엑세스 토큰이 존재하지 않거나, 만료되었다면 401 unAthorized
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
-            httpResponse.getWriter().write("accessToken not valid.");
+            httpResponse.getWriter().write("accessToken is not valid!!!");
             return;
         }
         filterChain.doFilter(request, response);

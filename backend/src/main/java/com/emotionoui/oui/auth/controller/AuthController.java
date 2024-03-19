@@ -26,7 +26,6 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/auth")
 public class AuthController {
 
     private final MemberRepository memberRepository;
@@ -41,7 +40,7 @@ public class AuthController {
      * @param response
      * @return
      */
-    @GetMapping("/login/kakao")
+    @GetMapping("/kakao")
     public ResponseEntity<Void> kakaoLogin(@RequestParam String code, HttpServletResponse response) {
         try {
             // 카카오에서 사용자 email 받아오기
@@ -74,7 +73,7 @@ public class AuthController {
      * @param member
      * @return
      */
-    @GetMapping("/logout")
+    @GetMapping("/auth/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal Member member) {
         // 레디스에서 리프레시토큰 삭제
         String key = RedisPrefix.REFRESH_TOKEN.prefix() + member.getEmail();
@@ -111,7 +110,7 @@ public class AuthController {
      * @param response
      * @return
      */
-    @PostMapping("/token")
+    @PostMapping("/auth/token")
     public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         // 쿠키에서 refreshToken 추출
         String refreshToken = null;
@@ -164,7 +163,7 @@ public class AuthController {
      * @return
      */
     @Transactional
-    @PutMapping
+    @PutMapping("/auth")
     public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal Member member){
         // redis에서 삭제
         String key = RedisPrefix.REFRESH_TOKEN.prefix() + member.getEmail();
