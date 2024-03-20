@@ -1,7 +1,6 @@
 package com.emotionoui.oui.diary.entity;
 
 import com.emotionoui.oui.diary.dto.EmotionClass;
-import com.emotionoui.oui.diary.dto.MusicClass;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +8,8 @@ import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -32,7 +33,7 @@ public class DailyDiaryCollection {
 
     private EmotionClass emotion;
 
-    private MusicClass music;
+    private List<String> music;
 
     @Builder
     public DailyDiaryCollection(String id, Integer diaryId, String content, Integer isDeleted){
