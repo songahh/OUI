@@ -37,6 +37,7 @@ public class MemberController {
                 .nickname(member.getNickname())
             .build();
 
+        System.out.println("getMember: "+member1.getEmail());
         return new ResponseEntity<>(member1, HttpStatus.OK);
     }
 }

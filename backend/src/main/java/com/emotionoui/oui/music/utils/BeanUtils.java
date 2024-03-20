@@ -1,6 +1,7 @@
 package com.emotionoui.oui.music.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -16,8 +17,16 @@ public class BeanUtils {
         return new RestTemplate();
     }
 
+//    @Bean
+//    public ObjectMapper objectMapper() { return new ObjectMapper(); }
+
     @Bean
-    public ObjectMapper objectMapper() { return new ObjectMapper(); }
+    public ObjectMapper objectMapper() {
+        //    LocalDateTime 타입을 정상적으로 JSON으로 변환하기 위한 설정
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
+    }
 
     @Bean
     @Qualifier("englishFinderPattern")
