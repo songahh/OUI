@@ -32,8 +32,8 @@ public class DiaryController {
 
     // 일기 게시글 수정하기
     @PutMapping("/{dailyId}")
-    public ResponseEntity<?> updateDailyDiary(@RequestBody UpdateDailyDiaryReq req){
-        return new ResponseEntity<String>(diaryService.updateDailyDiary(req), HttpStatus.OK);
+    public ResponseEntity<?> updateDailyDiary(@RequestBody UpdateDailyDiaryReq req, @PathVariable Integer dailyId){
+        return new ResponseEntity<Integer>(diaryService.updateDailyDiary(req, dailyId), HttpStatus.OK);
     }
 
     // 일기 게시글 삭제하기
@@ -44,7 +44,7 @@ public class DiaryController {
 
     // 일기 게시글 조회하기
     @GetMapping("/{dailyId}")
-    public ResponseEntity<?> searchDailyDiary(@PathVariable String dailyId){
+    public ResponseEntity<?> searchDailyDiary(@PathVariable Integer dailyId){
         return new ResponseEntity<SearchDailyDiaryRes>(diaryService.searchDailyDiary(dailyId), HttpStatus.OK);
     }
 

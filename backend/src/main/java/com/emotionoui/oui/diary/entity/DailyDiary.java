@@ -1,13 +1,10 @@
 package com.emotionoui.oui.diary.entity;
 
 
-import com.emotionoui.oui.calendar.entity.Emotion;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import java.time.LocalDateTime;
+
 import java.util.Date;
 
 @Entity
@@ -49,5 +46,9 @@ public class DailyDiary {
         this.mongoId = mongoId;
         this.dailyDate = dailyDate;
         diary.getDailyDiaryList().add(this);
+    }
+
+    public void modifyDailyDate(Date dailyDate){
+        this.dailyDate = dailyDate;
     }
 }

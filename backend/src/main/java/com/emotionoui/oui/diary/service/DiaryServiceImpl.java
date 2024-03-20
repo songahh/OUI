@@ -178,21 +178,21 @@ public class DiaryServiceImpl implements DiaryService{
     }
     
     // 일기 수정하기
-    public String updateDailyDiary(UpdateDailyDiaryReq req){
-        DailyDiaryCollection document = dailyDiaryMongoRepository.findById(req.getDailyDiaryId())
+    public Integer updateDailyDiary(UpdateDailyDiaryReq req, Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        dailyDiary.modifyDailyDate(req.getDailyDate());
+
+        String mongoId = dailyDiary.getMongoId();
+
+        DailyDiaryCollection document = dailyDiaryMongoRepository.findById(mongoId)
                 .orElseThrow(IllegalArgumentException::new);
 
         document.setContent(req.getDailyContent());
 
-//        DailyDiaryCollection dailyDiaryCollection = DailyDiaryCollection.builder()
-//                .id(req.getDailyDiaryId())
-//                .diaryId(req.getDiaryId())
-//                .content(req.getDailyContent())
-//                .isDeleted(0)
-//                .build();
-
         dailyDiaryMongoRepository.save(document);
-        return document.getId().toString();
+        return dailyId;
     }
 
     // 일기 삭제하기
@@ -204,11 +204,14 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     // 일기 조회하기
-    public SearchDailyDiaryRes searchDailyDiary(String dailyId){
-        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyId)
+    public SearchDailyDiaryRes searchDailyDiary(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        return SearchDailyDiaryRes.of(dailyDiaryCollection);
+        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        return SearchDailyDiaryRes.of(dailyDiaryCollection, dailyDiary);
     }
 
 
