@@ -53,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-System.out.println("JwtFilter.doFilter - 헤더에 담겨 온 accessToken : "+token);
+System.out.println("JwtFilter.doFilter - 쿠키에 담겨 온 accessToken : "+token);
         // 토큰이 존재하고, 유효하다면
         if (token != null && jwtTokenProvider.validateToken(token)) {
             Authentication auth = jwtTokenProvider.getAuthentication(token);
@@ -67,14 +67,15 @@ System.out.println("JwtFilter.doFilter - email: "+email);
             try{
                 member = memberRepository.findByEmail(email).orElseThrow(Exception::new);
                 System.out.println("JwtFilter.doFilter - nickname : "+member.getNickname());
+                System.out.println("JwtFilter.doFilter - regdate : "+member.getRegdate());
+
+                //스프링 시큐리티 인증 토큰 생성
+                Authentication authToken = new UsernamePasswordAuthenticationToken(member, null, member.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }catch (Exception e){
                 throw new MemberNotFoundException(e);
             }
 
-            //스프링 시큐리티 인증 토큰 생성
-            Authentication authToken = new UsernamePasswordAuthenticationToken(member, null, member.getAuthorities());
-
-            SecurityContextHolder.getContext().setAuthentication(authToken);
         }
         else{ // 엑세스 토큰이 존재하지 않거나, 만료되었다면 401 unAthorized
             HttpServletResponse httpResponse = (HttpServletResponse) response;
