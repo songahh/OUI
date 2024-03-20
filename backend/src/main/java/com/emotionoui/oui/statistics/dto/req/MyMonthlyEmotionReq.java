@@ -1,16 +1,15 @@
 package com.emotionoui.oui.statistics.dto.req;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-
+import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
+import java.time.YearMonth;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MyMonthlyEmotionReq {
 
-    private Integer memberId;
+    private Integer diaryId;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM", timezone = "Asia/Seoul")
-    private LocalDate date;
+    private YearMonth date;
 }
