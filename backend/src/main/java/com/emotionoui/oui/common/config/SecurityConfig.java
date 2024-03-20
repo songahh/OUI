@@ -1,4 +1,4 @@
-package com.emotionoui.oui.auth.config;
+package com.emotionoui.oui.common.config;
 
 import com.emotionoui.oui.auth.jwt.JwtFilter;
 import com.emotionoui.oui.auth.jwt.JwtTokenProvider;
@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable());
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/resources/**", "/login","/**", "/auth/token","/auth/login/kakao").permitAll()
+                        .requestMatchers("/login", "/auth/token","/auth/login/kakao").permitAll()
                         .anyRequest().authenticated());
         http
                 .addFilterBefore(new JwtFilter(jwtTokenProvider, jwtUtil, memberRepository),
