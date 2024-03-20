@@ -2,6 +2,7 @@ import { format } from 'date-fns'
 import useStore from '../store'
 import tmp1 from 'src/asset/images/tmp1.png'
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
 const DayWrapper = styled.div`
   display: flex;
@@ -35,19 +36,30 @@ const TodoWrapper = styled.div`
     height: 100%;
     overflow: hidden;
 `
-
-const TodoItemWrapper = styled.div`
+const TodoItemWrapperContainer = styled.div`
     width: 100%;
+    height: 20px;
+    display: flex;
+    margin: 2px;
+`
+const TodoItemWrapper = styled.div`
+    flex: 1;
+    height: 16px;
     display: flex;
     justify-content: center;
-    margin:2px;
+    margin-top:2px;
     background-color: #DEDCEE;
-    border-radius: 10px;
     text-align: center;
+`
+const TodoHeaderWrapper = styled.div`
+    width: 10px;
+    background-color: #BDB5FF;
 `
 
 
 const Day = ( props: DayProps ) =>{
+
+    const navigator = useNavigate()
 
     const { index, day } = props
     // const myLists = myCalendar?.filter(( list ) => list.datetime.substring(5, 10) === format( day, 'MM-dd' ))
@@ -60,6 +72,11 @@ const Day = ( props: DayProps ) =>{
         console.log(date)
         updateDate( date )
         updateModal()
+    }
+
+    const goMyDiary = () =>{
+        // 여기 전체 데이터를 넘겨준다?
+        navigator('/diary')
     }
 
     
@@ -83,16 +100,17 @@ const Day = ( props: DayProps ) =>{
                     </div>
                 )
             })} */}
-            <EmotionWrapper>
+            <EmotionWrapper onClick={ goMyDiary }>
                 <img src={ tmp1 } alt='' style={{ height: '100%' }}/>
             </EmotionWrapper>
             <TodoWrapper>
 
             {
-                todos.slice(0, 2).map((todo, index) => (
-                    <TodoItemWrapper key={index}>
-                      {todo}
-                    </TodoItemWrapper>
+                todos.slice(0, 3).map((index) => (
+                    <TodoItemWrapperContainer key={index}>
+                        <TodoHeaderWrapper/>
+                        <TodoItemWrapper />
+                    </TodoItemWrapperContainer>
                   ))
             }
             </TodoWrapper>
