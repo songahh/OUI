@@ -83,6 +83,7 @@ const TextboxContent = ( props: ContentProps ) => {
     const { 
         selectedFont,
         handleFontChange,
+        fontWeight,
         handleFontWeight,
         textAlign,
         handleTextAlign,
@@ -90,11 +91,8 @@ const TextboxContent = ( props: ContentProps ) => {
         handleFontColor 
     } = props;
 
-    const[ fontWeight, setFontWeight ] = useState(false);
-
-    const handleWeight = () => {
-        handleFontWeight();
-        setFontWeight(!fontWeight);
+    const handleAlignment = (event: React.MouseEvent<HTMLElement>, newAlignment: string ) => {
+        handleTextAlign(newAlignment);
     };
 
     return (
@@ -123,8 +121,8 @@ const TextboxContent = ( props: ContentProps ) => {
                     value="bold" 
                     size="large"
                     aria-label="bold"
-                    selected={ fontWeight }
-                    onChange={ handleWeight }
+                    selected={ fontWeight === "bold" }
+                    onChange={ handleFontWeight }
                 >
                     <FormatBold />
                 </ToggleButton>
@@ -177,6 +175,7 @@ export default TextboxContent;
 type ContentProps = {
     selectedFont?: string,
     handleFontChange?: (e: any) => void,
+    fontWeight?: string,
     handleFontWeight?: () => void,
     textAlign?: string,
     handleTextAlign?: (position: string) => void,
