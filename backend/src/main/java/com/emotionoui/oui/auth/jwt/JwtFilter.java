@@ -45,29 +45,29 @@ public class JwtFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         String token = jwtTokenProvider.resolveToken(request);
+        int check = jwtTokenProvider.validateToken(token);
+        System.out.println(check);
 
         // 로그인 페이지의 경로와 일치할 경우 필터링 과정을 건너뜁니다.
-        if (("/auth/token".equals(requestURI) || "/auth/login/kakao".equals(requestURI) || "/login".equals(requestURI))) {
+        if (("/auth/login/kakao".equals(requestURI) || "/login".equals(requestURI))) {
             System.out.println("로그인 화면으로 갈 때..");
             filterChain.doFilter(request, response);
             return;
         }
 
-System.out.println("JwtFilter.doFilter - 쿠키에 담겨 온 accessToken : "+token);
+        System.out.println("JwtFilter.doFilter - 헤더에 담겨 온 accessToken : "+token);
         // 토큰이 존재하고, 유효하다면
-        if (token != null && jwtTokenProvider.validateToken(token)) {
+        if (token != null && check==0) {
             Authentication auth = jwtTokenProvider.getAuthentication(token);
-System.out.println("JwtFilter.doFilter - member의 정보 : "+ auth);
+            System.out.println("JwtFilter.doFilter - member의 정보 : "+ auth);
             //토큰에서 email 획득
             String email = jwtUtil.getEmail(token);
-System.out.println("JwtFilter.doFilter - email: "+email);
 
             //member를 생성하여 값 set
             Member member;
             try{
                 member = memberRepository.findByEmail(email).orElseThrow(Exception::new);
                 System.out.println("JwtFilter.doFilter - nickname : "+member.getNickname());
-                System.out.println("JwtFilter.doFilter - regdate : "+member.getRegdate());
 
                 //스프링 시큐리티 인증 토큰 생성
                 Authentication authToken = new UsernamePasswordAuthenticationToken(member, null, member.getAuthorities());
@@ -75,12 +75,15 @@ System.out.println("JwtFilter.doFilter - email: "+email);
             }catch (Exception e){
                 throw new MemberNotFoundException(e);
             }
-
         }
-        else{ // 엑세스 토큰이 존재하지 않거나, 만료되었다면 401 unAthorized
-            HttpServletResponse httpResponse = (HttpServletResponse) response;
-            httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
-            httpResponse.getWriter().write("accessToken is not valid!!!");
+        else if(token != null && check==1){ // 만료된 토큰이라면 새로운 토큰 발급
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
+            response.getWriter().write("만료된 refreshToken입니다. /auth/token 으로 재요청하세요!!!");
+            return;
+        }
+        else if(token == null || check==2){ // 토큰이 없거나 이상한 토큰이라면 401 unAthorized
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
+            response.getWriter().write("이상한 refreshToken입니다. 새로 로그인하세요!!!");
             return;
         }
         filterChain.doFilter(request, response);
