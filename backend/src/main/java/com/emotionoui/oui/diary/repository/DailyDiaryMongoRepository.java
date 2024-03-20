@@ -1,8 +1,6 @@
 package com.emotionoui.oui.diary.repository;
 
-import com.emotionoui.oui.diary.dto.EmotionClass;
 import com.emotionoui.oui.diary.entity.DailyDiaryCollection;
-import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -12,5 +10,12 @@ public interface DailyDiaryMongoRepository extends MongoRepository<DailyDiaryCol
 
 
     @Query(value = "{'_id': ?0}", fields = "{'emotion': 1}")
-    DailyDiaryCollection getEmotion(String dailyId);
+    DailyDiaryCollection findEmotionByDailyId(String dailyId);
+
+    @Query(value = "{'_id': ?0}", fields = "{'music': 1}")
+    DailyDiaryCollection findMusicByDailyId(String dailyId);
+
+    @Query(value = "{'_id': ?0}", fields = "{'comment': 1}")
+    DailyDiaryCollection findCommentByDailyId(String dailyId);
+
 }

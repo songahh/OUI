@@ -1,5 +1,7 @@
 package com.emotionoui.oui.diary.service;
 
+import com.emotionoui.oui.calendar.entity.Emotion;
+import com.emotionoui.oui.calendar.repository.EmotionRepository;
 import com.emotionoui.oui.diary.dto.EmotionClass;
 import com.emotionoui.oui.diary.dto.MusicClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
@@ -25,6 +27,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -39,35 +42,41 @@ public class DiaryServiceImpl implements DiaryService{
     private final DailyDiaryMongoRepository dailyDiaryMongoRepository;
     private final DailyDiaryRepository dailyDiaryRepository;
     private final DiaryRepository diaryRepository;
+    private final EmotionRepository emotionRepository;
     private RestTemplate restTemplate;
     private static String emotionString;
     private static String musicString;
+    private static DailyDiary dailyDiary;
+    private static Date dailyDate;
     private static DailyDiaryCollection document;
 
     // 일기 생성하기
     public String createDailyDiary(CreateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
         
-        // 몽고디비에 넣을 entity 생성
+        // MongoDB에 넣을 entity 생성
         DailyDiaryCollection dailyDiaryCollection = DailyDiaryCollection.builder()
                 .diaryId(req.getDiaryId())
                 .content(req.getDailyContent())
                 .isDeleted(0)
                 .build();
 
-        // 몽고디비에 dailyDiary 정보 저장하기
+        // MongoDB에 dailyDiary 정보 저장
         document = dailyDiaryMongoRepository.insert(dailyDiaryCollection);
 
         // diaryId로 diary 정보 가져오기
         Diary diary = diaryRepository.findById(req.getDiaryId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        DailyDiary dailyDiary = DailyDiary.builder()
+        // MariaDB에 넣을 entity 생성
+        dailyDiary = DailyDiary.builder()
                 .diary(diary)
                 .mongoId(document.getId().toString())
+                .dailyDate(req.getDailyDate())
                 .build();
 
-        // 마리아디비에 dailyDiary 정보(몽고디비ID 포함) 저장하기
+        // MariaDB에 dailyDiary 정보(몽고디비ID 포함) 저장
         dailyDiaryRepository.save(dailyDiary);
+        dailyDate = req.getDailyDate();
 
         String text = null;
 
@@ -110,10 +119,21 @@ public class DiaryServiceImpl implements DiaryService{
             // thenRun: 반환 값을 받지 않고 다른 작업을 실행함
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                // 감정분석 결과를 몽고디비에 넣기
+                // 감정분석 결과를 MongoDB에 넣기
                 EmotionClass emotionRes = objectMapper.readValue(emotionString, EmotionClass.class);
                 document.setEmotion(emotionRes);
                 dailyDiaryMongoRepository.save(document);
+
+                // MariaDB에 대표감정(Emotion) 정보 저장
+                Emotion emotion = Emotion.builder()
+                        .dailyDiary(dailyDiary)
+                        .emotion(emotionRes.getMaxEmotion())
+                        .date(dailyDate)
+                        .member(null)
+                        .build();
+
+                emotionRepository.save(emotion);
+
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -124,7 +144,7 @@ public class DiaryServiceImpl implements DiaryService{
         musicString = future.get();
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            // 감정분석 결과를 몽고디비에 넣기
+            // 음악추천 결과를 MongoDB에 넣기
             // 이부분 송아 spotify 값 넣는 식으로 가야함 ㅇ0ㅇ
 
 
@@ -177,21 +197,21 @@ public class DiaryServiceImpl implements DiaryService{
     }
     
     // 일기 수정하기
-    public String updateDailyDiary(UpdateDailyDiaryReq req){
-        DailyDiaryCollection document = dailyDiaryMongoRepository.findById(req.getDailyDiaryId())
+    public Integer updateDailyDiary(UpdateDailyDiaryReq req, Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        dailyDiary.modifyDailyDate(req.getDailyDate());
+
+        String mongoId = dailyDiary.getMongoId();
+
+        DailyDiaryCollection document = dailyDiaryMongoRepository.findById(mongoId)
                 .orElseThrow(IllegalArgumentException::new);
 
         document.setContent(req.getDailyContent());
 
-//        DailyDiaryCollection dailyDiaryCollection = DailyDiaryCollection.builder()
-//                .id(req.getDailyDiaryId())
-//                .diaryId(req.getDiaryId())
-//                .content(req.getDailyContent())
-//                .isDeleted(0)
-//                .build();
-
         dailyDiaryMongoRepository.save(document);
-        return document.getId().toString();
+        return dailyId;
     }
 
     // 일기 삭제하기
@@ -203,19 +223,26 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     // 일기 조회하기
-    public SearchDailyDiaryRes searchDailyDiary(String dailyId){
-        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyId)
+    public SearchDailyDiaryRes searchDailyDiary(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        return SearchDailyDiaryRes.of(dailyDiaryCollection);
+        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        return SearchDailyDiaryRes.of(dailyDiaryCollection, dailyDiary);
     }
 
 
     public EmotionClass searchEmotion(String dailyId){
-        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.getEmotion(dailyId);
-        log.info("다이어리아이디 못 들고오나요? : " +dailyDiaryCollection.getDiaryId());
-        log.info("Angry 정도는? " + String.valueOf(dailyDiaryCollection.getEmotion().getAngry()));
-        //return dailyDiaryMongoRepository.getEmotion(dailyId);
-        return null;
+        return dailyDiaryMongoRepository.findEmotionByDailyId(dailyId).getEmotion();
+    }
+
+    public MusicClass searchMusic(String dailyId){
+        return dailyDiaryMongoRepository.findMusicByDailyId(dailyId).getMusic();
+    }
+
+    public String searchComment(String dailyId){
+        return dailyDiaryMongoRepository.findCommentByDailyId(dailyId).getComment();
     }
 }
