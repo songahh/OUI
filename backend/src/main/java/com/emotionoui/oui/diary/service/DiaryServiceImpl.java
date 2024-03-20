@@ -14,12 +14,14 @@ import com.emotionoui.oui.diary.repository.DailyDiaryMongoRepository;
 import com.emotionoui.oui.diary.repository.DailyDiaryRepository;
 import com.emotionoui.oui.diary.repository.DiaryRepository;
 import com.emotionoui.oui.diary.repository.MusicMongoRepository;
+import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.music.service.MusicService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -48,6 +50,7 @@ public class DiaryServiceImpl implements DiaryService{
     private final EmotionRepository emotionRepository;
     private final MusicMongoRepository musicMongoRepository;
     private final MusicService musicService;
+
 
     // 일기 생성하기
     public String createDailyDiary(CreateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
@@ -256,15 +259,24 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
 
-//    public EmotionClass searchEmotion(String dailyId){
-//        return dailyDiaryMongoRepository.findEmotionByDailyId(dailyId).getEmotion();
-//    }
-//
-//    public MusicClass searchMusic(String dailyId){
-//        return dailyDiaryMongoRepository.findMusicByDailyId(dailyId).getMusic();
-//    }
-//
-//    public String searchComment(String dailyId){
-//        return dailyDiaryMongoRepository.findCommentByDailyId(dailyId).getComment();
-//    }
+    public EmotionClass searchEmotion(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        return dailyDiaryMongoRepository.findEmotionByDailyId(dailyDiary.getMongoId()).getEmotion();
+    }
+
+    public List<String> searchMusic(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        return dailyDiaryMongoRepository.findMusicByDailyId(dailyDiary.getMongoId()).getMusic();
+    }
+
+    public String searchComment(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        return dailyDiaryMongoRepository.findCommentByDailyId(dailyDiary.getMongoId()).getComment();
+    }
 }
