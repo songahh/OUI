@@ -3,14 +3,18 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyle from './styles/global';
+import { CookiesProvider } from 'react-cookie';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 )
 root.render(
   <>
-    <GlobalStyle />
-    <App />
+    <CookiesProvider>
+      <GlobalStyle />
+      <App />
+    </CookiesProvider>
+
   </>
 )
 
