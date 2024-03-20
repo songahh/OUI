@@ -16,7 +16,7 @@ const lazyModules = routes?.map( ( { path, dynamicPath } ) => useRouter( path, d
 lazyModules.unshift( {
     path: '/',
     lazy: async () => {
-        const module = await import( `./calendar` )
+        const module = await import( `./main` )
         return {
             Component: module.default
         }
