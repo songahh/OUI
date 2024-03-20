@@ -18,7 +18,7 @@ const LeftIcon = ( props: IconProps ) => {
 
     return(
         <ButttonWrapper size={ size } onClick={ onClick }>
-           <img width={ size } height={ size } src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/external-left-arrows-those-icons-lineal-those-icons.png" alt="external-left-arrows-those-icons-lineal-those-icons"/>
+           <img width={ size } height={ size } src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/external-left-arrows-those-icons-lineal-those-icons" alt="external-left-arrows-those-icons-lineal-those-icons"/>
         </ButttonWrapper>
     )
 }

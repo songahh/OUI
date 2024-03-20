@@ -106,34 +106,6 @@ const MyModal = () => {
       }{
         !modalContent &&
         <Todo/>
-        // <>
-        // <TodoHeaderWrapper>
-        //   <div style={{marginTop:'2%'}}>
-        //     <LeftIcon size= { 20 } onClick={ moveBack }/>
-        //   </div>
-        // <TodoTitle>
-        //   <div style={{ fontSize:'20px'}}>일정 추가</div>
-        //   <div style={{ fontSize: '10px', marginLeft: '2%' }}> { format(clickDate, 'yyyy-MM-dd' ) }</div>
-        // </TodoTitle>
-        // <div style={{marginTop:'2%'}}>
-        //   <RightIcon size= { 20 } onClick={ RegistTodo }/>
-        // </div>
-        // </TodoHeaderWrapper>
-        // <TodoWrapper>
-        //   <div style={{ fontSize: '16px'}}>제목</div>
-        //   <input type="text" style={{ height:'10%', borderRadius:'10px'}}/>
-        //   <div style={{ fontSize: '16px'}}>메모 (선택)</div>
-        //   <textarea style={{height:'35%', borderRadius: '10px'}}/>
-        //   <div style={{ fontSize: '16px'}}>색 선택</div>
-        //   <ColorBoxWrapper>
-        //       <ColorBox color={ colors[0] } />
-        //       <ColorBox color={ colors[1] } />
-        //       <ColorBox color={ colors[2] } />
-        //       <ColorBox color={ colors[3] } />
-        //       <ColorBox color={ colors[4] } />
-        //   </ColorBoxWrapper>
-        // </TodoWrapper>
-        // </>
       }
     </MyModalWrapper>
   )
