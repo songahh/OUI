@@ -1,5 +1,7 @@
 package com.emotionoui.oui.diary.service;
 
+import com.emotionoui.oui.calendar.entity.Emotion;
+import com.emotionoui.oui.calendar.repository.EmotionRepository;
 import com.emotionoui.oui.diary.dto.EmotionClass;
 import com.emotionoui.oui.diary.dto.MusicClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
@@ -25,6 +27,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -39,36 +42,41 @@ public class DiaryServiceImpl implements DiaryService{
     private final DailyDiaryMongoRepository dailyDiaryMongoRepository;
     private final DailyDiaryRepository dailyDiaryRepository;
     private final DiaryRepository diaryRepository;
+    private final EmotionRepository emotionRepository;
     private RestTemplate restTemplate;
     private static String emotionString;
     private static String musicString;
+    private static DailyDiary dailyDiary;
+    private static Date dailyDate;
     private static DailyDiaryCollection document;
 
     // 일기 생성하기
     public String createDailyDiary(CreateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
         
-        // 몽고디비에 넣을 entity 생성
+        // MongoDB에 넣을 entity 생성
         DailyDiaryCollection dailyDiaryCollection = DailyDiaryCollection.builder()
                 .diaryId(req.getDiaryId())
                 .content(req.getDailyContent())
                 .isDeleted(0)
                 .build();
 
-        // 몽고디비에 dailyDiary 정보 저장하기
+        // MongoDB에 dailyDiary 정보 저장
         document = dailyDiaryMongoRepository.insert(dailyDiaryCollection);
 
         // diaryId로 diary 정보 가져오기
         Diary diary = diaryRepository.findById(req.getDiaryId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        DailyDiary dailyDiary = DailyDiary.builder()
+        // MariaDB에 넣을 entity 생성
+        dailyDiary = DailyDiary.builder()
                 .diary(diary)
                 .mongoId(document.getId().toString())
                 .dailyDate(req.getDailyDate())
                 .build();
 
-        // 마리아디비에 dailyDiary 정보(몽고디비ID 포함) 저장하기
+        // MariaDB에 dailyDiary 정보(몽고디비ID 포함) 저장
         dailyDiaryRepository.save(dailyDiary);
+        dailyDate = req.getDailyDate();
 
         String text = null;
 
@@ -111,10 +119,21 @@ public class DiaryServiceImpl implements DiaryService{
             // thenRun: 반환 값을 받지 않고 다른 작업을 실행함
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                // 감정분석 결과를 몽고디비에 넣기
+                // 감정분석 결과를 MongoDB에 넣기
                 EmotionClass emotionRes = objectMapper.readValue(emotionString, EmotionClass.class);
                 document.setEmotion(emotionRes);
                 dailyDiaryMongoRepository.save(document);
+
+                // MariaDB에 대표감정(Emotion) 정보 저장
+                Emotion emotion = Emotion.builder()
+                        .dailyDiary(dailyDiary)
+                        .emotion(emotionRes.getMaxEmotion())
+                        .date(dailyDate)
+                        .member(null)
+                        .build();
+
+                emotionRepository.save(emotion);
+
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -125,7 +144,7 @@ public class DiaryServiceImpl implements DiaryService{
         musicString = future.get();
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            // 감정분석 결과를 몽고디비에 넣기
+            // 음악추천 결과를 MongoDB에 넣기
             // 이부분 송아 spotify 값 넣는 식으로 가야함 ㅇ0ㅇ
 
 
