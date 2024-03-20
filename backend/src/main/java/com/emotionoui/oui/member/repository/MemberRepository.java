@@ -2,6 +2,7 @@ package com.emotionoui.oui.member.repository;
 
 import com.emotionoui.oui.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
