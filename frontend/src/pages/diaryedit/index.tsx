@@ -6,6 +6,7 @@ import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from '.
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
+import WebFont from 'webfontloader';
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
 
@@ -45,14 +46,22 @@ const DiaryWrite = () => {
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
     
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+
+    const todayDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
     const [ canvas, setCanvas ] = useState(null);
     const [ activeTool, setActiveTool ] = useState("textbox");
-    const [ selectedFont, setSelectedFont ] = useState("Dovemayo");
-    const [ textAlign, setTextAlign ] = useState("left");
-    const [ fontColor, setFontColor ] = useState("#000000");
+    const [ selectedFont, setSelectedFont ] = useState('');
+    const [ textAlign, setTextAlign ] = useState('');
+    const [ fontColor, setFontColor ] = useState('#000000');
     const [ penColor, setPenColor ] = useState('#000000');
     const [ penWidth, setPenWidth ] = useState(5);
-    const [ selectedDate, setSelectedDate ] = useState('');
+    const [ fontWeight, setFontWeight ] = useState('');
+    const [ dailyDate, setDailyDate ] = useState(todayDate);
     
     useEffect(() => {
         // 캔버스 생성
@@ -61,7 +70,7 @@ const DiaryWrite = () => {
             height: 1100,
             backgroundColor: '#FFFEFC'
         });
-    
+
         fabric.Object.prototype.set({
             cornerSize: 7,
             cornerStyle: 'rect',
@@ -69,22 +78,48 @@ const DiaryWrite = () => {
             cornerColor: '#CDCDCD',
             borderColor: '#CDCDCD',
         });
-    
+
         setCanvas(newCanvas);
-    
-        // 텍스트박스 추가
-        const textbox = new fabric.Textbox('', {
-            left: 50,
-            top: 50,
-            width: 500,
-            fontSize: 24,
-            fontFamily: selectedFont,
-            padding: 10,
+
+        const dailyDiaryId = 20;
+
+        WebFont.load({
+            custom: {
+                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'], // 사용하려는 폰트 목록
+                urls: ['src/asset/fonts'] // 폰트를 정의한 CSS 파일의 경로
+            },
+            active: () => {
+                getDiary(dailyDiaryId);
+            }
         });
-        newCanvas.add(textbox);
         
-        textboxRef.current = textbox; // 텍스트박스 ref 설정
-        newCanvas.setActiveObject(textbox);
+        const getDiary = (dailyDiaryId: number) => {
+            axios({
+                url: `http://localhost:8080/diary/${dailyDiaryId}`,
+                method: 'GET'
+            })
+            .then((resp) => {
+                const data = resp.data;
+
+                setDailyDate(data.dailyDate);
+
+                // JSON으로부터 캔버스 로드 후, 모든 객체를 선택 불가능하게 설정
+                newCanvas.loadFromJSON(data.dailyContent, () => {
+                    newCanvas.renderAll();
+                    newCanvas.forEachObject((obj) => {
+                        if(obj.type === "textbox") {
+                            textboxRef.current = obj;
+                            setSelectedFont(textboxRef.current.fontFamily);
+                            setFontColor(textboxRef.current.fill);
+                            setTextAlign(textboxRef.current.textAlign);
+                            setFontWeight(textboxRef.current.fontWeight);
+                        }
+                    });
+                });
+            });
+        }
+        
+        getDiary(dailyDiaryId);
         
         // 언마운트 시 캔버스 정리
         return () => {
@@ -181,7 +216,9 @@ const DiaryWrite = () => {
         canvas.setActiveObject(textboxRef.current);
         const activeObject = canvas.getActiveObject();
         if (activeObject && activeObject.type === 'textbox') {
-            activeObject.set('fontWeight', activeObject.get('fontWeight') === 'normal'? 'bold' : 'normal');
+            const fontWeight = activeObject.get('fontWeight') === 'normal'? 'bold' : 'normal';
+            setFontWeight(fontWeight);
+            activeObject.set('fontWeight', fontWeight);
             canvas.renderAll();
         }
     }
@@ -336,7 +373,7 @@ const DiaryWrite = () => {
     const navigator = useNavigate();
 
     const handleDateChange = (date: string) => {
-        setSelectedDate(date);
+        setDailyDate(date);
     };
 
     
@@ -345,26 +382,28 @@ const DiaryWrite = () => {
         // string으로 전달
         const diaryToString = JSON.stringify(canvas.toJSON());
 
-        const url = 'http://localhost:8080/diary';
+        const dailyDiaryId = 20;
+
+        console.log(dailyDate);
         axios({
-            url,
-            method: 'POST',
+            url: `http://localhost:8080/diary/${dailyDiaryId}`,
+            method: 'PUT',
             data: {
-                diaryId: 1,
-                dailyDate: selectedDate,
+                dailyDate: dailyDate,
                 dailyContent: diaryToString,
             },
         })
         .then((resp) => {
             console.log(resp);
+            navigator(`/diary`);
         });
     }
 
     return (
         <Container>
             <Header>
-                <BackIcon onClick={ () => { navigator('/diary') } }/>
-                <DateSelect onDateChange={ handleDateChange }/>
+                <BackIcon onClick={() => { navigator('/diary') }} />
+                <DateSelect dailyDate={ dailyDate } onDateChange={ handleDateChange } />
                 <SaveIcon onClick={ saveDiary }/>
             </Header>
             <canvas style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
@@ -391,6 +430,7 @@ const DiaryWrite = () => {
                         <TextboxContent 
                             selectedFont={ selectedFont } 
                             handleFontChange={ handleFontChange } 
+                            fontWeight={ fontWeight }
                             handleFontWeight={ handleFontWeight }
                             textAlign={ textAlign }
                             handleTextAlign={ handleTextAlign }

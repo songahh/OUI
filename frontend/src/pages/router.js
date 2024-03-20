@@ -2,6 +2,7 @@ import { useRouter } from '../hooks'
 
 export const routes = [
     { path: 'diarywrite' },
+    { path: 'diaryedit' },
     { path: 'diary' },
     { path: 'calendar' },
     { path: 'home' },

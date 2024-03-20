@@ -43,6 +43,7 @@
     "styled-components": "^6.1.8",
     "typescript": "^5.4.2",
     "web-vitals": "^2.1.4",
+    "webfontloader": "^1.6.28",
     "zustand": "^4.5.2"
   },
   "scripts": {

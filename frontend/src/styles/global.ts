@@ -11,51 +11,51 @@ import HakgyoansimGaeulsopungBold from '../asset/fonts/HakgyoansimGaeulsopung_Bo
 const GlobalStyle = createGlobalStyle`
       @font-face {
             font-family: 'DoveMayo';
-            src: local('DoveMayo'), local('DoveMayo');
+            src: local('DoveMayo'), url(${DoveMayo}) format('woff');
             font-style: normal;
-            src: url(${DoveMayo}) format('woff');
+            font-weight: normal;
       }
       @font-face {
             font-family: 'DoveMayoBold';
-            src: local('DoveMayoBold'), local('DoveMayoBold');
+            src: local('DoveMayoBold'), url(${DoveMayoBold}) format('woff');
             font-style: normal;
-            src: url(${DoveMayoBold}) format('woff');
+            font-weight: bold;
       }
       @font-face {
             font-family: 'IMHyeMin';
-            src: local('IMHyeMin'), local('IMHyeMin');
+            src: local('IMHyeMin'), url(${IMHyeMin}) format('woff');
             font-style: normal;
-            src: url(${IMHyeMin}) format('woff');
+            font-weight: normal;
       }
       @font-face {
             font-family: 'IMHyeMinBold';
-            src: local('IMHyeMinBold'), local('IMHyeMinBold');
+            src: local('IMHyeMinBold'), url(${IMHyeMinBold}) format('woff');
             font-style: normal;
-            src: url(${IMHyeMinBold}) format('woff');
+            font-weight: bold;
       }
       @font-face {
             font-family: 'Cafe24Supermagic';
-            src: local('Cafe24Supermagic'), local('Cafe24Supermagic');
+            src: local('Cafe24Supermagic'), url(${Cafe24Supermagic}) format('woff');
             font-style: normal;
-            src: url(${Cafe24Supermagic}) format('woff');
+            font-weight: normal;
       }
       @font-face {
             font-family: 'Cafe24SupermagicBold';
-            src: local('Cafe24SupermagicBold'), local('Cafe24SupermagicBold');
+            src: local('Cafe24SupermagicBold'), url(${Cafe24SupermagicBold}) format('woff');
             font-style: normal;
-            src: url(${Cafe24SupermagicBold}) format('woff');
+            font-weight: bold;
       }
       @font-face {
             font-family: 'HakgyoansimGaeulsopung';
-            src: local('HakgyoansimGaeulsopung'), local('HakgyoansimGaeulsopung');
+            src: local('HakgyoansimGaeulsopung'), url(${HakgyoansimGaeulsopung}) format('woff');
             font-style: normal;
-            src: url(${HakgyoansimGaeulsopung}) format('woff');
+            font-weight: normal;
       }
       @font-face {
             font-family: 'HakgyoansimGaeulsopungBold';
-            src: local('HakgyoansimGaeulsopungBold'), local('HakgyoansimGaeulsopungBold');
+            src: local('HakgyoansimGaeulsopungBold'), url(${HakgyoansimGaeulsopungBold}) format('woff');
             font-style: normal;
-            src: url(${HakgyoansimGaeulsopungBold}) format('woff');
+            font-weight: bold;
       }
 `
 
