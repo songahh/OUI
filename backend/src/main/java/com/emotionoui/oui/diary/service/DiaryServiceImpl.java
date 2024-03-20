@@ -3,21 +3,25 @@ package com.emotionoui.oui.diary.service;
 import com.emotionoui.oui.calendar.entity.Emotion;
 import com.emotionoui.oui.calendar.repository.EmotionRepository;
 import com.emotionoui.oui.diary.dto.EmotionClass;
-import com.emotionoui.oui.diary.dto.MusicClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
 import com.emotionoui.oui.diary.entity.DailyDiary;
 import com.emotionoui.oui.diary.entity.DailyDiaryCollection;
 import com.emotionoui.oui.diary.entity.Diary;
+import com.emotionoui.oui.diary.entity.MusicCollection;
 import com.emotionoui.oui.diary.repository.DailyDiaryMongoRepository;
 import com.emotionoui.oui.diary.repository.DailyDiaryRepository;
 import com.emotionoui.oui.diary.repository.DiaryRepository;
+import com.emotionoui.oui.diary.repository.MusicMongoRepository;
+import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.music.service.MusicService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -27,6 +31,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -43,12 +48,9 @@ public class DiaryServiceImpl implements DiaryService{
     private final DailyDiaryRepository dailyDiaryRepository;
     private final DiaryRepository diaryRepository;
     private final EmotionRepository emotionRepository;
-    private RestTemplate restTemplate;
-    private static String emotionString;
-    private static String musicString;
-    private static DailyDiary dailyDiary;
-    private static Date dailyDate;
-    private static DailyDiaryCollection document;
+    private final MusicMongoRepository musicMongoRepository;
+    private final MusicService musicService;
+
 
     // 일기 생성하기
     public String createDailyDiary(CreateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
@@ -61,14 +63,14 @@ public class DiaryServiceImpl implements DiaryService{
                 .build();
 
         // MongoDB에 dailyDiary 정보 저장
-        document = dailyDiaryMongoRepository.insert(dailyDiaryCollection);
+        DailyDiaryCollection document = dailyDiaryMongoRepository.insert(dailyDiaryCollection);
 
         // diaryId로 diary 정보 가져오기
         Diary diary = diaryRepository.findById(req.getDiaryId())
                 .orElseThrow(IllegalArgumentException::new);
 
         // MariaDB에 넣을 entity 생성
-        dailyDiary = DailyDiary.builder()
+        DailyDiary dailyDiary = DailyDiary.builder()
                 .diary(diary)
                 .mongoId(document.getId().toString())
                 .dailyDate(req.getDailyDate())
@@ -76,7 +78,7 @@ public class DiaryServiceImpl implements DiaryService{
 
         // MariaDB에 dailyDiary 정보(몽고디비ID 포함) 저장
         dailyDiaryRepository.save(dailyDiary);
-        dailyDate = req.getDailyDate();
+        Date dailyDate = req.getDailyDate();
 
         String text = null;
 
@@ -88,9 +90,11 @@ public class DiaryServiceImpl implements DiaryService{
             text = jsonNode.get("objects").get(0).get("text").asText();
             // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
             if(!Objects.equals(text, "")){
-//                emotionString = null;
-//                musicString = null;
-//                sendDataToAI(text);
+                // MongoDB에 Spotify URI 리스트 넣기
+                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary);
+                List<String> spotifyUriList = findSpotifyUri(musicString);
+                document.setMusic(spotifyUriList);
+                dailyDiaryMongoRepository.save(document);
             }
 
         } catch (Exception e){
@@ -101,7 +105,43 @@ public class DiaryServiceImpl implements DiaryService{
         return document.getId().toString();
     }
 
-    public void sendDataToAI(String text) throws InterruptedException, ExecutionException {
+    // musicIdList를 가지고 spotifyUriList를 만들기
+    private List<String> findSpotifyUri(String musicString){
+        // JsonString 파일을 List<Integer> 리스트로 만들기
+        List<Integer> musicIdList = new ArrayList<>();
+        String[] musicIds = musicString.split(",");
+        for(String musicId : musicIds){
+            musicIdList.add(Integer.parseInt(musicId.trim()));
+        }
+
+        List<String> list = new ArrayList<>();
+
+        // 할당받은 musicId를 기반으로 MongoDB에 있는 MUSIC document(musicInfo) 찾기
+        for(int i=0; i<musicIdList.size(); ++i){
+            int musicId = musicIdList.get(i);
+            MusicCollection musicCollection = musicMongoRepository.findByMusicId(musicId);
+            String artistName = musicCollection.getArtistName().get(0);
+            String songName = musicCollection.getSongName();
+            // spotify URI이 존재하지 않으면
+            if(musicCollection.getSpotifyUrl()==null){
+                // searchMusicURI 함수를 통해 spotify URI를 찾음
+                String uri = musicService.searchMusicURI(artistName, songName);
+                if(uri!=null) {
+                    list.add(uri);
+                    // MongoDB에 있는 기존 MUSIC Document에도 반영
+                    musicCollection.setSpotifyUrl(uri);
+                    musicMongoRepository.save(musicCollection);
+                }
+            }else{
+                list.add(musicCollection.getSpotifyUrl());
+            }
+        }
+        
+        return list;
+    }
+
+    // AI를 통한 감정분석 및 음악추천 결과값 받기
+    public String sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary) throws InterruptedException, ExecutionException {
         // 감정분석 AI Url
         String aiServerUrl = "http://ai-server-1/process-data";
         String aiServerUrl2 = "http://ai-server-2/process-data";
@@ -120,7 +160,7 @@ public class DiaryServiceImpl implements DiaryService{
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 // 감정분석 결과를 MongoDB에 넣기
-                EmotionClass emotionRes = objectMapper.readValue(emotionString, EmotionClass.class);
+                EmotionClass emotionRes = objectMapper.readValue(s, EmotionClass.class);
                 document.setEmotion(emotionRes);
                 dailyDiaryMongoRepository.save(document);
 
@@ -141,23 +181,7 @@ public class DiaryServiceImpl implements DiaryService{
             return sendEmotionData(s, aiServerUrl2);
         });
 
-        musicString = future.get();
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            // 음악추천 결과를 MongoDB에 넣기
-            // 이부분 송아 spotify 값 넣는 식으로 가야함 ㅇ0ㅇ
-
-
-
-            MusicClass musicClass = objectMapper.readValue(musicString, MusicClass.class);
-
-            document.setMusic(musicClass);
-
-
-            dailyDiaryMongoRepository.save(document);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return future.get();
     }
 
     // 감정처리를 위한 요청을 보내고 감정분석 결과를 받는 메서드
@@ -171,7 +195,7 @@ public class DiaryServiceImpl implements DiaryService{
 
         try {
             HttpResponse<String> emotionData = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return emotionString = emotionData.body();
+            return emotionData.body();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -190,6 +214,7 @@ public class DiaryServiceImpl implements DiaryService{
         try {
             HttpResponse<String> musicData = client.send(request, HttpResponse.BodyHandlers.ofString());
             return musicData.body();
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -234,15 +259,24 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
 
-    public EmotionClass searchEmotion(String dailyId){
-        return dailyDiaryMongoRepository.findEmotionByDailyId(dailyId).getEmotion();
+    public EmotionClass searchEmotion(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        return dailyDiaryMongoRepository.findEmotionByDailyId(dailyDiary.getMongoId()).getEmotion();
     }
 
-    public MusicClass searchMusic(String dailyId){
-        return dailyDiaryMongoRepository.findMusicByDailyId(dailyId).getMusic();
+    public List<String> searchMusic(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        return dailyDiaryMongoRepository.findMusicByDailyId(dailyDiary.getMongoId()).getMusic();
     }
 
-    public String searchComment(String dailyId){
-        return dailyDiaryMongoRepository.findCommentByDailyId(dailyId).getComment();
+    public String searchComment(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        return dailyDiaryMongoRepository.findCommentByDailyId(dailyDiary.getMongoId()).getComment();
     }
 }

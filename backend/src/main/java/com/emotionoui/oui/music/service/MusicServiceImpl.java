@@ -64,7 +64,8 @@ public class MusicServiceImpl implements MusicService{
                 throw new MusicException(String.format("json parsing 에러: %s", je.getMessage()));
             }
         }
-        throw new MusicException("노래명과 가수명에 해당하는 spotify uri가 존재하지 않습니다.");
+        //throw new MusicException("노래명과 가수명에 해당하는 spotify uri가 존재하지 않습니다.");
+        return null;
     }
 
     private String getEngSongName(String artistName, String songName){
