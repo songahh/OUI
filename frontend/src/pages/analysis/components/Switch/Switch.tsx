@@ -9,25 +9,27 @@ type ButtonWrapperProps = {
 const BoxWrapper = styled(Box)`
     border-radius: 4px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     margin-left: auto;
     align-items: center;
-    width: 100%;
+    width: auto; 
+    padding: 5px; 
+    max-width: 800px;
 `;
 
 const ButtonWrapper = styled.button<ButtonWrapperProps>`
-    
-    background-color: ${(props) => (props.selected ? "black" : "white")};
-    color: ${(props) => (props.selected ? "white" : "black")};
-    padding: 10px;
+    background-color: ${(props) => (props.selected ? "#84BBAF" : "white")};
+    color: ${(props) => (props.selected ? "white" : "#84BBAF")};
+    border: 0px;
+    padding: 10px; 
     margin: 3px;
     cursor: pointer;
-
+    font-family: 'IMHyeMin';
+    font-weight: bold;
 `;
 
-const Switch = () => {
-    const [keyType, setKeyType] = useState(1);
-
+const Switch = ({ keyType, setKeyType }) => {
+    
     return (
         <BoxWrapper>
             <ButtonWrapper onClick={() => setKeyType(1)} selected={keyType === 1}>
