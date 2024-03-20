@@ -8,9 +8,9 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-public class ScheduleDto {
+public class CalendarScheduleDto {
 
-    @JsonProperty("schedule")
+    @JsonProperty("schedule_id")
     private  Integer scheduleId;
 
     @JsonProperty("member_id")
@@ -25,9 +25,10 @@ public class ScheduleDto {
     @JsonProperty("date")
     private LocalDate date;
 
-    public ScheduleDto of(Schedule schedule){
+    public static CalendarScheduleDto of(Schedule schedule){
 
-        return  ScheduleDto.builder()
+        return  CalendarScheduleDto.builder()
+                .scheduleId(schedule.getScheduleId())
                 .memberId(schedule.getMember().getMemberId())
                 .title(schedule.getTitle())
                 .content(schedule.getContent())

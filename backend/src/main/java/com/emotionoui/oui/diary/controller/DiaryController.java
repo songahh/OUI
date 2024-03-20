@@ -1,5 +1,6 @@
 package com.emotionoui.oui.diary.controller;
 
+import com.emotionoui.oui.diary.dto.EmotionClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
@@ -25,6 +26,11 @@ public class DiaryController {
     @PostMapping
     public ResponseEntity<?> createDailyDiary(@RequestBody CreateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
         // 작성자가 필요함
+
+//        log.info("다이어리왔음? " + String.valueOf(req.getDiaryId()));
+//        log.info("다이어리왔음? " + req.getDailyContent());
+//        return new ResponseEntity<String>("1", HttpStatus.OK);
+
         return new ResponseEntity<String>(diaryService.createDailyDiary(req), HttpStatus.OK);
     }
 
@@ -44,5 +50,10 @@ public class DiaryController {
     @GetMapping("/{dailyId}")
     public ResponseEntity<?> searchDailyDiary(@PathVariable String dailyId){
         return new ResponseEntity<SearchDailyDiaryRes>(diaryService.searchDailyDiary(dailyId), HttpStatus.OK);
+    }
+
+    @GetMapping("/emotion/{dailyId}")
+    public ResponseEntity<?> searchEmotion(@PathVariable String dailyId){
+        return new ResponseEntity<EmotionClass>(diaryService.searchEmotion(dailyId), HttpStatus.OK);
     }
 }

@@ -20,6 +20,7 @@ bin/
 
 ### IntelliJ IDEA ###
 .env
+../.idea
 .idea
 *.iws
 *.iml
@@ -37,3 +38,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### spotify-key ###
+spotify-secret.properties

@@ -58,7 +58,6 @@ public class Schedule {
     @Builder
     public Schedule(Integer scheduleId, Member member, String title, String content, LocalDate date, Integer isDeleted, LocalDateTime createdAt) {
         this.scheduleId = scheduleId;
-
         this.member = member;
         this.title = title;
         this.content = content;
