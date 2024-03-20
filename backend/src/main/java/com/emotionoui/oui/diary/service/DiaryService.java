@@ -1,7 +1,5 @@
 package com.emotionoui.oui.diary.service;
 
-import com.emotionoui.oui.diary.dto.EmotionClass;
-import com.emotionoui.oui.diary.dto.MusicClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
@@ -14,7 +12,7 @@ public interface DiaryService {
     Integer updateDailyDiary(UpdateDailyDiaryReq req, Integer dailyId);
     void deleteDailyDiary(String dailyId);
     SearchDailyDiaryRes searchDailyDiary(Integer dailyId);
-    EmotionClass searchEmotion(String dailyId);
-    MusicClass searchMusic(String dailyId);
-    String searchComment(String dailyId);
+//    EmotionClass searchEmotion(String dailyId);
+//    MusicClass searchMusic(String dailyId);
+//    String searchComment(String dailyId);
 }
