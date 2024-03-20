@@ -6,12 +6,7 @@ import happyText from 'src/asset/images/research/searchHappy.png';
 import sadText from 'src/asset/images/research/searchSad.png';
 import question from 'src/asset/images/research/searchQuestion.png';
 import styled from "styled-components";
-import music from 'src/asset/images/research.png';
-import happy from 'src/asset/images/happyIcon.png';
-import sad from 'src/asset/images/sadIcon.png';
-import happyText from 'src/asset/images/searchHappy.png';
-import sadText from 'src/asset/images/searchSad.png';
-import question from 'src/asset/images/searchQuestion.png';
+
 
 
 

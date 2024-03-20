@@ -19,23 +19,6 @@ const LoginWrapper = styled.div`
 
 const Login = () => {
       
-        const code = new URL(window.location.href).searchParams.get("code");
-
-    //   useEffect(() => {
-    //     const kakaoLogin = async () => {
-    //       await axios({
-    //         method: "GET",
-    //         url: `${REDIRECT_URI}/?code=${code}`,
-    //         headers: {
-    //           "Content-Type": "application/json;charset=utf-8", 
-    //         },
-    //       }).then((res) => { 
-    //         console.log(res);
-    //       });
-    //     };
-    //     kakaoLogin();
-    //   }, []);
-
     return(
         <LoginWrapper>
             <a href={KAKAO_AUTH_URI}><img src= { kakao } /></a>
