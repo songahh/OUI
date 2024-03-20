@@ -1,4 +1,4 @@
 package com.emotionoui.oui.main.repository;
 
-public class MainRepository {
+public interface MainRepository {
 }
