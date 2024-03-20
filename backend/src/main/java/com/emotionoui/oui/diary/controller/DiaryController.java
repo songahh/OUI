@@ -1,6 +1,7 @@
 package com.emotionoui.oui.diary.controller;
 
 import com.emotionoui.oui.diary.dto.EmotionClass;
+import com.emotionoui.oui.diary.dto.MusicClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
@@ -26,18 +27,13 @@ public class DiaryController {
     @PostMapping
     public ResponseEntity<?> createDailyDiary(@RequestBody CreateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
         // 작성자가 필요함
-
-//        log.info("다이어리왔음? " + String.valueOf(req.getDiaryId()));
-//        log.info("다이어리왔음? " + req.getDailyContent());
-//        return new ResponseEntity<String>("1", HttpStatus.OK);
-
         return new ResponseEntity<String>(diaryService.createDailyDiary(req), HttpStatus.OK);
     }
 
     // 일기 게시글 수정하기
     @PutMapping("/{dailyId}")
-    public ResponseEntity<?> updateDailyDiary(@RequestBody UpdateDailyDiaryReq req){
-        return new ResponseEntity<String>(diaryService.updateDailyDiary(req), HttpStatus.OK);
+    public ResponseEntity<?> updateDailyDiary(@RequestBody UpdateDailyDiaryReq req, @PathVariable Integer dailyId){
+        return new ResponseEntity<Integer>(diaryService.updateDailyDiary(req, dailyId), HttpStatus.OK);
     }
 
     // 일기 게시글 삭제하기
@@ -48,12 +44,25 @@ public class DiaryController {
 
     // 일기 게시글 조회하기
     @GetMapping("/{dailyId}")
-    public ResponseEntity<?> searchDailyDiary(@PathVariable String dailyId){
+    public ResponseEntity<?> searchDailyDiary(@PathVariable Integer dailyId){
         return new ResponseEntity<SearchDailyDiaryRes>(diaryService.searchDailyDiary(dailyId), HttpStatus.OK);
     }
 
+    // 감정분석 결과 보여주기
     @GetMapping("/emotion/{dailyId}")
     public ResponseEntity<?> searchEmotion(@PathVariable String dailyId){
         return new ResponseEntity<EmotionClass>(diaryService.searchEmotion(dailyId), HttpStatus.OK);
+    }
+
+    // 추천노래 보여주기
+    @GetMapping("/music/{dailyId}")
+    public ResponseEntity<?> searchMusic(@PathVariable String dailyId){
+        return new ResponseEntity<MusicClass>(diaryService.searchMusic(dailyId), HttpStatus.OK);
+    }
+
+    // AI 코멘트 보여주기
+    @GetMapping("/comment/{dailyId}")
+    public ResponseEntity<?> searchComment(@PathVariable String dailyId){
+        return new ResponseEntity<String>(diaryService.searchComment(dailyId), HttpStatus.OK);
     }
 }

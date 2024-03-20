@@ -31,9 +31,11 @@ public class JwtUtil {
     // 토큰 만료 일자 검증
     public Boolean isExpired(String token) {
         boolean expired;
-        try {
+        try { // 유효하다면 false
             expired = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration().before(new Date(System.currentTimeMillis()));
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) { // 만료되었다면 true
+            expired = true;
+        }catch (Exception e){ // 다른 이유로 이상한 토큰이라면 true
             expired = true;
         }
         return expired;

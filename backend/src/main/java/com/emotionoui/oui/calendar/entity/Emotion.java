@@ -1,7 +1,7 @@
 package com.emotionoui.oui.calendar.entity;
 
 import com.emotionoui.oui.diary.entity.DailyDiary;
-import com.emotionoui.oui.member.dto.Member;
+import com.emotionoui.oui.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,13 +33,21 @@ public class Emotion {
     @Column(name = "emotion")
     private String emotion;
 
+//    @Builder
+//    public Emotion(Member member, DailyDiary dailyDiary, Date date, Emotion emotion) {
+//        this.emotionId = emotion.getEmotionId();
+//        this.member = member;
+//        this.dailyDiary = dailyDiary;
+//        this.date = date;
+//        this.emotion = emotion.getEmotion();
+//    }
+
     @Builder
-    public Emotion(Member member, DailyDiary dailyDiary, Date date, Emotion emotion) {
-        this.emotionId = emotion.getEmotionId();
+    public Emotion(Member member, DailyDiary dailyDiary, Date date, String emotion) {
         this.member = member;
         this.dailyDiary = dailyDiary;
         this.date = date;
-        this.emotion = emotion.getEmotion();
+        this.emotion = emotion;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.emotionoui.oui.survey.dto.req;
 
-import com.emotionoui.oui.member.dto.Member;
+import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.survey.entity.Preference;
 
 import lombok.AccessLevel;
