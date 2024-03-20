@@ -146,7 +146,7 @@ public class AuthService {
      */
     public String generateNewAccessToken(String refreshToken) throws Exception {
         // refreshToken의 유효성 검증.
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
+        if (jwtTokenProvider.validateToken(refreshToken)==1) {
             throw new IllegalArgumentException("리프레시 토큰이 유효하지 않습니다.");
         }
 

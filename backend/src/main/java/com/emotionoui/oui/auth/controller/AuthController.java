@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RequestMapping("/auth")
@@ -42,7 +44,7 @@ public class AuthController {
      * @return
      */
     @GetMapping("/login/kakao")
-    public ResponseEntity<Void> kakaoLogin(@RequestParam String code, HttpServletResponse response) {
+    public ResponseEntity<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) {
         try {
             // 카카오에서 사용자 email 받아오기
             KakaoLoginRes kakaoLoginRes = authService.kakaoLogin(code, response);
@@ -52,17 +54,31 @@ public class AuthController {
 //            System.out.println("AuthController.kakaoLogin- accessToken : "+accessToken);
 //            System.out.println("AuthController.kakaoLogin- refreshToken : "+refreshToken);
 
-            // accesstoken, refreshToken 쿠키에 담기
-            jwtTokenProvider.createAccessTokenCookie(accessToken, response);
+            // accesstoken 쿠키에 담기
+            //  jwtTokenProvider.createAccessTokenCookie(accessToken, response);
+
+
+            System.out.println("AuthController.kakaoLogin- accessToken : "+accessToken);
+            System.out.println("AuthController.kakaoLogin- refreshToken : "+refreshToken);
+
+            // refreshToken 쿠키에 담기
             jwtTokenProvider.createRefreshTokenCookie(refreshToken, response);
 
-            // 가입된 유저 확인 & 회원가입
-            kakaoMemberCheckAndRegister(kakaoLoginRes);
 
             // redis에 토큰 저장
             String key = RedisPrefix.REFRESH_TOKEN.prefix() + kakaoLoginRes.getEmail();
             redisService.setValues(key, refreshToken, Duration.ofDays(3));
-            return ResponseEntity.ok().build();
+            System.out.println("redis : "+redisService.getValues(key));
+
+            // 새로운 accessToken을 JSON 응답 본문에 담아 반환
+            Map<String, String> tokenMap = new HashMap<>();
+            tokenMap.put("accessToken", accessToken);
+
+            // 가입된 유저 확인 & 회원가입
+            kakaoMemberCheckAndRegister(kakaoLoginRes);
+
+            return ResponseEntity.ok().body(tokenMap);
+
         } catch (Exception e) { // 로그인 실패 시
             throw new LoginFailureException(e);
         }
@@ -140,25 +156,33 @@ public class AuthController {
         try {
             // refreshToken이 redis에 존재한다면
             String email = jwtTokenProvider.getEmailFromToken(refreshToken);
-            String savedRefreshToken = (String) redisService.getValues(email);
+            String key = RedisPrefix.REFRESH_TOKEN.prefix() + email;
+            String savedRefreshToken = (String) redisService.getValues(key);
+            System.out.println(savedRefreshToken);
+            System.out.println(refreshToken);
             // 레디스에 저장된 리프레시토큰과 지금 받아온 리프레시 토큰이 같다면
             if (savedRefreshToken.equals(refreshToken)) {
                 // authService의 generateNewAccessToken 메서드를 호출하여 새로운 accessToken, refreshToken을 발급
                 String newAccessToken = authService.generateNewAccessToken(refreshToken);
                 String newRefreshToken = jwtTokenProvider.createRefreshToken(email);
 
-                // 새로운 accessToken, refreshToken을 쿠키에 담아서 반환하는 메소드를 호출.
-                jwtTokenProvider.createAccessTokenCookie(newAccessToken, response);
+                // 새로운 refreshToken을 쿠키에 담아서 반환하는 메소드를 호출.
                 jwtTokenProvider.createRefreshTokenCookie(newRefreshToken, response);
 
                 // redis에 있던 refreshToken 갱신
-                String key = RedisPrefix.REFRESH_TOKEN.prefix() + email;
                 redisService.setValues(key, newRefreshToken, Duration.ofDays(3));
 
-                // 성공적으로 새로운 accessToken을 생성하고 쿠키에 담았으니, 상태 메시지만 응답 본문에 포함하여 반환
-                return ResponseEntity.ok().body("새로운 토큰을 생성한후 쿠키에 담았습니다.");
+                // 새로운 accessToken을 JSON 응답 본문에 담아 반환
+                Map<String, String> tokenMap = new HashMap<>();
+                tokenMap.put("accessToken", newAccessToken);
+                return ResponseEntity.ok().body(tokenMap);
+
+                // 새로운 accessToken을 쿠키에 담아서 반환하는 메소드를 호출.
+//                jwtTokenProvider.createAccessTokenCookie(newAccessToken, response);
+
             } else { //같지 않다면
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+                System.out.println("레디스에 저장된 토큰과 달라용");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("레디스에 저장된 토큰과 달라용");
             }
         } catch (Exception e) {
             // refreshToken이 유효하지 않거나 처리 중 오류가 발생한 경우
