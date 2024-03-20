@@ -1,7 +1,7 @@
 package com.emotionoui.oui.calendar.entity;
 
 import com.emotionoui.oui.diary.entity.DailyDiary;
-import com.emotionoui.oui.member.dto.Member;
+import com.emotionoui.oui.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 

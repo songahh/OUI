@@ -1,4 +1,4 @@
-package com.emotionoui.oui.member.dto;
+package com.emotionoui.oui.member.entity;
 
 import com.emotionoui.oui.alarm.entity.FcmInfo;
 import com.emotionoui.oui.calendar.entity.Emotion;
@@ -21,7 +21,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
@@ -111,5 +110,14 @@ public class Member implements UserDetails {
         this.email = email;
         this.nickname = nickname;
         this.regdate = regdate;
+    }
+
+    @Builder
+    public Member(int memberId, String email, String nickname, String img, LocalDateTime regdate){
+        this.memberId= memberId;
+        this.email = email;
+        this.nickname = nickname;
+        this.img = img;
+        this.regdate= regdate;
     }
 }

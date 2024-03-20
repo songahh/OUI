@@ -18,9 +18,9 @@ public class JwtTokenProvider {
 
     private final JwtUtil jwtUtil;
 
-    private Long accessTokenExpireTime = 1000 * 60 * 60L;
+    private Long accessTokenExpireTime = 1000 * 60 * 60L; // 1시간
 
-    private Long refreshTokenExpireTime = 1000 * 60 * 60 * 24 * 14L;
+    private Long refreshTokenExpireTime = 1000 * 60 * 60 * 24 * 3L; // 3일
     @Autowired
     public JwtTokenProvider(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
@@ -46,8 +46,8 @@ public class JwtTokenProvider {
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setSecure(true);
         accessTokenCookie.setPath("/");
-        // 쿠키 만료 시간 설정, 예: 1일
-        accessTokenCookie.setMaxAge(1 * 24 * 60 * 60);
+        // 쿠키 만료 시간 설정 ( 60분 )
+        accessTokenCookie.setMaxAge(60*60);
         response.addCookie(accessTokenCookie);
     }
 
@@ -61,8 +61,8 @@ public class JwtTokenProvider {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
-        // 쿠키 만료 시간 설정, 예: 7일
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+        // 쿠키 만료 시간 설정 ( 3일 )
+        refreshTokenCookie.setMaxAge(3 * 24 * 60 * 60);
         response.addCookie(refreshTokenCookie);
     }
 

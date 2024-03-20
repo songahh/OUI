@@ -1,10 +1,10 @@
 package com.emotionoui.oui.auth.config;
 
-import com.emotionoui.oui.auth.dto.CustomUserDetailsService;
 import com.emotionoui.oui.auth.jwt.JwtFilter;
 import com.emotionoui.oui.auth.jwt.JwtTokenProvider;
-import com.emotionoui.oui.auth.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.emotionoui.oui.auth.jwt.JwtUtil;
+import com.emotionoui.oui.member.repository.MemberRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,28 +12,24 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
-    @Autowired
+    private MemberRepository memberRepository;
+    private JwtUtil jwtUtil;
     private JwtTokenProvider jwtTokenProvider;
-
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
-    }
 
     //AuthenticationManager Bean 등록
     @Bean
@@ -44,19 +40,23 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
                 .csrf((auth) -> auth.disable())
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable());
         http
-                .addFilterBefore(new JwtFilter(jwtTokenProvider),
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/resources/**", "/**", "/login","/").permitAll()
+                        .anyRequest().authenticated());
+        http
+                .addFilterBefore(new JwtFilter(jwtTokenProvider, jwtUtil, memberRepository),
                         UsernamePasswordAuthenticationFilter.class);
-
-
-        SecurityFilterChain chain = http.build();
-        return chain;
+        http
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return http.build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
