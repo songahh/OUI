@@ -182,6 +182,12 @@ public class AuthController {
 
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/check")
+    public ResponseEntity<Void> check(@RequestParam int num){
+        System.out.println("체크체크");
+        return ResponseEntity.ok().build();
+    }
 }
 
 

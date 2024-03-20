@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @EntityListeners({AuditingEntityListener.class})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "MEBMER_DIARY")
+@Table(name = "MEMBER_DIARY")
 public class MemberDiary {
 
     @Id
@@ -24,7 +24,7 @@ public class MemberDiary {
     @Column(name = "member_diary_id")
     private Integer id;
 
-    private String alarm;
+    private String alarm;// 각 회원,다이어리마다 알람on/off 여부
     private Integer orders;
 
     @CreatedDate
