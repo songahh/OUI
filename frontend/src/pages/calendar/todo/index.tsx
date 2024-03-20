@@ -39,11 +39,11 @@ const ColorBoxWrapper = styled.div`
   padding-left: 1rem;
 `
 
-const ColorBox = styled.button<{ color: string }>`
+const ColorBox = styled.button<{ color: string; selected: boolean }>`
   border: none;
   border-radius: 100%;
-  height: 60%;
-  width: 5%;
+  height: ${({ selected }) => (selected ? '70%' : '60%')}; 
+  width: ${({ selected }) => (selected ? '5%' : '4%')}; 
   cursor: pointer;
   background-color: ${ ( props ) => props.color };
 `
@@ -54,6 +54,9 @@ const Todo = () => {
   const navigator = useNavigate()
 
   const { clickDate } = useStore()
+  const [ title, setTitle ] = useState('')
+  const [ memo, setMemo ] = useState('')
+  const [ todoColor, setTodoColor ] = useState('BBDED6')
   
   const colors = [ '#BBDED6', '#FFE17D', '#C0DEFF', '#F7EDE2', '#A1A7C4' ] 
 
@@ -61,8 +64,13 @@ const Todo = () => {
     navigator( '/calendar' )
   }
   const RegistTodo = () =>{
+    colors.push(todoColor)
     navigator( '/calendar' )
   }
+
+  const setColor = (color) => {
+    setTodoColor(color)
+  };
 
   return(
     <>
@@ -80,16 +88,23 @@ const Todo = () => {
   </TodoHeaderWrapper>
   <TodoWrapper>
     <div style={{ fontSize: '16px'}}>제목</div>
-    <input type="text" style={{ height:'10%', borderRadius:'10px'}}/>
+    <input type="text" 
+        style={{ height:'10%', borderRadius:'10px'}}
+        value= { title }
+        onChange={(e) => { setTitle( e.target.value )}}/>
     <div style={{ fontSize: '16px'}}>메모 (선택)</div>
-    <textarea style={{height:'35%', borderRadius: '10px'}}/>
+    <textarea 
+        style={{height:'35%', borderRadius: '10px'}} 
+        value= { memo } onChange={(e) => { setMemo( e.target.value )}}/>
     <div style={{ fontSize: '16px'}}>색 선택</div>
     <ColorBoxWrapper>
-        <ColorBox color={ colors[0] } />
-        <ColorBox color={ colors[1] } />
-        <ColorBox color={ colors[2] } />
-        <ColorBox color={ colors[3] } />
-        <ColorBox color={ colors[4] } />
+    {
+      colors?.map((color, index) => {
+        return(
+          <ColorBox color={ color } selected={color === todoColor} onClick={() => setColor(color)}/>
+        )
+      })
+    }
     </ColorBoxWrapper>
   </TodoWrapper>
     </>
