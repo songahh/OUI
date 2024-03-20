@@ -47,7 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = jwtTokenProvider.resolveToken(request);
 
         // 로그인 페이지의 경로와 일치할 경우 필터링 과정을 건너뜁니다.
-        if (("/".equals(requestURI) || "/login".equals(requestURI))) {
+        if (("/auth/token".equals(requestURI) || "/auth/login/kakao".equals(requestURI) || "/login".equals(requestURI))) {
             System.out.println("로그인 화면으로 갈 때..");
             filterChain.doFilter(request, response);
             return;

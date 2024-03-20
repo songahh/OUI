@@ -99,7 +99,6 @@ public class AuthController {
                 break;
             }
         }
-        System.out.println(stop);
         String memberNickname = email.substring(0,stop);
         LocalDateTime regdate = LocalDateTime.now();
 

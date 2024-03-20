@@ -1,4 +1,4 @@
-package com.emotionoui.oui.auth.config;
+package com.emotionoui.oui.common.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
