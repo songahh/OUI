@@ -11,6 +11,7 @@ FROM openjdk:17-ea-4-jdk-slim
 WORKDIR /app
 
 COPY --from=builder /build/build/libs/oui-0.0.1-SNAPSHOT.jar .
+COPY .env /app/.env
 
 EXPOSE 8080
 
