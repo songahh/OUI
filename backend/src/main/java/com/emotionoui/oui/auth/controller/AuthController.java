@@ -49,8 +49,6 @@ public class AuthController {
             // 받아온 email로 jwt access, refresh 토큰 만들기
             String accessToken = jwtTokenProvider.createAccessToken(kakaoLoginRes.getEmail());
             String refreshToken = jwtTokenProvider.createRefreshToken(kakaoLoginRes.getEmail());
-//            System.out.println("AuthController.kakaoLogin- accessToken : "+accessToken);
-//            System.out.println("AuthController.kakaoLogin- refreshToken : "+refreshToken);
 
             // accesstoken, refreshToken 쿠키에 담기
             jwtTokenProvider.createAccessTokenCookie(accessToken, response);
@@ -58,6 +56,9 @@ public class AuthController {
 
             // 가입된 유저 확인 & 회원가입
             kakaoMemberCheckAndRegister(kakaoLoginRes);
+
+            System.out.println("AuthController.kakaoLogin- accessToken : "+accessToken);
+            System.out.println("AuthController.kakaoLogin- refreshToken : "+refreshToken);
 
             // redis에 토큰 저장
             String key = RedisPrefix.REFRESH_TOKEN.prefix() + kakaoLoginRes.getEmail();
