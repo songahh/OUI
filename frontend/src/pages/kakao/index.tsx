@@ -2,7 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 
+
 const Kakao = () => {
+
   const navigator = useNavigate();
 
   // Axios 인스턴스 생성
@@ -11,6 +13,7 @@ const Kakao = () => {
     headers: {
       "Content-Type": "application/json;charset=utf-8",
     },
+    withCredentials: true,
   });
 
   useEffect(() => {
@@ -20,10 +23,10 @@ const Kakao = () => {
 
     const kakaoLogin = async () => {
       try {
-        const res = await api.get(`${REDIRECT_URI}?code=${code}`);
-        console.log(res);
-        navigator("/main");
-      } catch (error) {
+        const res = await api.get(`${REDIRECT_URI}?code=${code}`)
+        // navigator("/main");
+      }
+      catch (error) {
         console.log("로그인 에러 발생");
         console.log(error);
       }
