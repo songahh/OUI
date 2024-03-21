@@ -1,6 +1,7 @@
 import { format } from 'date-fns'
 import { useNavigate } from 'react-router-dom'
-import { LeftIcon, RightIcon } from 'src/components'
+import edit from 'src/asset/images/edit.png'
+import trash from 'src/asset/images/trash.png'
 import useStore from '../store'
 import styled from 'styled-components'
 
@@ -55,8 +56,8 @@ const TodoCard = ( props: TodoCardProps ) =>{
                     SCHEDULE
                 </TodoTitle>
                 <div style={{ display:'flex', marginTop:'1%', gap: '2%'}}>
-                <LeftIcon size= { 20 } onClick={ editTodo }/>
-                <RightIcon size= { 20 } onClick={ deletTodo }/>
+                <img onClick={ editTodo } src={ edit } alt ='' style={{ width: '30px', height: '30px'}}/>
+                <img onClick={ deletTodo } src={ trash } alt ='' style={{ width: '30px', height: '30px'}}/>
                 </div>
             </TodoCardHeader>
             <TodoBody>

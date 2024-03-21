@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { LeftIcon, RightIcon } from 'src/components'
 import { useQuery } from 'react-query'
-import { createPortal } from 'react-dom'
-import useDate from 'src/util/date'
 import useStore from '../store';
 import { format } from 'date-fns';
 import styled from 'styled-components'
