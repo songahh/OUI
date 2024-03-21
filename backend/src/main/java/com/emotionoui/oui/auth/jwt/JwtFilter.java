@@ -78,12 +78,12 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         else if(token != null && check==1){ // 만료된 토큰이라면 새로운 토큰 발급
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
-            response.getWriter().write("만료된 refreshToken입니다. /auth/token 으로 재요청하세요!!!");
+            response.getWriter().write("만료된 accessToken입니다. 토큰을 재요청하세요.");
             return;
         }
-        else if(token == null || check==2){ // 토큰이 없거나 이상한 토큰이라면 401 unAthorized
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
-            response.getWriter().write("이상한 refreshToken입니다. 새로 로그인하세요!!!");
+        else if(token == null || check==2){ // 토큰이 없거나 이상한 토큰이라면 400 badRequest
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 상태 코드 설정
+            response.getWriter().write("accessToken이 없거나 이상합니다. 다시 로그인하세요.");
             return;
         }
         filterChain.doFilter(request, response);
