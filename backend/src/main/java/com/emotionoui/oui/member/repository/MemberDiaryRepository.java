@@ -1,5 +1,6 @@
 package com.emotionoui.oui.member.repository;
 
+import com.emotionoui.oui.member.entity.AlarmType;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.MemberDiary;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -13,8 +14,13 @@ import java.util.List;
 public interface MemberDiaryRepository extends JpaRepository<MemberDiary, Integer> {
 
     @Query("SELECT m.alarm FROM MemberDiary m WHERE m.diary.id = :diaryId AND m.member.memberId = :memberId")
-    String findAlarmByMemberIdAndDiaryId(Integer diaryId, Integer memberId);
+    AlarmType findAlarmByMemberIdAndDiaryId(Integer diaryId, Integer memberId);
 
     @Query("SELECT m.member FROM MemberDiary m WHERE m.diary.id = :diaryId")
     List<Member> findMemberByDiaryId(@Param("diaryId") Integer diaryId);
+
+    MemberDiary findByMemberId(Integer newMemberId);
+
+    @Query("SELECT COUNT(m.id) FROM MemberDiary m WHERE m.member.memberId = :memberId AND m.isDeleted = 1")
+    Integer countByMemberId(@Param("memberId") Integer memberId);
 }

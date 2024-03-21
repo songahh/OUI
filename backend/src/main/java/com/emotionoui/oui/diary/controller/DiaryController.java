@@ -2,7 +2,9 @@ package com.emotionoui.oui.diary.controller;
 
 import com.emotionoui.oui.diary.dto.EmotionClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
+import com.emotionoui.oui.diary.dto.req.DecorateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDailyDiaryReq;
+import com.emotionoui.oui.diary.dto.req.UpdateDiarySettingReq;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
 import com.emotionoui.oui.diary.dto.res.SearchDiarySettingRes;
 import com.emotionoui.oui.diary.service.DiaryService;
@@ -39,11 +41,11 @@ public class DiaryController {
         return new ResponseEntity<Integer>(diaryService.updateDailyDiary(req, dailyId), HttpStatus.OK);
     }
 
-    // 일기 게시글 삭제하기
-    @PutMapping("/delete/{dailyId}")
-    public ResponseEntity<?> deleteDailyDiary(){
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    // 일기 게시글 삭제하기
+//    @PutMapping("/delete/{dailyId}")
+//    public ResponseEntity<?> dailyService.deleteDailyDiary(){
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
     // 일기 게시글 조회하기
     @GetMapping("/{dailyId}")
@@ -71,10 +73,25 @@ public class DiaryController {
 
     // 다이어리 설정 조회하기
     @GetMapping("/setting/{diaryId}")
-    public ResponseEntity<?> searchDiarySetting(@PathVariable Integer diaryId, @AuthenticationPrincipal Member member){
+    public ResponseEntity<?> searchDiarySetting(@PathVariable("diaryId") Integer diaryId, @AuthenticationPrincipal Member member){
         Integer memberId = member.getMemberId();
         return new ResponseEntity<SearchDiarySettingRes>(diaryService.searchDiarySetting(diaryId, memberId), HttpStatus.OK);
     }
 
     // 다이어리 설정 수정하기
+    @PutMapping("/setting/{diaryId}")
+    public ResponseEntity<?> updateDiarySetting(@RequestBody UpdateDiarySettingReq req, @PathVariable("diaryId") Integer diaryId, @AuthenticationPrincipal Member member){
+        Integer memberId = member.getMemberId();
+        diaryService.updateDiarySetting(req, diaryId, memberId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    ///diary/decorate/{dailyId}
+
+    @PostMapping("/diary/decorate/{dailyId}")
+    public ResponseEntity<?> decorateDailyDiary(@RequestBody DecorateDailyDiaryReq req, @PathVariable("dailyId") Integer dailyId) throws IOException, ExecutionException, InterruptedException {
+        return new ResponseEntity<String>(diaryService.decorateDailyDiary(req, dailyId), HttpStatus.OK);
+    }
+
+
 }

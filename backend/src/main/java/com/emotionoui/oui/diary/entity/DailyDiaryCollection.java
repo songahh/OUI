@@ -30,6 +30,9 @@ public class DailyDiaryCollection {
     // 일기 내용
     private String content;
 
+    // 일기 꾸미기 내용
+    private String decoration;
+
     // 삭제 유무
     private Integer isDeleted;
 

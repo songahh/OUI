@@ -3,6 +3,7 @@ package com.emotionoui.oui.diary.dto.res;
 import com.emotionoui.oui.diary.entity.DailyDiary;
 import com.emotionoui.oui.diary.entity.DailyDiaryCollection;
 import com.emotionoui.oui.diary.entity.Diary;
+import com.emotionoui.oui.member.entity.AlarmType;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.MemberDiary;
 import lombok.AllArgsConstructor;
@@ -22,12 +23,12 @@ public class SearchDiarySettingRes {
     // 템플릿 종류
     private Integer templateId;
     // 알람 ON/OFF 설정 상태
-    private String alarm;
+    private AlarmType alarm;
     // 공용다이어리에서의 멤버
     private List<Member> memberList;
 
 
-    public static SearchDiarySettingRes privateRes(Diary diary, String alarmStatus) {
+    public static SearchDiarySettingRes privateRes(Diary diary, AlarmType alarmStatus) {
         return SearchDiarySettingRes.builder()
                 .name(diary.getName())
                 .templateId(diary.getTemplateId())
@@ -35,7 +36,7 @@ public class SearchDiarySettingRes {
                 .build();
     }
 
-    public static SearchDiarySettingRes SharingRes(Diary diary, String alarmStatus, List<Member> memberList) {
+    public static SearchDiarySettingRes SharingRes(Diary diary, AlarmType alarmStatus, List<Member> memberList) {
         return SearchDiarySettingRes.builder()
                 .name(diary.getName())
                 .templateId(diary.getTemplateId())

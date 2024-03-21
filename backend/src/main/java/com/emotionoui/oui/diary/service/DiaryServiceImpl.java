@@ -4,7 +4,9 @@ import com.emotionoui.oui.calendar.entity.Emotion;
 import com.emotionoui.oui.calendar.repository.EmotionRepository;
 import com.emotionoui.oui.diary.dto.EmotionClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
+import com.emotionoui.oui.diary.dto.req.DecorateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDailyDiaryReq;
+import com.emotionoui.oui.diary.dto.req.UpdateDiarySettingReq;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
 import com.emotionoui.oui.diary.dto.res.SearchDiarySettingRes;
 import com.emotionoui.oui.diary.entity.DailyDiary;
@@ -15,6 +17,7 @@ import com.emotionoui.oui.diary.repository.DailyDiaryMongoRepository;
 import com.emotionoui.oui.diary.repository.DailyDiaryRepository;
 import com.emotionoui.oui.diary.repository.DiaryRepository;
 import com.emotionoui.oui.diary.repository.MusicMongoRepository;
+import com.emotionoui.oui.member.entity.AlarmType;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.MemberDiary;
 import com.emotionoui.oui.member.repository.MemberDiaryRepository;
@@ -231,7 +234,7 @@ public class DiaryServiceImpl implements DiaryService{
         DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        dailyDiary.modifyDailyDate(req.getDailyDate());
+        dailyDiary.updateDailyDate(req.getDailyDate());
 
         String mongoId = dailyDiary.getMongoId();
 
@@ -285,17 +288,71 @@ public class DiaryServiceImpl implements DiaryService{
         return dailyDiaryMongoRepository.findCommentByDailyId(dailyDiary.getMongoId()).getComment();
     }
 
+    // 다이어리 설정 조회하기
     public SearchDiarySettingRes searchDiarySetting(Integer diaryId, Integer memberId){
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        String alarmStatus = memberDiaryRepository.findAlarmByMemberIdAndDiaryId(diaryId, memberId);
+        AlarmType alarmStatus = memberDiaryRepository.findAlarmByMemberIdAndDiaryId(diaryId, memberId);
 
-        if(diary.getType()==0){
+        if(diary.getType().toString().equals("개인")){
             return SearchDiarySettingRes.privateRes(diary, alarmStatus);
         }else{
             List<Member> memberList = memberDiaryRepository.findMemberByDiaryId(diaryId);
             return SearchDiarySettingRes.SharingRes(diary, alarmStatus, memberList);
         }
+    }
+    
+     // 다이어리 설정 수정하기
+    public void updateDiarySetting(UpdateDiarySettingReq req, Integer diaryId, Integer memberId){
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(IllegalArgumentException::new);
+        diary.updateDiary(req.getName(), req.getTemplateId());
+
+        MemberDiary memberDiary = memberDiaryRepository.findById(memberId)
+                .orElseThrow(IllegalArgumentException::new);
+        memberDiary.updateAlarm(req.getAlarm());
+
+        if(diary.getType().toString().equals("공유")){
+            List<Member> newMemberList = req.getMemberList();
+            List<MemberDiary> oldMemberDiaryList = diary.getMemberDiaryList();
+
+            for(MemberDiary oldMemberDiary : oldMemberDiaryList){
+                Member member = oldMemberDiary.getMember();
+            }
+
+
+            for(Member member : newMemberList){
+                MemberDiary rep = memberDiaryRepository.findByMemberId(member.getMemberId());
+                if(rep==null){
+                    MemberDiary newMemberDiary = MemberDiary.builder()
+                            .alarm(AlarmType.ON)
+                            .orders(memberDiaryRepository.countByMemberId(member.getMemberId())+1)
+                            .isDeleted(0)
+                            .diary(diary)
+                            .member(member)
+                            .build();
+                }
+            }
+
+
+        }
+
+    }
+
+
+    // 일기 꾸미기
+    public String decorateDailyDiary(DecorateDailyDiaryReq req, Integer dailyId){
+
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        dailyDiaryCollection.setDecoration(req.getDecoration());
+        dailyDiaryMongoRepository.save(dailyDiaryCollection);
+
+        return dailyDiaryCollection.getId().toString();
     }
 }

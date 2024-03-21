@@ -24,12 +24,11 @@ public class MemberDiary {
     @Column(name = "member_diary_id")
     private Integer id;
 
-    private String alarm;
     private Integer orders;
 
     @CreatedDate
     @LastModifiedDate
-    private LocalDateTime create_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "is_deleted")
     private Integer isDeleted;
@@ -42,8 +41,13 @@ public class MemberDiary {
     @JoinColumn(name="member_id")
     private Member member;
 
+    @Column(name = "alarm")
+    @Enumerated(EnumType.STRING)
+    private AlarmType alarm;
+
+
     @Builder
-    public MemberDiary(String alarm, Integer orders, Integer isDeleted, Diary diary, Member member){
+    public MemberDiary(AlarmType alarm, Integer orders, Integer isDeleted, Diary diary, Member member){
         this.alarm = alarm;
         this.orders = orders;
         this.isDeleted = isDeleted;
@@ -51,5 +55,9 @@ public class MemberDiary {
         this.member = member;
         diary.getMemberDiaryList().add(this);
 //        member.getMemberDiaryList().add(this);
+    }
+
+    public void updateAlarm(AlarmType alarm){
+        this.alarm = alarm;
     }
 }
