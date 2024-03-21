@@ -14,7 +14,7 @@ const AppWrapper = styled.div`
   max-width: 1024px; 
   width: 100%; 
   min-height: 100vh;
-
+  background-color: #F9F3EE;
 `;
 
 const queryClient = new QueryClient() // QueryClient 생성

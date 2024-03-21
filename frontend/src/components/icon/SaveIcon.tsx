@@ -5,14 +5,14 @@ const ButtonWrapper = styled.button<{ size: number}>`
     display: flex;
     width: ${( props ) => props.size }px;
     padding: 0px;
-    margin: 10px;
+    margin: 20px 50px;
     border: none;
     cursor: pointer;
     background-color: transparent;
 `
 
 const SaveIcon = ( props: IconProps ) => {
-    const { size = 80, onClick } = props;
+    const { size = 70, onClick } = props;
 
     return (
         <ButtonWrapper size={ size } onClick={ onClick }>
