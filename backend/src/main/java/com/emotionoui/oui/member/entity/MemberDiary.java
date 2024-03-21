@@ -61,4 +61,11 @@ public class MemberDiary {
     public void updateAlarm(AlarmType alarm){
         this.alarm = alarm;
     }
+
+    public void updateIsDeleted(){
+        if(this.isDeleted==1)
+            this.isDeleted = 0;
+        else
+            this.isDeleted = 1;
+    }
 }
