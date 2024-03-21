@@ -22,9 +22,9 @@ public class QMemberDiary extends EntityPathBase<MemberDiary> {
 
     public static final QMemberDiary memberDiary = new QMemberDiary("memberDiary");
 
-    public final StringPath alarm = createString("alarm");
+    public final EnumPath<AlarmType> alarm = createEnum("alarm", AlarmType.class);
 
-    public final DateTimePath<java.time.LocalDateTime> create_at = createDateTime("create_at", java.time.LocalDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final com.emotionoui.oui.diary.entity.QDiary diary;
 

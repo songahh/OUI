@@ -20,7 +20,7 @@ public class QDiary extends EntityPathBase<Diary> {
 
     public static final QDiary diary = new QDiary("diary");
 
-    public final DateTimePath<java.time.LocalDateTime> created_at = createDateTime("created_at", java.time.LocalDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final ListPath<DailyDiary, QDailyDiary> dailyDiaryList = this.<DailyDiary, QDailyDiary>createList("dailyDiaryList", DailyDiary.class, QDailyDiary.class, PathInits.DIRECT2);
 
@@ -34,7 +34,9 @@ public class QDiary extends EntityPathBase<Diary> {
 
     public final StringPath name = createString("name");
 
-    public final NumberPath<Integer> type = createNumber("type", Integer.class);
+    public final NumberPath<Integer> templateId = createNumber("templateId", Integer.class);
+
+    public final EnumPath<DiaryType> type = createEnum("type", DiaryType.class);
 
     public QDiary(String variable) {
         super(Diary.class, forVariable(variable));

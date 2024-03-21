@@ -8,6 +8,4 @@ import java.util.List;
 
 @Repository
 public interface MainRepository extends JpaRepository<MemberDiary, Integer> {
-    // memberId로 해당 멤버 찾아오기
-    List<MemberDiary>find(Integer memberId);
 }

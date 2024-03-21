@@ -26,7 +26,7 @@ public class QSchedule extends EntityPathBase<Schedule> {
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
-    public final DatePath<java.time.LocalDate> date = createDate("date", java.time.LocalDate.class);
+    public final DateTimePath<java.util.Date> date = createDateTime("date", java.util.Date.class);
 
     public final NumberPath<Integer> isDeleted = createNumber("isDeleted", Integer.class);
 
