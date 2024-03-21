@@ -1,9 +1,8 @@
 import { fabric } from 'fabric';
 import { useEffect, useRef } from 'react';
-import axios, { AxiosHeaders } from 'axios';
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import WebFont from 'webfontloader';
-import cookie from 'react-cookies';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -14,9 +13,9 @@ const Container = styled.div`
 `;
 
 const Diary = () => {
-    const canvasRef = useRef(null);
-    const accessToken = cookie.load('accessToken');
     const navigator = useNavigate();
+    
+    const canvasRef = useRef(null);
     
     useEffect(() => {
         
@@ -45,14 +44,14 @@ const Diary = () => {
             }
         });
 
-        const dailyDiaryId = 1;
+        const dailyDiaryId = 5;
 
         // Axios 인스턴스 생성
         const api = axios.create({
             baseURL: 'http://localhost:8080', 
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
-                "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDA4NTgwLCJleHAiOjE3MTEwMTIxODB9.NfR8B9qLkTISml-mWVuVKf4eSDxrNeBFQHAXLIrJu9E"
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDM5NTUyLCJleHAiOjE3MTEwNDMxNTJ9.oStW42gpXeOk_w1oQnfzVq-ENWyIs1y89id_akTTusE"
             },
             withCredentials: true,
         });
@@ -72,7 +71,6 @@ const Diary = () => {
                         obj.selectable = false;
                     });
                 });
-
                 const decoObjects = JSON.parse(data.decoration);
 
                 fabric.util.enlivenObjects(decoObjects, (enlivenedObjects) => {

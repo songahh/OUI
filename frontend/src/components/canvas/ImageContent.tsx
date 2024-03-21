@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { fabric } from 'fabric';
 import { FileUploadOutlined } from '@mui/icons-material';
 import JoyIcon from 'src/asset/images/joyIcon.png';
 import ComfortIcon from 'src/asset/images/comfortIcon.png';
@@ -21,8 +23,8 @@ const UploadLabel = styled.label`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100px;
-  height: 100px;
+  width: 130px;
+  height: 130px;
   border: 2px dashed gray;
   border-radius: 10px;
   margin: 13px;
@@ -40,15 +42,56 @@ const ButtonWrapper = styled.button`
 `
 
 const ImageContent = ( props: ContentProps ) => {
-  const { onImageUpload, handleSticker } = props;
+  const { canvas } = props;
   
   // 이미지 파일 업로드 핸들러
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files[0];
-    if (file && onImageUpload) {
-      onImageUpload(file);
-    }
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+          const imgElement = document.createElement('img');
+          imgElement.src = event.target.result as string;
+          imgElement.onload = () => {
+              const maxWidth = 150;
+              const scaleFactor = maxWidth / imgElement.width; 
+
+              const imgInstance = new fabric.Image(imgElement, {
+                  left: 300,
+                  top: 300,
+                  scaleX: scaleFactor,
+                  scaleY: scaleFactor,
+                  angle: 0,
+                  opacity: 1.0,
+              });
+              canvas.add(imgInstance);
+              canvas.setActiveObject(imgInstance);
+          };
+      };
+      reader.readAsDataURL(file);
+      }
   };
+
+// 스티커 추가
+const handleSticker = (value: string) => {
+    const imgElement = document.createElement('img');
+    imgElement.src = value;
+    imgElement.onload = () => {
+        const maxWidth = 150;
+        const scaleFactor = maxWidth / imgElement.width; 
+
+        const imgInstance = new fabric.Image(imgElement, {
+            left: 300,
+            top: 300,
+            scaleX: scaleFactor,
+            scaleY: scaleFactor,
+            angle: 0,
+            opacity: 1.0,
+        });
+        canvas.add(imgInstance);
+        canvas.setActiveObject(imgInstance);
+    };
+}
       
   const stickerList = [ JoyIcon, ComfortIcon, PanicIcon, AngryIcon, UnrestIcon, SadIcon ];
 
@@ -59,8 +102,8 @@ const ImageContent = ( props: ContentProps ) => {
       </UploadLabel>
       <input id="upload" style={{ display: "none" }} type="file" accept="image/*" onChange={ handleImageUpload } />
       { stickerList.map( ( sticker, index ) => (
-        <ButtonWrapper key={ index } onClick={() => handleSticker(sticker) }>
-          <img src={ sticker } alt="emoji" style={{ height: "100px" }}/>
+        <ButtonWrapper key={ index } onClick={ () => handleSticker(sticker) }>
+          <img src={ sticker } alt="emoji" style={{ height: "130px" }}/>
         </ButtonWrapper>
       ))}
     </ContentWrapper>
@@ -70,6 +113,5 @@ const ImageContent = ( props: ContentProps ) => {
 export default ImageContent;
 
 type ContentProps = {
-  onImageUpload?: (file: File) => void;
-  handleSticker?: (value: string) => void;
+  canvas: fabric.Canvas,
 }
