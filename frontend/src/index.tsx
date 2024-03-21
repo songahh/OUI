@@ -3,7 +3,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyle from './styles/global';
+import axios from 'axios';
 import { CookiesProvider } from 'react-cookie';
+
+axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.withCredentials = true;
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

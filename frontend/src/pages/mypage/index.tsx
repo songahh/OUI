@@ -1,10 +1,11 @@
 import Button from 'src/components/control/Button/Button';
 import { Drawer } from 'src/components/control/Drawer';
 import { Header } from 'src/components/control/Header';
+import axios from 'axios';
 import styled from 'styled-components'
 
 const MyPage = () => {
-
+    console.log(axios.defaults.headers.common["Authorization"])
     return(
         <>
             <Header>
