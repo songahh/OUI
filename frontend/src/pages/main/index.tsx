@@ -86,7 +86,7 @@ const Main = () => {
     <>
     <Header>
     <Drawer></Drawer>
-    <Button path='/mypage' btType='user' name="temp"></Button>
+    <Button path='/diarywrite' btType='user' name="temp"></Button>
     </Header>
     <hr></hr>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
