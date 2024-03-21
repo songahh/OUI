@@ -23,6 +23,8 @@ public class SearchDailyDiaryRes {
     private Integer diaryId;
     // 일기 내용
     private String dailyContent;
+    // 일기 꾸미기 내용
+    private String decoration;
     // 일기 날짜
     private String dailyDate;
 
@@ -32,8 +34,8 @@ public class SearchDailyDiaryRes {
                 .writerId(collection.getMemberId())
                 .diaryId(collection.getDiaryId())
                 .dailyContent(collection.getContent())
+                .decoration(collection.getDecoration())
                 .dailyDate(dailyDiary.getDailyDate().toString())
                 .build();
     }
-
 }

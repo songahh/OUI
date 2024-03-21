@@ -317,10 +317,16 @@ public class DiaryServiceImpl implements DiaryService{
             List<Member> newMemberList = req.getMemberList();
             List<MemberDiary> oldMemberDiaryList = diary.getMemberDiaryList();
 
+            top:
             for(MemberDiary oldMemberDiary : oldMemberDiaryList){
                 Member member = oldMemberDiary.getMember();
+                for (Member newMember : newMemberList) {
+                    if (member.getMemberId() == newMember.getMemberId()) {
+                        continue top;
+                    }
+                }
+                oldMemberDiary.updateIsDeleted();
             }
-
 
             for(Member member : newMemberList){
                 MemberDiary rep = memberDiaryRepository.findByMemberId(member.getMemberId());
@@ -332,12 +338,11 @@ public class DiaryServiceImpl implements DiaryService{
                             .diary(diary)
                             .member(member)
                             .build();
+
+                    memberDiaryRepository.save(memberDiary);
                 }
             }
-
-
         }
-
     }
 
 
