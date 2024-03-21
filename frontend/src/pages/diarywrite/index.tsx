@@ -6,7 +6,6 @@ import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from '.
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import {Cookies} from 'react-cookie'
 import useStore from 'src/store';
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
@@ -30,7 +29,7 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     background-color: #F9F3EE;
-`;
+`
 
 const BottomSheetHeader = styled.div`
     display: flex;
@@ -41,14 +40,11 @@ const BottomSheetHeader = styled.div`
 
 const Content = styled.div`
     padding: 10px;
-`;
+`
 
 const DiaryWrite = () => {
 
-
     const accessToken = useStore(state => state.accessToken);
-
-    console.log(accessToken);
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
     

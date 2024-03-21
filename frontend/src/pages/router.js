@@ -5,7 +5,6 @@ export const routes = [
     { path: 'diaryedit' },
     { path: 'diary' },
     { path: 'calendar' },
-    { path: 'home' },
     { path: 'main' },
     { path: 'mypage' },
     { path: 'login' },
@@ -19,7 +18,7 @@ const lazyModules = routes?.map( ( { path, dynamicPath } ) => useRouter( path, d
 lazyModules.unshift( {
     path: '/',
     lazy: async () => {
-        const module = await import( `./main` )
+        const module = await import( `./login` )
         return {
             Component: module.default
         }
