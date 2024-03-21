@@ -6,7 +6,8 @@ import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from '.
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import cookie from 'react-cookies';
+import {Cookies} from 'react-cookie'
+import useStore from 'src/store';
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
 
@@ -43,8 +44,11 @@ const Content = styled.div`
 `;
 
 const DiaryWrite = () => {
-    const accessToken = cookie.load('accessToken');
 
+
+    const accessToken = useStore();
+
+    // console.log("!11"+accessToken);
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
     
@@ -347,17 +351,14 @@ const DiaryWrite = () => {
         baseURL: 'http://localhost:8080', 
         headers: {
             "Content-Type": "application/json;charset=utf-8",
-            "Cookie": accessToken,
         },
         withCredentials: true,
     });
     
     // 저장
     const saveDiary = () => {
-        console.log(accessToken);
-        // string으로 전달
         const diaryToString = JSON.stringify(canvas.toJSON());
-
+        
         api({
             url: 'diary',
             method: 'POST',
