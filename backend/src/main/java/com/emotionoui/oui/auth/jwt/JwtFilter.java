@@ -48,13 +48,6 @@ public class JwtFilter extends OncePerRequestFilter {
         int check = jwtTokenProvider.validateToken(token);
         System.out.println(check);
 
-        // 로그인 페이지의 경로와 일치할 경우 필터링 과정을 건너뜁니다.
-        if (("/auth/login/kakao".equals(requestURI) || "/login".equals(requestURI))) {
-            System.out.println("로그인 화면으로 갈 때..");
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         System.out.println("JwtFilter.doFilter - 헤더에 담겨 온 accessToken : "+token);
         // 토큰이 존재하고, 유효하다면
         if (token != null && check==0) {
