@@ -8,6 +8,9 @@ import com.emotionoui.oui.auth.redis.RedisService;
 import com.emotionoui.oui.auth.service.AuthService;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.repository.MemberRepository;
+import com.emotionoui.oui.schedule.entity.Schedule;
+import com.emotionoui.oui.survey.entity.Preference;
+import com.emotionoui.oui.survey.repository.PreferenceRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Scanner;
 
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -35,6 +39,7 @@ public class AuthController {
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
+    private final PreferenceRepository preferenceRepository;
 
     /**
      * kakao로그인
@@ -51,19 +56,12 @@ public class AuthController {
             // 받아온 email로 jwt access, refresh 토큰 만들기
             String accessToken = jwtTokenProvider.createAccessToken(kakaoLoginRes.getEmail());
             String refreshToken = jwtTokenProvider.createRefreshToken(kakaoLoginRes.getEmail());
-//            System.out.println("AuthController.kakaoLogin- accessToken : "+accessToken);
-//            System.out.println("AuthController.kakaoLogin- refreshToken : "+refreshToken);
-
-            // accesstoken 쿠키에 담기
-            //  jwtTokenProvider.createAccessTokenCookie(accessToken, response);
-
 
             System.out.println("AuthController.kakaoLogin- accessToken : "+accessToken);
             System.out.println("AuthController.kakaoLogin- refreshToken : "+refreshToken);
 
             // refreshToken 쿠키에 담기
             jwtTokenProvider.createRefreshTokenCookie(refreshToken, response);
-
 
             // redis에 토큰 저장
             String key = RedisPrefix.REFRESH_TOKEN.prefix() + kakaoLoginRes.getEmail();
@@ -107,6 +105,7 @@ public class AuthController {
     private void kakaoMemberCheckAndRegister(KakaoLoginRes kakaoLoginRes) {
 
         String email = kakaoLoginRes.getEmail();
+
         // nickname은 처음에는 email에서 뒷부분 뺀 걸로 설정해주자.
         int stop = 0;
         for(int i = 0; i<email.length(); i++){
@@ -116,13 +115,19 @@ public class AuthController {
             }
         }
         String memberNickname = email.substring(0,stop);
-        LocalDateTime regdate = LocalDateTime.now();
+//        LocalDateTime regdate = LocalDateTime.now();
 
         Member kakaoMember = memberRepository.findByEmail(email).orElse(null);
 
         // 가입되지 않은 회원이라면 회원가입
         if (kakaoMember == null) {
-            kakaoMember = new Member(email, memberNickname, regdate);
+            kakaoMember = new Member(email, memberNickname);
+            memberRepository.save(kakaoMember);
+        }
+
+        // 탈퇴한 회원이라면 가입처리
+        if (kakaoMember.getIsDeleted()==1){
+            kakaoMember.setIsDeleted(0);
             memberRepository.save(kakaoMember);
         }
     }
@@ -195,14 +200,9 @@ public class AuthController {
      * @return
      */
     @Transactional
+    @PutMapping
     public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal Member member){
-        // redis에서 삭제
-        String key = RedisPrefix.REFRESH_TOKEN.prefix() + member.getEmail();
-        redisService.deleteValues(key);
-        // db에서 isDeleted == 1 로 바꾸기(탈퇴처리)
-        member.setIsDeleted(1);
-        memberRepository.save(member);
-
+        authService.deleteMember(member);
         return ResponseEntity.ok().build();
     }
 }
