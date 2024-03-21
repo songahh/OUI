@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { addDays, addMonths, format, subMonths } from 'date-fns'
 import { DateList, DayList, MyModal }  from './components'
-import { useNavigate } from 'react-router-dom'
 import writeDiary from 'src/asset/images/writeDiary.png'
 import { LeftIcon, RightIcon } from 'src/components'
 import { useQuery } from 'react-query'
@@ -9,6 +8,7 @@ import useStore from './store';
 import { createPortal } from 'react-dom'
 import useDate from 'src/util/date'
 import styled from 'styled-components'
+import { getCalendar } from './api';
 
 const Title = styled.div`
     font-size: 20px;
@@ -70,8 +70,6 @@ const Modal = styled.div`
 
 const Calendar = () => {
 
-  const navigator = useNavigate()
-
   const { currentMonth, setCurrentMonth, calculateDateRange } = useDate()
   const { startDate, endDate } = calculateDateRange()
   const { isModalOpened, updateModal} = useStore()
@@ -107,6 +105,11 @@ const Calendar = () => {
   const movePrevMonth = () =>{ setCurrentMonth( subMonths( currentMonth, 1) ) }
   const moveNextMonth = () => { setCurrentMonth( addMonths( currentMonth, 1) ) }
 
+  
+
+  const { data: calendars, refetch } = useQuery(['calendars', currentMonth], () => getCalendar(currentMonth))
+  useEffect(() => { refetch() }, [ currentMonth, refetch ])
+
   return(
           <CalendarWrapper>
             <CalendarHeaderWrapper>
@@ -129,7 +132,7 @@ const Calendar = () => {
             </ModalPortal>
         }
             <DateList/>
-            <DayList list = { days }/>
+            <DayList list = { days } calendars = { calendars }/>
           </CalendarWrapper>
   )
 }

@@ -3,6 +3,7 @@ import useStore from '../store'
 import tmp1 from 'src/asset/images/tmp1.png'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
+import { MyCalendarType } from 'src/types'
 
 const DayWrapper = styled.div`
   display: flex;
@@ -125,5 +126,5 @@ type DayProps = {
     children?: React.ReactNode
     index?: number,
     day?: string,
-    // myCalendar?: MyCalendarType[]
+    calendars: MyCalendarType[]
 }

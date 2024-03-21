@@ -23,7 +23,7 @@ const WeekWrapper = styled.div`
 
 const DayList = ( props ) => {
   
-  const { list } = props
+  const { list, calendars } = props
 
   const cal = []
   for(let i = 0; i < list.length; i++) {
@@ -45,8 +45,7 @@ const DayList = ( props ) => {
           <WeekWrapper key={ index }>
             { day?.map(( day, index ) => (
                   <Day day= { day } index={ index } key={ index } 
-                  // myCalendar={ myCalendar }
-                  />
+                  calendars = { calendars }/>
             ))}
           </WeekWrapper>
       ))}
