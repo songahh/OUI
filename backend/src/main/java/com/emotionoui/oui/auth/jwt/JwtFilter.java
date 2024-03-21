@@ -78,10 +78,10 @@ System.out.println("JwtFilter.doFilter - email: "+email);
 
         }
         else{ // 엑세스 토큰이 존재하지 않거나, 만료되었다면 401 unAthorized
-            HttpServletResponse httpResponse = (HttpServletResponse) response;
-            httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
-            httpResponse.getWriter().write("accessToken is not valid!!!");
-            return;
+//            HttpServletResponse httpResponse = (HttpServletResponse) response;
+//            httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
+//            httpResponse.getWriter().write("accessToken is not valid!!!");
+//            return;
         }
         filterChain.doFilter(request, response);
     }

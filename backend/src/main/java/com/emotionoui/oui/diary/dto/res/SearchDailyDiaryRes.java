@@ -17,6 +17,8 @@ public class SearchDailyDiaryRes {
 
     // 몽고디비 일기 ID
     private String dailyDiaryId;
+    // 일기 작성자 ID
+    private Integer writerId;
     // 다이어리 ID
     private Integer diaryId;
     // 일기 내용
@@ -27,9 +29,11 @@ public class SearchDailyDiaryRes {
     public static SearchDailyDiaryRes of(DailyDiaryCollection collection, DailyDiary dailyDiary) {
         return SearchDailyDiaryRes.builder()
                 .dailyDiaryId(collection.getId().toString())
+                .writerId(collection.getMemberId())
                 .diaryId(collection.getDiaryId())
                 .dailyContent(collection.getContent())
                 .dailyDate(dailyDiary.getDailyDate().toString())
                 .build();
     }
+
 }

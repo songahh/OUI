@@ -1,6 +1,7 @@
 package com.emotionoui.oui.diary.entity;
 
 import com.emotionoui.oui.diary.dto.EmotionClass;
+import com.emotionoui.oui.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,22 +24,28 @@ public class DailyDiaryCollection {
     // 다이어리 ID
     private Integer diaryId;
 
+    // 작성자 ID
+    private Integer memberId;
+
     // 일기 내용
     private String content;
+
+    // 삭제 유무
+    private Integer isDeleted;
+
+    // 텍스트 기반 감정분석 결과
+    private EmotionClass emotion;
+
+    // 음악 추천 리스트
+    private List<String> music;
 
     // 코멘트 내용
     private String comment;
 
-    private Integer isDeleted;
-
-    private EmotionClass emotion;
-
-    private List<String> music;
-
     @Builder
-    public DailyDiaryCollection(String id, Integer diaryId, String content, Integer isDeleted){
-//        this.id = new ObjectId(id);
+    public DailyDiaryCollection(Integer diaryId, Integer memberId, String content, Integer isDeleted){
         this.diaryId = diaryId;
+        this.memberId = memberId;
         this.content = content;
         this.isDeleted = isDeleted;
     }

@@ -42,7 +42,7 @@ public class AuthController {
      * @return
      */
     @GetMapping("/login/kakao")
-    public ResponseEntity<Void> kakaoLogin(@RequestParam String code, HttpServletResponse response) {
+    public ResponseEntity<Void> kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) {
         try {
             // 카카오에서 사용자 email 받아오기
             KakaoLoginRes kakaoLoginRes = authService.kakaoLogin(code, response);
