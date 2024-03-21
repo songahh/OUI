@@ -1,9 +1,24 @@
-import { getAxios } from "src/api/util"
+import axios from 'axios';
 
-export const getLogin = async ( params: String ) => {
-    try{
-        return await getAxios(`/auth/login/kakao?code=${params}` )
-    }catch( err ){
-        console.log( err )
+
+const api = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    withCredentials: true,
+    timeout: 10000
+});
+
+
+export const getLogin = async( params: String ) => {
+    try {
+        const res = await api.get( '/auth/login/kakao', {
+            params: {
+                code: params
+            }
+        });
+        
+        return res
+    } catch ( err ) {
+        console.log(err)
+        throw err;
     }
 }

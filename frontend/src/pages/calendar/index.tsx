@@ -5,6 +5,7 @@ import writeDiary from 'src/asset/images/writeDiary.png'
 import { LeftIcon, RightIcon } from 'src/components'
 import { useQuery } from 'react-query'
 import useStore from './store';
+import cookie from 'react-cookies'
 import { createPortal } from 'react-dom'
 import useDate from 'src/util/date'
 import styled from 'styled-components'
