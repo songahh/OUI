@@ -24,8 +24,11 @@ public class MainController {
      */
     @GetMapping
     public ResponseEntity<List<MemberDiary>> getDiaries(@AuthenticationPrincipal Member member){
-        String memberEmail=member.getEmail();
+        // 우선사용자의 정보 가져오기
+        int memberId =member.getMemberId();
+        // 반환할 리스트
         List<MemberDiary> memberDiaries = new ArrayList<>();
+        // MemberDiary 테이블에서 memberId에 해당하는 diaryId 찾아서 diary테이블에서 diaryId에 해당하는 다이어리 정보 가져오기
 
 
         return null;
