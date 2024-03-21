@@ -29,16 +29,21 @@ public class JwtUtil {
     }
 
     // 토큰 만료 일자 검증
-    public Boolean isExpired(String token) {
-        boolean expired;
+    public int isExpired(String token) {
+        int check = 0; // 0 : 유효 , 1 : 만료 , 2 : 이상한 토큰
+//        boolean expired;
         try { // 유효하다면 false
-            expired = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration().before(new Date(System.currentTimeMillis()));
+            if (!Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration().before(new Date(System.currentTimeMillis()))) {
+                check = 0;
+            };
         } catch (ExpiredJwtException e) { // 만료되었다면 true
-            expired = true;
-        }catch (Exception e){ // 다른 이유로 이상한 토큰이라면 true
-            expired = true;
+//          expired = true;
+            check = 1;
+        } catch (Exception e) { // 다른 이유로 이상한 토큰이라면 true
+//          expired = true;
+            check = 2;
         }
-        return expired;
+        return check;
     }
 
     // 토큰 생성

@@ -22,15 +22,14 @@ public class SearchDailyDiaryRes {
     // 일기 내용
     private String dailyContent;
     // 일기 날짜
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dailyDate;
+    private String dailyDate;
 
     public static SearchDailyDiaryRes of(DailyDiaryCollection collection, DailyDiary dailyDiary) {
         return SearchDailyDiaryRes.builder()
                 .dailyDiaryId(collection.getId().toString())
                 .diaryId(collection.getDiaryId())
                 .dailyContent(collection.getContent())
-                .dailyDate(dailyDiary.getDailyDate())
+                .dailyDate(dailyDiary.getDailyDate().toString())
                 .build();
     }
 }

@@ -106,10 +106,9 @@ public class Member implements UserDetails {
     @OneToOne(mappedBy = "member")
     private FcmInfo fcmInfo;
 
-    public Member(String email, String nickname, LocalDateTime regdate) {
+    public Member(String email, String nickname) {
         this.email = email;
         this.nickname = nickname;
-        this.regdate = regdate;
     }
 
     @Builder
