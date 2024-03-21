@@ -7,12 +7,13 @@ const useAxios = axios.create({
   timeout: 10000
 })
 
+
+
 useAxios.interceptors.request.use( 
   async( config ) => {
-      const accessToken  = cookie.load('Cookie')
-    
+      const accessToken = useStore();
       if( accessToken ){
-        config.headers['Cookie'] = `${ accessToken }`
+        config.headers['Authorization'] = `${ accessToken }`
       }
 
       return config
