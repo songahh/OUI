@@ -46,9 +46,9 @@ const Content = styled.div`
 const DiaryWrite = () => {
 
 
-    const accessToken = useStore();
+    const accessToken = useStore(state => state.accessToken);
 
-    // console.log("!11"+accessToken);
+    console.log(accessToken);
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
     

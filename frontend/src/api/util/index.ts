@@ -9,10 +9,10 @@ const useAxios = axios.create({
 })
 
 
-
 useAxios.interceptors.request.use( 
   async( config ) => {
       const accessToken = useStore();
+      console.log("ACCESSTOKEN",accessToken)
       if( accessToken ){
         config.headers['Authorization'] = `${ accessToken }`
       }
@@ -41,23 +41,18 @@ useAxios.interceptors.response.use(
     if( error?.response?.status === 401 || error === 401 || status === 401 ){
 
       if( localStorage.getItem('refreshToken')){
-        const refreshToken = localStorage.getItem('refreshToken')
+        const refreshToken = useStore();
         const data = { "Authorization-refresh" : refreshToken }
         try{
           const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/reissue`, { headers : data })
           useStore.setState({ isLogin: true })
           useStore.setState({ accessToken: response?.headers?.authorization })
-          localStorage.setItem("accessToken", response?.headers?.authorization )
-          localStorage.setItem("refreshToken", response?.headers[`refresh-token`] )
 
           error.config.headers.Authorization = response?.headers?.authorization
           return axios.request(error.config)
         } catch( refreshError ){
-          localStorage.removeItem("accessToken")
-          localStorage.removeItem("refreshToken")
         }
        
-
       }
     }
   }
@@ -76,6 +71,16 @@ export const getAxios =  async ( url: string, params?: any )  => {
 export const postAxios =  async( url: string, data?: any, multi?:any )  =>{
   try{
     const response = await useAxios.post( url, data, multi )
+    console.log(response)
+    return response
+  } catch( error ){
+    return Promise.reject( error )
+  }
+}
+
+export const putAxios =  async( url: string, data?: any )  =>{
+  try{
+    const response = await useAxios.put( url, data )
     console.log(response)
     return response
   } catch( error ){
