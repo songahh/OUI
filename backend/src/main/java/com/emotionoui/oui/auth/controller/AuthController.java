@@ -49,7 +49,7 @@ public class AuthController {
      * @return
      */
     @GetMapping("/login/kakao")
-    public ResponseEntity<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) {
+    public ResponseEntity<?> kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) {
         try {
             // 카카오에서 사용자 email 받아오기
             KakaoLoginRes kakaoLoginRes = authService.kakaoLogin(code, response);
@@ -203,6 +203,12 @@ public class AuthController {
     @PutMapping
     public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal Member member){
         authService.deleteMember(member);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<Void> check(@RequestParam int num){
+        System.out.println("체크체크");
         return ResponseEntity.ok().build();
     }
 }

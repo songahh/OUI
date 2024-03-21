@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @EntityListeners({AuditingEntityListener.class})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "MEBMER_DIARY")
+@Table(name = "MEMBER_DIARY")
 public class MemberDiary {
 
     @Id
@@ -24,6 +24,7 @@ public class MemberDiary {
     @Column(name = "member_diary_id")
     private Integer id;
 
+    @Column(name = "orders")
     private Integer orders;
 
     @CreatedDate

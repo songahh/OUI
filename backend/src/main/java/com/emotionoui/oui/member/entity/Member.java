@@ -30,7 +30,7 @@ public class Member implements UserDetails {
     @Id
     @Column(name="member_id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private int memberId;
+    private Integer memberId;
 
     @Column(name="email", nullable = false)
     private String email;
