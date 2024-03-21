@@ -2,11 +2,11 @@ import { fabric } from 'fabric';
 import { BottomSheet } from 'react-spring-bottom-sheet'
 import 'react-spring-bottom-sheet/dist/style.css'
 import { SaveIcon, BackIcon } from 'src/components';
-import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from './components';
+import { Tab, TextboxContent, ImageContent, DrawingContent } from './components';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import cookie from 'react-cookies';
+import WebFont from 'webfontloader';
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
 
@@ -42,21 +42,35 @@ const Content = styled.div`
     padding: 10px;
 `;
 
-const DiaryWrite = () => {
-    const accessToken = cookie.load('accessToken');
-
+const DiaryEdit = () => {
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
     
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+
+    const todayDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
     const [ canvas, setCanvas ] = useState(null);
     const [ activeTool, setActiveTool ] = useState("textbox");
-    const [ selectedFont, setSelectedFont ] = useState("Dovemayo");
-    const [ textAlign, setTextAlign ] = useState("left");
-    const [ fontColor, setFontColor ] = useState("#000000");
+    const [ selectedFont, setSelectedFont ] = useState('');
+    const [ textAlign, setTextAlign ] = useState('');
+    const [ fontColor, setFontColor ] = useState('#000000');
     const [ penColor, setPenColor ] = useState('#000000');
     const [ penWidth, setPenWidth ] = useState(5);
-    const [ selectedDate, setSelectedDate ] = useState('');
+    const [ fontWeight, setFontWeight ] = useState('');
     
+    const api = axios.create({
+        baseURL: 'http://localhost:8080', 
+        headers: {
+            "Content-Type": "application/json;charset=utf-8",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDA4NTgwLCJleHAiOjE3MTEwMTIxODB9.NfR8B9qLkTISml-mWVuVKf4eSDxrNeBFQHAXLIrJu9E"
+        },
+        withCredentials: true,
+    });
+
     useEffect(() => {
         // 캔버스 생성
         const newCanvas = new fabric.Canvas(canvasRef.current, {
@@ -64,7 +78,7 @@ const DiaryWrite = () => {
             height: 1100,
             backgroundColor: '#FFFEFC'
         });
-    
+
         fabric.Object.prototype.set({
             cornerSize: 7,
             cornerStyle: 'rect',
@@ -72,29 +86,56 @@ const DiaryWrite = () => {
             cornerColor: '#CDCDCD',
             borderColor: '#CDCDCD',
         });
-    
+
         setCanvas(newCanvas);
-    
-        // 텍스트박스 추가
-        const textbox = new fabric.Textbox('', {
-            left: 50,
-            top: 50,
-            width: 500,
-            fontSize: 24,
-            fontFamily: selectedFont,
-            padding: 10,
+
+        const dailyDiaryId = 1;
+
+        WebFont.load({
+            custom: {
+                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'], // 사용하려는 폰트 목록
+                urls: ['src/asset/fonts'] // 폰트를 정의한 CSS 파일의 경로
+            },
+            active: () => {
+                getDiary(dailyDiaryId);
+            }
         });
-        newCanvas.add(textbox);
         
-        textboxRef.current = textbox; // 텍스트박스 ref 설정
-        newCanvas.setActiveObject(textbox);
-        
+        const getDiary = (dailyDiaryId: number) => {
+            api({
+                url: `/diary/${dailyDiaryId}`,
+                method: 'GET'
+            })
+            .then((resp) => {
+                const data = resp.data;
+                console.log(data);
+                // JSON으로부터 캔버스 로드 후, 모든 객체를 선택 불가능하게 설정
+                newCanvas.loadFromJSON(data.dailyContent, () => {
+                    newCanvas.renderAll();
+                    // 모든 객체를 순회하면서 selectable 속성을 false로 설정
+                    newCanvas.forEachObject((obj) => {
+                        obj.selectable = false;
+                    });
+                });
+                // 모든 객체를 순회하면서 selectable 속성을 false로 설정
+                const decoObjects = JSON.parse(data.decoration);
+
+                fabric.util.enlivenObjects(decoObjects, (enlivenedObjects) => {
+                    enlivenedObjects.forEach((obj) => {
+                        obj.selectable = true;
+                        newCanvas.add(obj); // 각 객체를 캔버스에 추가
+                    });
+                    newCanvas.renderAll(); // 모든 객체가 추가된 후 캔버스를 다시 그림
+                }, null);
+            });
+        }
+
         // 언마운트 시 캔버스 정리
         return () => {
             newCanvas.dispose();
         };
     }, []);
-    
+
     useEffect(() => {
         if(!canvasRef.current || !canvas) return;
         
@@ -184,7 +225,9 @@ const DiaryWrite = () => {
         canvas.setActiveObject(textboxRef.current);
         const activeObject = canvas.getActiveObject();
         if (activeObject && activeObject.type === 'textbox') {
-            activeObject.set('fontWeight', activeObject.get('fontWeight') === 'normal'? 'bold' : 'normal');
+            const fontWeight = activeObject.get('fontWeight') === 'normal'? 'bold' : 'normal';
+            setFontWeight(fontWeight);
+            activeObject.set('fontWeight', fontWeight);
             canvas.renderAll();
         }
     }
@@ -338,45 +381,33 @@ const DiaryWrite = () => {
 
     const navigator = useNavigate();
 
-    const handleDateChange = (date: string) => {
-        setSelectedDate(date);
-    };
-
-    // Axios 인스턴스 생성
-    const api = axios.create({
-        baseURL: 'http://localhost:8080', 
-        headers: {
-            "Content-Type": "application/json;charset=utf-8",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDA4NTgwLCJleHAiOjE3MTEwMTIxODB9.NfR8B9qLkTISml-mWVuVKf4eSDxrNeBFQHAXLIrJu9E"
-        },
-        withCredentials: true,
-    });
-    
     // 저장
     const saveDiary = () => {
-        // string으로 전달
-        const diaryToString = JSON.stringify(canvas.toJSON());
+        // canvas에서 selectable이 true인 객체들만 필터링
+        const decoObjects = canvas.getObjects().filter(obj => obj.selectable);
 
-        console.log(diaryToString);
+        // 필터링된 객체들을 JSON 문자열로 변환
+        const decoString = JSON.stringify(decoObjects.map(obj => obj.toJSON()));
+
+        const dailyDiaryId = 1;
+
         api({
-            url: '/diary',
+            url: `/diary/decorate/${dailyDiaryId}`,
             method: 'POST',
             data: {
-                diaryId: 1,
-                dailyDate: selectedDate,
-                dailyContent: diaryToString,
+                decoration: decoString,
             },
         })
         .then((resp) => {
             console.log(resp);
+            navigator(`/diary`);
         });
     }
 
     return (
         <Container>
             <Header>
-                <BackIcon onClick={ () => { navigator('/diary') } }/>
-                <DateSelect onDateChange={ handleDateChange }/>
+                <BackIcon onClick={() => { navigator('/diary') }} />
                 <SaveIcon onClick={ saveDiary }/>
             </Header>
             <canvas style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
@@ -403,6 +434,7 @@ const DiaryWrite = () => {
                         <TextboxContent 
                             selectedFont={ selectedFont } 
                             handleFontChange={ handleFontChange } 
+                            fontWeight={ fontWeight }
                             handleFontWeight={ handleFontWeight }
                             textAlign={ textAlign }
                             handleTextAlign={ handleTextAlign }
@@ -427,4 +459,4 @@ const DiaryWrite = () => {
     );
 };
 
-export default DiaryWrite;
+export default DiaryEdit;

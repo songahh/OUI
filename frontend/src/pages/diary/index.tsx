@@ -35,8 +35,6 @@ const Diary = () => {
             borderColor: '#CDCDCD',
         });
         
-        const dailyDiaryId = 20;
-
         WebFont.load({
             custom: {
                 families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'], // 사용하려는 폰트 목록
@@ -47,12 +45,14 @@ const Diary = () => {
             }
         });
 
+        const dailyDiaryId = 1;
+
         // Axios 인스턴스 생성
         const api = axios.create({
             baseURL: 'http://localhost:8080', 
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
-                "Cookie": accessToken,
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDA4NTgwLCJleHAiOjE3MTEwMTIxODB9.NfR8B9qLkTISml-mWVuVKf4eSDxrNeBFQHAXLIrJu9E"
             },
             withCredentials: true,
         });
@@ -60,8 +60,7 @@ const Diary = () => {
         const getDiary = (dailyDiaryId: number) => {
             api({
                 url: `/diary/${dailyDiaryId}`,
-                method: 'GET',
-                withCredentials: true,
+                method: 'GET'
             })
             .then((resp) => {
                 const data = resp.data;
@@ -73,6 +72,16 @@ const Diary = () => {
                         obj.selectable = false;
                     });
                 });
+
+                const decoObjects = JSON.parse(data.decoration);
+
+                fabric.util.enlivenObjects(decoObjects, (enlivenedObjects) => {
+                    enlivenedObjects.forEach((obj) => {
+                        obj.selectable = false;
+                        newCanvas.add(obj);
+                    });
+                    newCanvas.renderAll();
+                }, null);
             });
         }
 

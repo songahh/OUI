@@ -9,15 +9,17 @@ const SelectLabel = styled.span`
 
 const DateSelect = (props: DateSelectProps) => {
   const { onDateChange, dailyDate } = props;
-
-  const dailyYear = new Date(dailyDate).getFullYear();
-  const dailyMonth = new Date(dailyDate).getMonth() + 1;
-  const dailyDay = new Date(dailyDate).getDate();
-
-  const [ year, setYear ] = useState((dailyYear));
-  const [ month, setMonth ] = useState(dailyMonth);
-  const [ day, setDay ] = useState(dailyDay);
+  
+  const [ year, setYear ] = useState(new Date(dailyDate).getFullYear());
+  const [ month, setMonth ] = useState(new Date(dailyDate).getMonth() + 1);
+  const [ day, setDay ] = useState(new Date(dailyDate).getDate());
   const [ daysInMonth, setDaysInMonth ] = useState([]);
+
+  useEffect(() => {
+    setYear(new Date(dailyDate).getFullYear());
+    setMonth(new Date(dailyDate).getMonth() + 1);
+    setDay(new Date(dailyDate).getDate());
+  }, [ dailyDate]);
 
   useEffect(() => {
     const updateDaysInMonth = () => {
@@ -36,7 +38,7 @@ const DateSelect = (props: DateSelectProps) => {
 
     const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     onDateChange && onDateChange(formattedDate);
-  }, [ year, month, day, onDateChange ]);
+  }, [ year, month, day ]);
 
   return (
     <div>
