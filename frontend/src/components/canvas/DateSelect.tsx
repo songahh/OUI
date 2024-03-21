@@ -8,16 +8,26 @@ const SelectLabel = styled.span`
 `;
 
 const DateSelect = (props: DateSelectProps) => {
-  const { onDateChange } = props;
+  const { selectedDate, setSelectedDate } = props;
 
-  const initialYear = new Date().getFullYear();
-  const initialMonth = new Date().getMonth() + 1;
-  const initialDay = new Date().getDate();
+  const currentDate = new Date();
+  const initialDate = selectedDate ? new Date(props.selectedDate) : currentDate;
 
-  const [year, setYear] = useState(initialYear);
-  const [month, setMonth] = useState(initialMonth);
-  const [day, setDay] = useState(initialDay);
+  const selectedYear = new Date(initialDate).getFullYear();
+  const selectedMonth = new Date(initialDate).getMonth() + 1;
+  const selectedDay = new Date(initialDate).getDate();
+
+  const [year, setYear] = useState(selectedYear);
+  const [month, setMonth] = useState(selectedMonth);
+  const [day, setDay] = useState(selectedDay);
   const [daysInMonth, setDaysInMonth] = useState([]);
+
+  useEffect(() => {
+    const date = new Date(selectedDate || currentDate);
+    setYear(date.getFullYear());
+    setMonth(date.getMonth() + 1);
+    setDay(date.getDate());
+  }, [ selectedDate ]);
 
   useEffect(() => {
     const updateDaysInMonth = () => {
@@ -40,20 +50,20 @@ const DateSelect = (props: DateSelectProps) => {
     updateDaysInMonth();
 
     const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    onDateChange && onDateChange(formattedDate);
-  }, [ year, month, day, onDateChange ]);
+    setSelectedDate(formattedDate);
+  }, [ year, month, day ]);
 
-  const handleYearChange = (e) => {
+  const handleYearChange = (e: any) => {
     const selectedYear = parseInt(e.target.value, 10);
     setYear(selectedYear);
   };
 
-  const handleMonthChange = (e) => {
+  const handleMonthChange = (e: any) => {
     const selectedMonth = parseInt(e.target.value, 10);
     setMonth(selectedMonth);
   };
 
-  const handleDayChange = (e) => {
+  const handleDayChange = (e: any) => {
     const selectedDay = parseInt(e.target.value, 10);
     setDay(selectedDay);
   };
@@ -125,5 +135,6 @@ const DateSelect = (props: DateSelectProps) => {
 export default DateSelect;
 
 type DateSelectProps = {
-  onDateChange?: (formattedDate: string) => void;
+  selectedDate?: string,
+  setSelectedDate?: React.Dispatch<React.SetStateAction<string>>,
 }

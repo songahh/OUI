@@ -66,7 +66,7 @@ const DiaryEdit = () => {
         baseURL: 'http://localhost:8080', 
         headers: {
             "Content-Type": "application/json;charset=utf-8",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDA4NTgwLCJleHAiOjE3MTEwMTIxODB9.NfR8B9qLkTISml-mWVuVKf4eSDxrNeBFQHAXLIrJu9E"
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDM5NTUyLCJleHAiOjE3MTEwNDMxNTJ9.oStW42gpXeOk_w1oQnfzVq-ENWyIs1y89id_akTTusE"
         },
         withCredentials: true,
     });
@@ -89,7 +89,7 @@ const DiaryEdit = () => {
 
         setCanvas(newCanvas);
 
-        const dailyDiaryId = 1;
+        const dailyDiaryId = 5;
 
         WebFont.load({
             custom: {
@@ -389,7 +389,7 @@ const DiaryEdit = () => {
         // 필터링된 객체들을 JSON 문자열로 변환
         const decoString = JSON.stringify(decoObjects.map(obj => obj.toJSON()));
 
-        const dailyDiaryId = 1;
+        const dailyDiaryId = 5;
 
         api({
             url: `/diary/decorate/${dailyDiaryId}`,

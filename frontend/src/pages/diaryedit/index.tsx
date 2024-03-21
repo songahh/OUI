@@ -1,8 +1,7 @@
 import { fabric } from 'fabric';
 import { BottomSheet } from 'react-spring-bottom-sheet'
 import 'react-spring-bottom-sheet/dist/style.css'
-import { SaveIcon, BackIcon } from 'src/components';
-import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from './components';
+import { SaveIcon, BackIcon, Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from 'src/components';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
@@ -43,8 +42,17 @@ const Content = styled.div`
 `;
 
 const DiaryEdit = () => {
+    const navigator = useNavigate();
+
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
+
+    const [textboxProps, setTextboxProps] = useState({
+        selectedFont: 'Dovemayo',
+        fontWeight: 'normal',
+        textAlign: 'left',
+        fontColor: '#262626',
+    });
     
     const today = new Date();
     const year = today.getFullYear();
@@ -55,19 +63,13 @@ const DiaryEdit = () => {
 
     const [ canvas, setCanvas ] = useState(null);
     const [ activeTool, setActiveTool ] = useState("textbox");
-    const [ selectedFont, setSelectedFont ] = useState('');
-    const [ textAlign, setTextAlign ] = useState('');
-    const [ fontColor, setFontColor ] = useState('#000000');
-    const [ penColor, setPenColor ] = useState('#000000');
-    const [ penWidth, setPenWidth ] = useState(5);
-    const [ fontWeight, setFontWeight ] = useState('');
-    const [ dailyDate, setDailyDate ] = useState(todayDate);
+    const [ selectedDate, setSelectedDate ] = useState(todayDate);
     
     const api = axios.create({
         baseURL: 'http://localhost:8080', 
         headers: {
             "Content-Type": "application/json;charset=utf-8",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDA4NTgwLCJleHAiOjE3MTEwMTIxODB9.NfR8B9qLkTISml-mWVuVKf4eSDxrNeBFQHAXLIrJu9E"
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDQzOTMwLCJleHAiOjE3MTEwNDc1MzB9.hmCSNrBD4RwdpDHY96N-GpKcy9r_nJU7NjvAN8wr6V0"
         },
         withCredentials: true,
     });
@@ -90,18 +92,20 @@ const DiaryEdit = () => {
 
         setCanvas(newCanvas);
 
-        const dailyDiaryId = 1;
+        //////////// 임시 dailyDiaryId
+        const dailyDiaryId = 5;
 
         WebFont.load({
             custom: {
                 families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'], // 사용하려는 폰트 목록
-                urls: ['src/asset/fonts'] // 폰트를 정의한 CSS 파일의 경로
+                urls: ['src/asset/fonts']
             },
             active: () => {
                 getDiary(dailyDiaryId);
             }
         });
         
+        // 수정할 일기 조회
         const getDiary = (dailyDiaryId: number) => {
             api({
                 url: `/diary/${dailyDiaryId}`,
@@ -110,18 +114,19 @@ const DiaryEdit = () => {
             .then((resp) => {
                 const data = resp.data;
 
-                setDailyDate(data.dailyDate.substring(0, 10));
+                setSelectedDate(data.dailyDate.substring(0, 10));
 
-                // JSON으로부터 캔버스 로드 후, 모든 객체를 선택 불가능하게 설정
                 newCanvas.loadFromJSON(data.dailyContent, () => {
                     newCanvas.renderAll();
                     newCanvas.forEachObject((obj) => {
                         if(obj.type === "textbox") {
                             textboxRef.current = obj;
-                            setSelectedFont(textboxRef.current.fontFamily);
-                            setFontColor(textboxRef.current.fill);
-                            setTextAlign(textboxRef.current.textAlign);
-                            setFontWeight(textboxRef.current.fontWeight);
+                            setTextboxProps({
+                                selectedFont: textboxRef.current.fontFamily,
+                                fontWeight: textboxRef.current.fontWeight,
+                                textAlign: textboxRef.current.textAlign,
+                                fontColor: textboxRef.current.fill,
+                            });
                         }
                     });
                 });
@@ -133,193 +138,6 @@ const DiaryEdit = () => {
             newCanvas.dispose();
         };
     }, []);
-
-    useEffect(() => {
-        if(!canvasRef.current || !canvas) return;
-        
-        switch(activeTool) {
-            case "drawing":
-                handlePenTool();
-                disableTextbox();
-                break;
-            case "textbox":
-                disablePenTool();
-                handleTextboxTool();
-                break;
-            default:
-                disablePenTool();
-                disableTextbox();
-        }
-    }, [ activeTool ]);
-
-    useEffect(() => {
-        if (!canvas || !textboxRef.current) return;
-        
-        const activeObject = canvas.getActiveObject();
-        if (activeObject && activeObject.type === 'textbox') {
-            activeObject.set('textAlign', textAlign);
-            canvas.renderAll();
-        }
-    }, [ textAlign ]);
-
-    useEffect(() => {
-        if (!canvas || !textboxRef.current) return;
-
-        const activeObject = canvas.getActiveObject();
-        if (activeObject && activeObject.type === 'textbox') {
-            activeObject.set('fontFamily', selectedFont);
-            canvas.renderAll();
-        }
-    }, [ selectedFont ]);
-
-    useEffect(() => {
-        if(!canvas || !textboxRef.current) return;
-
-        const pen = canvas.freeDrawingBrush;
-        pen.color = penColor;
-        canvas.renderAll();
-    }, [ penColor ])
-    
-    useEffect(() => {
-        if(!canvas || !textboxRef.current) return;
-
-        const pen = canvas.freeDrawingBrush;
-        pen.width = penWidth;
-        canvas.renderAll();
-    }, [ penWidth ])
-
-    // 텍스트박스 선택 활성화
-    const handleTextboxTool = () => {
-        canvas.isDrawingMode = false;
-        canvas.setActiveObject(textboxRef.current);
-        canvas.renderAll();
-    }
-
-    // 텍스트박스 선택 비활성화
-    const disableTextbox = () => {
-        canvas.discardActiveObject();
-        canvas.renderAll();
-    } 
-
-    // 펜 활성화
-    const handlePenTool = () => {
-        canvas.freeDrawingBrush.width = penWidth;
-        canvas.isDrawingMode = true;
-    };
-
-    // 펜 비활성화
-    const disablePenTool = () => {
-        canvas.isDrawingMode = false;
-    }
-    
-    // 폰트 변경
-    const handleFontChange = (event: any) => {
-        canvas.setActiveObject(textboxRef.current);
-        setSelectedFont(event.target.value);
-    };
-
-    // 텍스트 굵기
-    const handleFontWeight = () => {
-        canvas.setActiveObject(textboxRef.current);
-        const activeObject = canvas.getActiveObject();
-        if (activeObject && activeObject.type === 'textbox') {
-            const fontWeight = activeObject.get('fontWeight') === 'normal'? 'bold' : 'normal';
-            setFontWeight(fontWeight);
-            activeObject.set('fontWeight', fontWeight);
-            canvas.renderAll();
-        }
-    }
-
-    // 텍스트 정렬
-    const handleTextAlign = (position: string) => {
-        canvas.setActiveObject(textboxRef.current);
-        setTextAlign(position);
-    }
-
-    // 텍스트 색상
-    const handleFontColor = (event: any) => {
-        canvas.setActiveObject(textboxRef.current);
-
-        const color = event.target.value;
-        setFontColor(color);
-        
-        const activeObject = canvas.getActiveObject();
-        if (activeObject && activeObject.type === 'textbox') {
-            activeObject.set('fill', color);
-            canvas.renderAll();
-        }
-    }
-
-    // 펜 굵기
-    const handlePenWidth = (event: any) => {
-        setPenWidth(parseInt(event.target.value, 10) || 1);
-    }
-
-    // 펜 색상
-    const handlePenColor = (event: any) => {
-        setPenColor(event.target.value);
-    } 
-
-    // 이미지 업로드
-    const handleImageUpload = (file: File) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const imgElement = document.createElement('img');
-            imgElement.src = event.target.result as string;
-            imgElement.onload = () => {
-                const maxWidth = 150;
-                const scaleFactor = maxWidth / imgElement.width; 
-
-                const imgInstance = new fabric.Image(imgElement, {
-                    left: 300,
-                    top: 300,
-                    scaleX: scaleFactor,
-                    scaleY: scaleFactor,
-                    angle: 0,
-                    opacity: 1.0,
-                });
-                canvas.add(imgInstance);
-                canvas.setActiveObject(imgInstance);
-            };
-        };
-        reader.readAsDataURL(file);
-    };
-
-    // 스티커 추가
-    const handleSticker = (value: string) => {
-        const imgElement = document.createElement('img');
-        imgElement.src = value;
-        imgElement.onload = () => {
-            const maxWidth = 150;
-            const scaleFactor = maxWidth / imgElement.width; 
-
-            const imgInstance = new fabric.Image(imgElement, {
-                left: 300,
-                top: 300,
-                scaleX: scaleFactor,
-                scaleY: scaleFactor,
-                angle: 0,
-                opacity: 1.0,
-            });
-            canvas.add(imgInstance);
-            canvas.setActiveObject(imgInstance);
-        };
-    }
-
-    function deleteObject(eventData: MouseEvent, transformData: fabric.Transform, x: number, y: number): boolean {
-        const canvas = transformData.target.canvas;
-        const activeObjects = canvas.getActiveObjects();
-        
-        if (activeObjects && activeObjects.length > 0) {
-            activeObjects.forEach(object => {
-                canvas.remove(object);
-            });
-            canvas.discardActiveObject(); // 선택 해제
-            canvas.requestRenderAll(); // 캔버스 갱신
-            return true; // 핸들러가 성공적으로 처리되었음을 반환
-        }
-        return false; // 아무것도 삭제되지 않았음을 반환
-    }
 
     // 객체 선택 시 삭제 버튼 추가
     useEffect(() => {
@@ -349,8 +167,66 @@ const DiaryEdit = () => {
         img.onload = () => {
             canvas.renderAll();
         };
-    }, [ canvas ]);    
+    }, [ canvas ]);   
+    
+    // 객체 삭제
+    function deleteObject(eventData: MouseEvent, transformData: fabric.Transform, x: number, y: number): boolean {
+        const canvas = transformData.target.canvas;
+        const activeObjects = canvas.getActiveObjects();
+        
+        if (activeObjects && activeObjects.length > 0) {
+            activeObjects.forEach(object => {
+                canvas.remove(object);
+            });
+            canvas.discardActiveObject();
+            canvas.requestRenderAll();
+            return true;
+        }
+        return false;
+    }
 
+    useEffect(() => {
+        if(!canvasRef.current || !canvas) return;
+        
+        switch(activeTool) {
+            case "drawing":
+                handlePenTool();
+                disableTextbox();
+                break;
+            case "textbox":
+                disablePenTool();
+                handleTextboxTool();
+                break;
+            default:
+                disablePenTool();
+                disableTextbox();
+        }
+    }, [ activeTool ]);
+
+    // 텍스트박스 선택 활성화
+    const handleTextboxTool = () => {
+        canvas.isDrawingMode = false;
+        canvas.setActiveObject(textboxRef.current);
+        canvas.renderAll();
+    }
+
+    // 텍스트박스 선택 비활성화
+    const disableTextbox = () => {
+        canvas.discardActiveObject();
+        canvas.renderAll();
+    } 
+
+    // 펜 활성화
+    const handlePenTool = () => {
+        canvas.freeDrawingBrush.width = 10;
+        canvas.isDrawingMode = true;
+    };
+
+    // 펜 비활성화
+    const disablePenTool = () => {
+        canvas.isDrawingMode = false;
+    }
+    
     // Canvas에서 마우스 이벤트 핸들링
     useEffect(() => {
         if (!canvas) return;
@@ -372,29 +248,18 @@ const DiaryEdit = () => {
         }
     };
 
-    // 지우개 버튼 클릭 시 획 지우개 모드 활성화
-    const handleEraserTool = () => {
-        setActiveTool('eraser');
-    };
-
-    const navigator = useNavigate();
-
-    const handleDateChange = (date: string) => {
-        setDailyDate(date);
-    };
-
     // 저장
     const saveDiary = () => {
         // string으로 전달
         const diaryToString = JSON.stringify(canvas.toJSON());
 
-        const dailyDiaryId = 1;
+        const dailyDiaryId = 5;
 
         api({
             url: `/diary/${dailyDiaryId}`,
             method: 'PUT',
             data: {
-                dailyDate: dailyDate,
+                dailyDate: selectedDate,
                 dailyContent: diaryToString,
             },
         })
@@ -408,7 +273,7 @@ const DiaryEdit = () => {
         <Container>
             <Header>
                 <BackIcon onClick={() => { navigator('/diary') }} />
-                <DateSelect dailyDate={ dailyDate } onDateChange={ handleDateChange } />
+                <DateSelect selectedDate={ selectedDate } setSelectedDate={ setSelectedDate }/>
                 <SaveIcon onClick={ saveDiary }/>
             </Header>
             <canvas style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
@@ -423,36 +288,22 @@ const DiaryEdit = () => {
                 ]}
                 header={
                     <BottomSheetHeader>
-                        <Tab value="텍스트" onClick={() => setActiveTool("textbox")} disabled={ activeTool === "textbox" }/>
-                        <Tab value="이미지" onClick={() => setActiveTool("image")} disabled={ activeTool === "image" }/>
-                        <Tab value="그리기" onClick={() => setActiveTool("drawing")} disabled={ activeTool === "drawing" }/>
-                        <Tab value="지우개" onClick={ handleEraserTool } disabled={ activeTool === "eraser" }/>
+                        <Tab value="텍스트" onClick={ () => setActiveTool("textbox") } disabled={ activeTool === "textbox" }/>
+                        <Tab value="이미지" onClick={ () => setActiveTool("image") } disabled={ activeTool === "image" }/>
+                        <Tab value="그리기" onClick={ () => setActiveTool("drawing") } disabled={ activeTool === "drawing" }/>
+                        <Tab value="지우개" onClick={ () => setActiveTool('eraser') } disabled={ activeTool === "eraser" }/>
                     </BottomSheetHeader>
                 }
             >
                 <Content>
                     {(activeTool === "textbox") && (
-                        <TextboxContent 
-                            selectedFont={ selectedFont } 
-                            handleFontChange={ handleFontChange } 
-                            fontWeight={ fontWeight }
-                            handleFontWeight={ handleFontWeight }
-                            textAlign={ textAlign }
-                            handleTextAlign={ handleTextAlign }
-                            fontColor={ fontColor }
-                            handleFontColor={ handleFontColor }
-                        />
+                        <TextboxContent canvas={ canvas } textboxRef={ textboxRef } textboxProps={ textboxProps } />
                     )}
                     {(activeTool === "image") && (
-                        <ImageContent onImageUpload={ handleImageUpload } handleSticker={ handleSticker }/>
+                        <ImageContent canvas={ canvas } />
                     )}
                     {(activeTool === "drawing" || activeTool === "eraser") && (
-                        <DrawingContent 
-                            penWidth={ penWidth }
-                            handlePenWidth={ handlePenWidth }
-                            penColor={ penColor } 
-                            handlePenColor={ handlePenColor }
-                        />
+                        <DrawingContent canvas={ canvas } />
                     )}
                 </Content>                                
             </BottomSheet>

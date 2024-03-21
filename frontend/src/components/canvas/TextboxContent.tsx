@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormatAlignLeft, FormatAlignCenter, FormatAlignRight, FormatBold } from '@mui/icons-material';
 import { Select, MenuItem, InputLabel, ToggleButton, ToggleButtonGroup, Divider } from '@mui/material';
 import styled from 'styled-components';
@@ -79,42 +79,98 @@ const TextboxContent = ( props: ContentProps ) => {
         "#C0DEFF",
         "#BDB5FF",
     ];
+    
+    const { canvas, textboxRef, textboxProps } = props;
+    
 
-    const { 
-        selectedFont,
-        handleFontChange,
-        handleFontWeight,
-        textAlign,
-        handleTextAlign,
-        fontColor,
-        handleFontColor 
-    } = props;
+    const [ selectedFont, setSelectedFont ] = useState('Dovemayo');
+    const [ fontWeight, setFontWeight ] = useState(false);
+    const [ textAlign, setTextAlign ] = useState('left');
+    const [ fontColor, setFontColor ] = useState('#262626');
 
-    const[ fontWeight, setFontWeight ] = useState(false);
+    useEffect(() => {
+        setSelectedFont(textboxProps?.selectedFont || 'Dovemayo');
+        setTextAlign(textboxProps?.textAlign || 'left');
+        setFontColor(textboxProps?.fontColor || '#262626');
+        setFontWeight(textboxProps?.fontWeight === 'bold' ? true : false);
+    }, [textboxProps])
 
-    const handleWeight = () => {
-        handleFontWeight();
-        setFontWeight(!fontWeight);
+    // 글씨체 변경
+    const handleFontChange = (event: any) => {
+        canvas.setActiveObject(textboxRef.current);
+
+        const font = event.target.value;
+        setSelectedFont(font);
+
+        if (!canvas || !textboxRef.current) return;
+
+        const activeObject: any = canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'textbox') {
+            activeObject.set("fontFamily", font);
+            canvas.renderAll();
+        }
     };
 
+    // 글씨 굵기 변경
+    const handleFontWeight = () => {
+        canvas.setActiveObject(textboxRef.current);
+        setFontWeight(!fontWeight);
+
+        if (!canvas || !textboxRef.current) return;
+        
+        const activeObject: any = canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'textbox') {
+            activeObject.set('fontWeight', activeObject.get('fontWeight') === 'normal' ? 'bold' : 'normal');
+            canvas.renderAll();
+        }
+    };
+
+    // 글씨 정렬 변경
+    const handleTextAlign = (position: string) => {
+        canvas.setActiveObject(textboxRef.current);
+        setTextAlign(position);
+
+        if (!canvas || !textboxRef.current) return;
+        
+        const activeObject: any = canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'textbox') {
+            activeObject.set('textAlign', position);
+            canvas.renderAll();
+        }
+    };
+
+    // 글씨 색 변경
+    const handleFontColor = (event: any) => {
+        canvas.setActiveObject(textboxRef.current);
+
+        const color = event.target.value;
+        setFontColor(color);
+        
+        const activeObject = canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'textbox') {
+            activeObject.set('fill', color);
+            canvas.renderAll();
+        }
+    };
+    
     return (
         <ContentWrapper>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start"}}>
                 <SelectWrapper>
                     <InputLabel style={{ fontWeight: "bold", margin: "20px" }}>글씨체</InputLabel>
                     <Select
-                        value={selectedFont}
-                        onChange={handleFontChange}
+                        value={ selectedFont }
+                        onChange={ handleFontChange }
                         sx={{ width: '250px' }}
                         style={{ fontFamily: `${ selectedFont }` }}
                     >
                         {fontList.map((font) => (
                             <MenuItem
-                                key={font.fontId}
-                                value={font.fontFamily}
+                                key={ font.fontId }
+                                value={ font.fontFamily }
                                 style={{ fontFamily: `${font.fontFamily}` }}
                             >
-                                {font.fontTitle}
+                                { font.fontTitle }
                             </MenuItem>
                         ))}
                     </Select>
@@ -124,7 +180,7 @@ const TextboxContent = ( props: ContentProps ) => {
                     size="large"
                     aria-label="bold"
                     selected={ fontWeight }
-                    onChange={ handleWeight }
+                    onChange={ handleFontWeight }
                 >
                     <FormatBold />
                 </ToggleButton>
@@ -175,11 +231,12 @@ const TextboxContent = ( props: ContentProps ) => {
 export default TextboxContent;
 
 type ContentProps = {
-    selectedFont?: string,
-    handleFontChange?: (e: any) => void,
-    handleFontWeight?: () => void,
-    textAlign?: string,
-    handleTextAlign?: (position: string) => void,
-    fontColor?: string,
-    handleFontColor?: (e: any) => void,
+    canvas: fabric.Canvas,
+    textboxRef: React.MutableRefObject<fabric.Textbox>,
+    textboxProps?: {
+        selectedFont: string;
+        fontWeight: string;
+        textAlign: string;
+        fontColor: string;
+    },
 }
