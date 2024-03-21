@@ -1,9 +1,8 @@
 import { getAxios } from "src/api/util"
 
-export const getCalendar = async ( params: Date ) => {
+export const getCalendar = async ( params: string ) => {
     try{
-        console.log(params)
-        return await getAxios( '/calendar/my', params )
+        return await getAxios( '/calendar/my', { date: params } ).then((res)=>console.log(res))
     }catch( err ){
         console.log( err )
     }

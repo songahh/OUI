@@ -5,6 +5,7 @@ export const routes = [
     { path: 'diaryedit' },
     { path: 'diary' },
     { path: 'calendar' },
+    { path: 'calendar', dynamicPath: `calendar/:diaryId` },
     { path: 'main' },
     { path: 'mypage' },
     { path: 'login' },

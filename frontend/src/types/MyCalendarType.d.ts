@@ -1,7 +1,7 @@
 export interface DiaryType {
     memberId: int,
     dailyDiaryId: int,
-    date: Date,
+    date: String,
     emotion: String,
 }
 
@@ -10,7 +10,7 @@ export interface ScheduleType {
     memberId: int,
     title: String,
     content: String,
-    date: Date,
+    date: String,
 }
 
 export interface MyCalendarType {
