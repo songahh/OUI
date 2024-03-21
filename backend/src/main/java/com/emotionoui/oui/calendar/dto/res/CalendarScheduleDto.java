@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 @Builder
 public class CalendarScheduleDto {
@@ -23,16 +24,29 @@ public class CalendarScheduleDto {
     private String content;
 
     @JsonProperty("date")
-    private LocalDate date;
+    private String date;
 
     public static CalendarScheduleDto of(Schedule schedule){
+
+        LocalDate localDate = LocalDate.ofInstant(schedule.getDate().toInstant(), ZoneId.systemDefault());
 
         return  CalendarScheduleDto.builder()
                 .scheduleId(schedule.getScheduleId())
                 .memberId(schedule.getMember().getMemberId())
                 .title(schedule.getTitle())
                 .content(schedule.getContent())
-                .date(schedule.getDate())
+                .date(localDate.toString())
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "ScheduleDto{" +
+                "scheduleId=" + scheduleId +
+                ", memberId=" + memberId +
+                ", title=" + title +
+                ", content=" + content +
+                ", date=" + date + '\'' +
+                '}';
     }
 }
