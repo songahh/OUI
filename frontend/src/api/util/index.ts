@@ -2,6 +2,7 @@ import useStore from 'src/store'
 import axios from 'axios'
 import cookie from 'react-cookies';
 
+
 const useAxios = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
   timeout: 10000
@@ -9,7 +10,8 @@ const useAxios = axios.create({
 
 useAxios.interceptors.request.use( 
   async( config ) => {
-      const accessToken  = cookie.load('Cookie')
+      const accessToken  = cookie.load('accessToken')
+      console.log("ACCESSTOKEN", accessToken)
     
       if( accessToken ){
         config.headers['Cookie'] = `${ accessToken }`
