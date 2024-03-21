@@ -6,9 +6,11 @@ import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from '.
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import WebFont from 'webfontloader';
+import { putDiary } from './api';
+import { WebFont } from 'webfontloader';
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
+import { useMutation } from 'react-query';
 
 const GlobalStyle = createGlobalStyle`
     [data-rsbs-scroll="true"] {
@@ -376,6 +378,13 @@ const DiaryWrite = () => {
         setDailyDate(date);
     };
 
+    const DiaryMutation = useMutation(putDiary,{
+        onSuccess: async( res ) =>{
+            // if( res?)
+        }
+    }
+    )
+
     
     // 저장
     const saveDiary = () => {
@@ -397,6 +406,9 @@ const DiaryWrite = () => {
             console.log(resp);
             navigator(`/diary`);
         });
+
+        
+        
     }
 
     return (
