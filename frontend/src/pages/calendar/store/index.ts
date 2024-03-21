@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-const useStore = create<Model>(( set, get ) => ({
+const useStore = create<Model>(( set ) => ({
   isModalOpened: false,
   updateModal: () => set(( state ) => ({ isModalOpened: !state.isModalOpened })),
 
@@ -14,8 +14,10 @@ const useStore = create<Model>(( set, get ) => ({
 export interface Model{
   isModalOpened : boolean
   updateModal: () => void
+
   clickDate: Date
   updateDate: ( date: Date ) => void
+
   modalContent: boolean
   setModalContent: () => void
 }

@@ -16,10 +16,9 @@ useAxios.interceptors.request.use(
         const storedData = JSON.parse(storedDataString);
 
         const accessToken = storedData?.state?.accessToken;
-        console.log('accessToken', accessToken)
         
         if( accessToken ){
-          config.headers['Authorization'] = `${ accessToken }`
+          config.headers['Authorization'] = `Bearer ${ accessToken }` // 앞에 Bearer를 추가해야 요청 성공
         }
   
         return config

@@ -5,7 +5,6 @@ import writeDiary from 'src/asset/images/writeDiary.png'
 import { LeftIcon, RightIcon } from 'src/components'
 import { useQuery } from 'react-query'
 import useStore from './store';
-import cookie from 'react-cookies'
 import { createPortal } from 'react-dom'
 import useDate from 'src/util/date'
 import styled from 'styled-components'
@@ -37,7 +36,8 @@ const CalendarHeaderRightWrapper =styled.button `
   align-items: center;
   margin-right: 10px;
   margin-top: 10px;
-
+  border: none;
+  background-color: transparent;
 `
 
 const CalendarHeaderMiddleWrapper = styled.div`
@@ -71,18 +71,18 @@ const Modal = styled.div`
 
 const Calendar = () => {
 
-  const { currentMonth, setCurrentMonth, calculateDateRange } = useDate()
+  const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() 
   const { startDate, endDate } = calculateDateRange()
-  const { isModalOpened, updateModal} = useStore()
+  const { isModalOpened, updateModal} = useStore() // Day 컴포넌트에서 업데이트 된 상태 가져오기
 
   const html = document.querySelector( 'html' )
 
-  const closeModal = () => {
+  const closeModal = () => { 
       updateModal()
       html?.classList.remove( 'scroll-locked' )
   }
 
-  const ModalPortal = ({ children, onClose  }) => {
+  const ModalPortal = ({ children, onClose  }) => { 
     const handleBackgroundClick = (e) => {
       ( e.target === e.currentTarget ) && onClose()
     }
@@ -107,8 +107,9 @@ const Calendar = () => {
   const moveNextMonth = () => { setCurrentMonth( addMonths( currentMonth, 1) ) }
 
   
+  const today = format(currentMonth, 'yyyy-MM-01')
 
-  const { data: calendars, refetch } = useQuery(['calendars', currentMonth], () => getCalendar(currentMonth))
+  const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getCalendar( today ))
   useEffect(() => { refetch() }, [ currentMonth, refetch ])
 
   return(
