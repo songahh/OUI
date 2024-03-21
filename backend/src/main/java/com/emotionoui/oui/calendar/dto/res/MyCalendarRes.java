@@ -5,7 +5,7 @@ import lombok.Builder;
 
 import java.util.Date;
 import java.util.List;
-
+@Builder
 public class MyCalendarRes {
 
     @JsonProperty("diaries")
@@ -14,9 +14,15 @@ public class MyCalendarRes {
     @JsonProperty("schedule")
     private List<CalendarScheduleDto> schedules;
 
-    @Builder
-    MyCalendarRes(List<CalendarDiaryDto> diaries, List<CalendarScheduleDto> schedules){
-        this.diaries = diaries;
-        this.schedules = schedules;
+//    @Builder
+//    MyCalendarRes(List<CalendarDiaryDto> diaries, List<CalendarScheduleDto> schedules){
+//        this.diaries = diaries;
+//        this.schedules = schedules;
+//    }
+    public static MyCalendarRes of(List<CalendarDiaryDto> diaries, List<CalendarScheduleDto> schedules){
+        return MyCalendarRes.builder()
+                .diaries(diaries)
+                .schedules(schedules)
+                .build();
     }
 }

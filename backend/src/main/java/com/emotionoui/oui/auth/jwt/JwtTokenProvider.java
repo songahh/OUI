@@ -32,8 +32,8 @@ public class JwtTokenProvider {
     }
 
     // 토큰의 유효성 + 만료일자 확인
-    public boolean validateToken(String token) {
-        return !jwtUtil.isExpired(token);
+    public int validateToken(String token) {
+        return jwtUtil.isExpired(token);
     }
 
     // 액세스 토큰 생성
@@ -41,21 +41,23 @@ public class JwtTokenProvider {
         return jwtUtil.createJwt(email, accessTokenExpireTime);
     }
 
-    public void createAccessTokenCookie(String accessToken, HttpServletResponse response) {
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
-        // 쿠키 만료 시간 설정 ( 60분 )
-        accessTokenCookie.setMaxAge(60*60);
-        response.addCookie(accessTokenCookie);
-    }
+    // 액세스 토큰을 쿠키에 담는 메서드
+//    public void createAccessTokenCookie(String accessToken, HttpServletResponse response) {
+//        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+//        accessTokenCookie.setHttpOnly(true);
+//        accessTokenCookie.setSecure(true);
+//        accessTokenCookie.setPath("/");
+//        // 쿠키 만료 시간 설정 ( 60분 )
+//        accessTokenCookie.setMaxAge(60*60);
+//        response.addCookie(accessTokenCookie);
+//    }
 
     // 리프레시 토큰 생성
     public String createRefreshToken(String email) {
         return jwtUtil.createJwt(email, refreshTokenExpireTime);
     }
 
+    // 리프레시 토큰을 쿠키에 담는 메서드
     public void createRefreshTokenCookie(String refreshToken, HttpServletResponse response) {
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
@@ -68,16 +70,22 @@ public class JwtTokenProvider {
 
     // 요청에서 토큰을 해석하는 메소드
     public String resolveToken(HttpServletRequest request) {
-        // 쿠키에서 토큰을 해석하는 메소드
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("accessToken".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
+        // 헤더에서 "Authorization" 값을 가져와서 토큰을 해석하는 메소드
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // "Bearer " 다음의 토큰 값을 반환
         }
         return null;
+//        // 쿠키에서 토큰을 해석하는 메소드
+//        Cookie[] cookies = request.getCookies();
+//        if (cookies != null) {
+//            for (Cookie cookie : cookies) {
+//                if ("accessToken".equals(cookie.getName())) {
+//                    return cookie.getValue();
+//                }
+//            }
+//        }
+//        return null;
     }
 
     // 토큰을 기반으로 사용자 인증 정보를 생성하는 메소드

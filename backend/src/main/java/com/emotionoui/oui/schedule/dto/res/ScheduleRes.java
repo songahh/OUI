@@ -5,7 +5,7 @@ import com.emotionoui.oui.schedule.entity.Schedule;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Builder
 public class ScheduleRes {
@@ -20,7 +20,7 @@ public class ScheduleRes {
     private String content;
 
     @JsonProperty("date")
-    private LocalDate date;
+    private Date date;
 
     public ScheduleRes of(Schedule schedule){
 

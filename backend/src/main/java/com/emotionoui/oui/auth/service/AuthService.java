@@ -5,10 +5,20 @@ import com.emotionoui.oui.auth.exception.KakaoGetMemberException;
 import com.emotionoui.oui.auth.exception.KakaoGetTokenException;
 import com.emotionoui.oui.auth.exception.MemberNotFoundException;
 import com.emotionoui.oui.auth.jwt.JwtTokenProvider;
+import com.emotionoui.oui.auth.redis.RedisPrefix;
+import com.emotionoui.oui.auth.redis.RedisService;
+import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.repository.MemberRepository;
+import com.emotionoui.oui.schedule.entity.Schedule;
+import com.emotionoui.oui.schedule.repository.ScheduleRepository;
+import com.emotionoui.oui.survey.entity.Preference;
+import com.emotionoui.oui.survey.repository.PreferenceRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -21,6 +31,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
+@RequiredArgsConstructor
 @Service
 public class AuthService {
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -32,12 +45,10 @@ public class AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
-
-    @Autowired
-    public AuthService(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userDetailsService = userDetailsService;
-    }
+    private final MemberRepository memberRepository;
+    private final RedisService redisService;
+    private final PreferenceRepository preferenceRepository;
+    private final ScheduleRepository scheduleRepository;
 
     /**
      * 카카오에서 유저 정보(email) 받아오기
@@ -133,7 +144,7 @@ public class AuthService {
 //            System.out.println("email: " + email);
             return new KakaoLoginRes(email);
         }catch (Exception e){
-           throw new KakaoGetMemberException(e);
+            throw new KakaoGetMemberException(e);
 
         }
     }
@@ -146,7 +157,7 @@ public class AuthService {
      */
     public String generateNewAccessToken(String refreshToken) throws Exception {
         // refreshToken의 유효성 검증.
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
+        if (jwtTokenProvider.validateToken(refreshToken)==1) {
             throw new IllegalArgumentException("리프레시 토큰이 유효하지 않습니다.");
         }
 
@@ -163,5 +174,31 @@ public class AuthService {
 
         // 새로운 accessToken을 생성합니다.
         return jwtTokenProvider.createAccessToken(email);
+    }
+
+    public void deleteMember(Member member) {
+        // redis에서 삭제
+        String key = RedisPrefix.REFRESH_TOKEN.prefix() + member.getEmail();
+        redisService.deleteValues(key);
+        // db에서 isDeleted == 1 로 바꾸기(탈퇴처리)
+        member.setIsDeleted(1);
+        memberRepository.save(member);
+        // 해당 사용자와 연관된 정보도 삭제처리하기
+        // 회원 취향
+        Optional<Preference> optionalPreference = preferenceRepository.findByMemberMemberIdAndIsDeleted(member.getMemberId(), 0); // 0은 삭제되지 않은 상태를 나타냄
+        if (optionalPreference.isPresent()) {
+            Preference preference = optionalPreference.get();
+            preference.changeIsDelete();
+            preferenceRepository.save(preference);
+        }
+        // 회원 일정
+        Optional<Schedule> optionalSchedule= scheduleRepository.findByMemberMemberIdAndIsDeleted(member.getMemberId(), 0);
+        if(optionalSchedule.isPresent()){
+            Schedule schedule = optionalSchedule.get();
+            schedule.changeIsDelete();;
+            scheduleRepository.save(schedule);
+        }
+        // 회원 다이어리
+        // 회원 알람
     }
 }
