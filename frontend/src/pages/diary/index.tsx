@@ -1,8 +1,9 @@
 import { fabric } from 'fabric';
 import { useEffect, useRef } from 'react';
-import axios from 'axios';
+import axios, { AxiosHeaders } from 'axios';
 import { useNavigate } from "react-router-dom";
 import WebFont from 'webfontloader';
+import cookie from 'react-cookies';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -14,7 +15,7 @@ const Container = styled.div`
 
 const Diary = () => {
     const canvasRef = useRef(null);
-
+    const accessToken = cookie.load('accessToken');
     const navigator = useNavigate();
     
     useEffect(() => {
@@ -46,10 +47,21 @@ const Diary = () => {
             }
         });
 
+        // Axios 인스턴스 생성
+        const api = axios.create({
+            baseURL: 'http://localhost:8080', 
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+                "Cookie": accessToken,
+            },
+            withCredentials: true,
+        });
+
         const getDiary = (dailyDiaryId: number) => {
-            axios({
-                url: `http://localhost:8080/diary/${dailyDiaryId}`,
-                method: 'GET'
+            api({
+                url: `/diary/${dailyDiaryId}`,
+                method: 'GET',
+                withCredentials: true,
             })
             .then((resp) => {
                 const data = resp.data;
