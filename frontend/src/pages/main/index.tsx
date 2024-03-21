@@ -40,6 +40,7 @@ const SliderWrapper = styled( Slider )`
 `;
 
 const Main = () => {
+
   const settings = {
     className: 'center',
     infinite: false,

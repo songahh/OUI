@@ -6,7 +6,6 @@ import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from '.
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import {Cookies} from 'react-cookie'
 import useStore from 'src/store';
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
@@ -46,9 +45,9 @@ const Content = styled.div`
 const DiaryWrite = () => {
 
 
-    const accessToken = useStore();
+    const accessToken = useStore(state => state.accessToken);
 
-    // console.log("!11"+accessToken);
+    console.log(accessToken);
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
     
