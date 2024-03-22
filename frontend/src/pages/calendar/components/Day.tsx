@@ -65,8 +65,10 @@ const Day = ( props: DayProps ) =>{
     const { day, calendars } = props
     const { updateDate, updateModal } = useStore()
 
-    const todos = ["Test1", 'Test2', 'Test3', "test4"]
-    // const todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
+    console.log('Day', calendars)
+
+    const diaries = calendars?.diaries?.filter(( diary ) => diary?.date?.substring(5, 10) === format( day, 'MM-dd'))
+    const todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
 
     function listTodo (e, date): void{
         console.log(date)
@@ -87,27 +89,26 @@ const Day = ( props: DayProps ) =>{
             { format( day, 'd' ) }
             </DayClick>
             <EmotionWrapper onClick={ goMyDiary }>
+                {
+                    diaries?.map(( diary, index ) => {
+                        return(
+                            <img src={ tmp1 } alt='' style={{ height: '100%' }} key={ index }/>
+                        )
+                    })
+                }
                 <img src={ tmp1 } alt='' style={{ height: '100%' }}/>
             </EmotionWrapper>
             <TodoWrapper>
             {
-                todos.slice(0, 3).map((index) => (
-                    <TodoItemWrapperContainer key={index}>
-                        <TodoHeaderWrapper/>
-                        <TodoItemWrapper />
-                    </TodoItemWrapperContainer>
-                  ))
-            }
-            {/* {
                 todos?.map(( todo, index ) =>{
                     return(
-                        <TodoItemWrapperContainer key={index}>
-                        <TodoHeaderWrapper/>
-                        <TodoItemWrapper >{todo.title}</TodoItemWrapper>
-                    </TodoItemWrapperContainer>
+                        <TodoItemWrapperContainer key={ index }>
+                            <TodoHeaderWrapper/>
+                            <TodoItemWrapper/>
+                        </TodoItemWrapperContainer>
                     )
                 })
-            } */}
+            }
             </TodoWrapper>
         </DayWrapper>
     )
