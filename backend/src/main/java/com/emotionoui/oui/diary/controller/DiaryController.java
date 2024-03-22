@@ -87,10 +87,9 @@ public class DiaryController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/diary/decorate/{dailyId}")
+    // 일기 꾸미기
+    @PostMapping("/decorate/{dailyId}")
     public ResponseEntity<?> decorateDailyDiary(@RequestBody DecorateDailyDiaryReq req, @PathVariable("dailyId") Integer dailyId) throws IOException, ExecutionException, InterruptedException {
         return new ResponseEntity<String>(diaryService.decorateDailyDiary(req, dailyId), HttpStatus.OK);
     }
-
-
 }
