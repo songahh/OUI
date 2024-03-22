@@ -1,18 +1,12 @@
 import { fabric } from 'fabric';
 import { BottomSheet } from 'react-spring-bottom-sheet'
 import 'react-spring-bottom-sheet/dist/style.css'
-import { SaveIcon, BackIcon, Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from 'src/components';
+import { SaveIcon, BackIcon, Tab, ImageContent, DrawingContent } from 'src/components';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
+import WebFont from 'webfontloader';
 import styled from 'styled-components';
-import { createGlobalStyle } from 'styled-components';
-
-const GlobalStyle = createGlobalStyle`
-    [data-rsbs-scroll="true"] {
-        overflow: hidden !important;
-    }
-`;
 
 const Header = styled.div`
     width: 100%;
@@ -26,6 +20,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: #F9F3EE;
 `;
 
 const BottomSheetHeader = styled.div`
@@ -39,16 +34,26 @@ const Content = styled.div`
     padding: 10px;
 `;
 
-const DiaryWrite = () => {
+const DiaryEdit = () => {
     const navigator = useNavigate();
 
     const canvasRef = useRef(null);
-    const textboxRef = useRef<fabric.Textbox>(null);
     
     const [ canvas, setCanvas ] = useState(null);
-    const [ activeTool, setActiveTool ] = useState("textbox");
-    const [ selectedDate, setSelectedDate ] = useState('');
+    const [ activeTool, setActiveTool ] = useState("image");
     
+    const api = axios.create({
+        baseURL: 'http://localhost:8080', 
+        headers: {
+            "Content-Type": "application/json;charset=utf-8",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDY1NzIxLCJleHAiOjE3MTEwNjkzMjF9.qzZ5JuNcYdkSv2kFdzfOVwLVo3xHMmDcO0mZoJ2OO2g"
+        },
+        withCredentials: true,
+    });
+
+    //////////// 임시 dailyDiaryId
+    const dailyDiaryId = 6;
+
     useEffect(() => {
         // 캔버스 생성
         const newCanvas = new fabric.Canvas(canvasRef.current, {
@@ -56,7 +61,7 @@ const DiaryWrite = () => {
             height: 900,
             backgroundColor: '#FFFEFC'
         });
-    
+
         fabric.Object.prototype.set({
             cornerSize: 10,
             cornerStyle: 'rect',
@@ -64,26 +69,50 @@ const DiaryWrite = () => {
             cornerColor: '#CDCDCD',
             borderColor: '#CDCDCD',
         });
-    
+
         setCanvas(newCanvas);
-    
-        // 텍스트박스 추가
-        const textbox = new fabric.Textbox('', {
-            left: 60,
-            top: 60,
-            width: 400,
-            fontSize: 24,
-            fontFamily: "Dovemayo",
-            fill: "#262626",
-            textAlign: "left",
-            fontWeight: "normal",
-            padding: 10,
+
+        WebFont.load({
+            custom: {
+                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
+                urls: ['src/asset/fonts']
+            },
+            active: () => {
+                getDiary(dailyDiaryId);
+            }
         });
-        newCanvas.add(textbox);
         
-        textboxRef.current = textbox; // 텍스트박스 ref 설정
-        newCanvas.setActiveObject(textbox);
-        
+        const getDiary = (dailyDiaryId: number) => {
+            api({
+                url: `/diary/${dailyDiaryId}`,
+                method: 'GET'
+            })
+            .then((resp) => {
+                const data = resp.data;
+
+                // 1. 일기 작성자가 쓴 일기 -> 백그라운드로 선택되지 않게!
+                const dailyContent = data.dailyContent;
+                // JSON으로부터 캔버스 로드 후, 모든 객체를 선택 불가능하게 설정
+                newCanvas.loadFromJSON(dailyContent, () => {
+                    newCanvas.renderAll();
+                    // 모든 객체를 순회하면서 selectable 속성을 false로 설정
+                    newCanvas.forEachObject((obj) => {
+                        obj.selectable = false;
+                    });
+                });
+
+                // 2. 친구들이 꾸민 객체들
+                const decoObjects = JSON.parse(data.decoration);
+                fabric.util.enlivenObjects(decoObjects, (enlivenedObjects: any) => {
+                    enlivenedObjects.forEach((obj: any) => {
+                        obj.selectable = true;
+                        newCanvas.add(obj); // 각 객체를 캔버스에 추가
+                    });
+                    newCanvas.renderAll(); // 모든 객체가 추가된 후 캔버스를 다시 그림
+                }, null);
+            });
+        }
+
         // 언마운트 시 캔버스 정리
         return () => {
             newCanvas.dispose();
@@ -119,7 +148,7 @@ const DiaryWrite = () => {
             canvas.renderAll();
         };
     }, [ canvas ]);   
-
+    
     // 객체 삭제
     function deleteObject(eventData: MouseEvent, transformData: fabric.Transform, x: number, y: number): boolean {
         const canvas = transformData.target.canvas;
@@ -142,31 +171,11 @@ const DiaryWrite = () => {
         switch(activeTool) {
             case "drawing":
                 handlePenTool();
-                disableTextbox();
-                break;
-            case "textbox":
-                disablePenTool();
-                handleTextboxTool();
                 break;
             default:
                 disablePenTool();
-                disableTextbox();
         }
     }, [ activeTool ]);
-
-
-    // 텍스트박스 선택 활성화
-    const handleTextboxTool = () => {
-        canvas.isDrawingMode = false;
-        canvas.setActiveObject(textboxRef.current);
-        canvas.renderAll();
-    }
-
-    // 텍스트박스 선택 비활성화
-    const disableTextbox = () => {
-        canvas.discardActiveObject();
-        canvas.renderAll();
-    } 
 
     // 펜 활성화
     const handlePenTool = () => {
@@ -194,50 +203,42 @@ const DiaryWrite = () => {
 
     // 마우스가 지나가는 객체를 확인하여 삭제
     const handleMouseOver = (event: any) => {
-        if (activeTool === 'eraser' && event.target && event.target.type === 'path') {
+        if (activeTool === 'eraser' && event.target && event.target.selectable && event.target.type === 'path') {
             canvas.remove(event.target);
             canvas.renderAll();
         }
     };
 
-    // Axios 인스턴스 생성
-    const api = axios.create({
-        baseURL: 'http://localhost:8080', 
-        headers: {
-            "Content-Type": "application/json;charset=utf-8",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDQzOTMwLCJleHAiOjE3MTEwNDc1MzB9.hmCSNrBD4RwdpDHY96N-GpKcy9r_nJU7NjvAN8wr6V0"
-        },
-        withCredentials: true,
-    });
-    
     // 저장
     const saveDiary = () => {
-        // string으로 전달
-        const diaryToString = JSON.stringify(canvas.toJSON());
+        // canvas에서 selectable이 true인 객체들만 필터링
+        const decoObjects = canvas.getObjects().filter((obj: any) => obj.selectable);
+
+        // 필터링된 객체들을 JSON 문자열로 변환
+        const decoString = JSON.stringify(decoObjects.map((obj: any) => obj.toJSON()));
 
         api({
-            url: '/diary',
+            url: `/diary/decorate/${dailyDiaryId}`,
             method: 'POST',
             data: {
-                diaryId: 1,
-                dailyDate: selectedDate,
-                dailyContent: diaryToString,
+                decoration: decoString,
             },
         })
         .then((resp) => {
-            console.log(resp);
+            navigator(`/diary`);
+        })
+        .catch((err) => {
+            console.log("에러발생:", err)
         });
     }
 
     return (
         <Container>
             <Header>
-                <BackIcon onClick={ () => { navigator('/diary') } }/>
-                <DateSelect setSelectedDate={ setSelectedDate }/>
+                <BackIcon onClick={() => { navigator('/diary') }} />
                 <SaveIcon onClick={ saveDiary }/>
             </Header>
             <canvas style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
-            <GlobalStyle />
             <BottomSheet
                 open={true}
                 blocking={false}
@@ -248,7 +249,6 @@ const DiaryWrite = () => {
                 ]}
                 header={
                     <BottomSheetHeader>
-                        <Tab value="텍스트" onClick={ () => setActiveTool("textbox") } disabled={ activeTool === "textbox" }/>
                         <Tab value="이미지" onClick={ () => setActiveTool("image") } disabled={ activeTool === "image" }/>
                         <Tab value="그리기" onClick={ () => setActiveTool("drawing") } disabled={ activeTool === "drawing" }/>
                         <Tab value="지우개" onClick={ () => setActiveTool('eraser') } disabled={ activeTool === "eraser" }/>
@@ -256,19 +256,16 @@ const DiaryWrite = () => {
                 }
             >
                 <Content>
-                    {(activeTool === "textbox") && (
-                        <TextboxContent canvas={ canvas } textboxRef={ textboxRef } />
-                    )}
                     {(activeTool === "image") && (
                         <ImageContent canvas={ canvas } />
                     )}
                     {(activeTool === "drawing" || activeTool === "eraser") && (
                         <DrawingContent canvas={ canvas } />
                     )}
-                </Content>                                
+                </Content>                                  
             </BottomSheet>
         </Container>
     );
 };
 
-export default DiaryWrite;
+export default DiaryEdit;

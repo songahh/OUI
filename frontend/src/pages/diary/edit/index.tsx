@@ -7,13 +7,6 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import WebFont from 'webfontloader';
 import styled from 'styled-components';
-import { createGlobalStyle } from 'styled-components';
-
-const GlobalStyle = createGlobalStyle`
-    [data-rsbs-scroll="true"] {
-        overflow: hidden !important;
-    }
-`;
 
 const Header = styled.div`
     width: 100%;
@@ -69,21 +62,24 @@ const DiaryEdit = () => {
         baseURL: 'http://localhost:8080', 
         headers: {
             "Content-Type": "application/json;charset=utf-8",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDQzOTMwLCJleHAiOjE3MTEwNDc1MzB9.hmCSNrBD4RwdpDHY96N-GpKcy9r_nJU7NjvAN8wr6V0"
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDY1NzIxLCJleHAiOjE3MTEwNjkzMjF9.qzZ5JuNcYdkSv2kFdzfOVwLVo3xHMmDcO0mZoJ2OO2g"
         },
         withCredentials: true,
     });
+
+    //////////// 임시 dailyDiaryId
+    const dailyDiaryId = 6;
 
     useEffect(() => {
         // 캔버스 생성
         const newCanvas = new fabric.Canvas(canvasRef.current, {
             width: 950,
-            height: 1100,
+            height: 900,
             backgroundColor: '#FFFEFC'
         });
 
         fabric.Object.prototype.set({
-            cornerSize: 7,
+            cornerSize: 10,
             cornerStyle: 'rect',
             transparentCorners: false,
             cornerColor: '#CDCDCD',
@@ -92,12 +88,9 @@ const DiaryEdit = () => {
 
         setCanvas(newCanvas);
 
-        //////////// 임시 dailyDiaryId
-        const dailyDiaryId = 5;
-
         WebFont.load({
             custom: {
-                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'], // 사용하려는 폰트 목록
+                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
                 urls: ['src/asset/fonts']
             },
             active: () => {
@@ -253,8 +246,6 @@ const DiaryEdit = () => {
         // string으로 전달
         const diaryToString = JSON.stringify(canvas.toJSON());
 
-        const dailyDiaryId = 5;
-
         api({
             url: `/diary/${dailyDiaryId}`,
             method: 'PUT',
@@ -263,9 +254,11 @@ const DiaryEdit = () => {
                 dailyContent: diaryToString,
             },
         })
-        .then((resp) => {
-            console.log(resp);
+        .then(() => {
             navigator(`/diary`);
+        })
+        .catch((err) => {
+            console.log("에러발생:", err);
         });
     }
 
@@ -277,7 +270,6 @@ const DiaryEdit = () => {
                 <SaveIcon onClick={ saveDiary }/>
             </Header>
             <canvas style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
-            <GlobalStyle />
             <BottomSheet
                 open={true}
                 blocking={false}

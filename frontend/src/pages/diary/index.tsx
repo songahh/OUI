@@ -36,22 +36,22 @@ const Diary = () => {
         
         WebFont.load({
             custom: {
-                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'], // 사용하려는 폰트 목록
-                urls: ['src/asset/fonts'] // 폰트를 정의한 CSS 파일의 경로
+                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
+                urls: ['src/asset/fonts']
             },
             active: () => {
                 getDiary(dailyDiaryId);
             }
         });
 
-        const dailyDiaryId = 5;
+        const dailyDiaryId = 6;
 
         // Axios 인스턴스 생성
         const api = axios.create({
             baseURL: 'http://localhost:8080', 
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
-                "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDM5NTUyLCJleHAiOjE3MTEwNDMxNTJ9.oStW42gpXeOk_w1oQnfzVq-ENWyIs1y89id_akTTusE"
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDY1NzIxLCJleHAiOjE3MTEwNjkzMjF9.qzZ5JuNcYdkSv2kFdzfOVwLVo3xHMmDcO0mZoJ2OO2g"
             },
             withCredentials: true,
         });
@@ -80,6 +80,9 @@ const Diary = () => {
                     });
                     newCanvas.renderAll();
                 }, null);
+            })
+            .catch((err) => {
+                console.log("에러발생:", err);
             });
         }
 
@@ -91,8 +94,11 @@ const Diary = () => {
 
     return (
         <Container>
-            <button onClick={() => navigator('/diarywrite')}>일기 쓰기</button>
-            <button onClick={() => navigator('/diaryedit')}>일기 수정</button>
+            <div>
+                <button onClick={() => navigator('/diary/write')}>일기 쓰기</button>
+                <button onClick={() => navigator('/diary/edit')}>일기 수정</button>
+                <button onClick={() => navigator('/diary/deco')}>일기 꾸미기</button>
+            </div>
             <canvas id="canvas" style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
         </Container>
     )
