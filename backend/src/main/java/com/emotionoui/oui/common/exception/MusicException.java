@@ -1,4 +1,4 @@
-package com.emotionoui.oui.music;
+package com.emotionoui.oui.common.exception;
 
 public class MusicException extends RuntimeException{
 

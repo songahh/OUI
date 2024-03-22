@@ -20,7 +20,6 @@ public class OuiApplication {
     }
 
     private final SpotifyCredential spotifyCredential;
-    private final MusicService musicService;
 
     @PostConstruct
     public void getSpotifyCredential(){
