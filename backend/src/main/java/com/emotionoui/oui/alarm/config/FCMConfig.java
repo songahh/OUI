@@ -17,7 +17,7 @@ public class FCMConfig {
     @Bean
     FirebaseMessaging firebaseMessaging() throws IOException {
         // ClassPathResource: resources에 접근 가능하게 해줌
-        ClassPathResource resource = new ClassPathResource("firebase_service_key.json");
+        ClassPathResource resource = new ClassPathResource("env/firebase_service_key.json");
 
         InputStream refreshToken = resource.getInputStream();
 
