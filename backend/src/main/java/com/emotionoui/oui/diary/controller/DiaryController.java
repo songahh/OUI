@@ -37,37 +37,38 @@ public class DiaryController {
 
     // 일기 게시글 수정하기
     @PutMapping("/{dailyId}")
-    public ResponseEntity<?> updateDailyDiary(@RequestBody UpdateDailyDiaryReq req, @PathVariable Integer dailyId){
+    public ResponseEntity<?> updateDailyDiary(@RequestBody UpdateDailyDiaryReq req, @PathVariable("dailyId") Integer dailyId){
         return new ResponseEntity<Integer>(diaryService.updateDailyDiary(req, dailyId), HttpStatus.OK);
     }
 
-//    // 일기 게시글 삭제하기
-//    @PutMapping("/delete/{dailyId}")
-//    public ResponseEntity<?> dailyService.deleteDailyDiary(){
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    // 일기 게시글 삭제하기
+    @PutMapping("/delete/{dailyId}")
+    public ResponseEntity<?> deleteDailyDiary(@PathVariable("dailyId") Integer dailyId){
+        diaryService.deleteDailyDiary(dailyId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     // 일기 게시글 조회하기
     @GetMapping("/{dailyId}")
-    public ResponseEntity<?> searchDailyDiary(@PathVariable Integer dailyId){
+    public ResponseEntity<?> searchDailyDiary(@PathVariable("dailyId") Integer dailyId){
         return new ResponseEntity<SearchDailyDiaryRes>(diaryService.searchDailyDiary(dailyId), HttpStatus.OK);
     }
 
     // 감정분석 결과 보여주기
     @GetMapping("/emotion/{dailyId}")
-    public ResponseEntity<?> searchEmotion(@PathVariable Integer dailyId){
+    public ResponseEntity<?> searchEmotion(@PathVariable("dailyId") Integer dailyId){
         return new ResponseEntity<EmotionClass>(diaryService.searchEmotion(dailyId), HttpStatus.OK);
     }
 
     // 추천노래 보여주기
     @GetMapping("/music/{dailyId}")
-    public ResponseEntity<?> searchMusic(@PathVariable Integer dailyId){
+    public ResponseEntity<?> searchMusic(@PathVariable("dailyId") Integer dailyId){
         return new ResponseEntity<List<String>>(diaryService.searchMusic(dailyId), HttpStatus.OK);
     }
 
     // AI 코멘트 보여주기
     @GetMapping("/comment/{dailyId}")
-    public ResponseEntity<?> searchComment(@PathVariable Integer dailyId){
+    public ResponseEntity<?> searchComment(@PathVariable("dailyId") Integer dailyId){
         return new ResponseEntity<String>(diaryService.searchComment(dailyId), HttpStatus.OK);
     }
 
@@ -85,8 +86,6 @@ public class DiaryController {
         diaryService.updateDiarySetting(req, diaryId, memberId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    ///diary/decorate/{dailyId}
 
     @PostMapping("/diary/decorate/{dailyId}")
     public ResponseEntity<?> decorateDailyDiary(@RequestBody DecorateDailyDiaryReq req, @PathVariable("dailyId") Integer dailyId) throws IOException, ExecutionException, InterruptedException {

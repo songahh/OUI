@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 public interface DiaryService {
     String createDailyDiary(CreateDailyDiaryReq req, Member member) throws IOException, ExecutionException, InterruptedException;
     Integer updateDailyDiary(UpdateDailyDiaryReq req, Integer dailyId);
-    void deleteDailyDiary(String dailyId);
+    void deleteDailyDiary(Integer dailyId);
     SearchDailyDiaryRes searchDailyDiary(Integer dailyId);
     EmotionClass searchEmotion(Integer dailyId);
     List<String> searchMusic(Integer dailyId);
