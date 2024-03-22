@@ -1,6 +1,10 @@
 package com.emotionoui.oui.music.service;
 
-import com.emotionoui.oui.music.MusicException;
+import com.emotionoui.oui.common.exception.MusicException;
+import com.emotionoui.oui.music.dto.req.SongReq;
+import com.emotionoui.oui.music.dto.res.SongRes;
+import com.emotionoui.oui.music.entity.MusicCollection;
+import com.emotionoui.oui.music.repository.MusicMongoRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +17,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import se.michaelthelin.spotify.SpotifyApi;
 
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -21,6 +26,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class MusicServiceImpl implements MusicService{
+
+
     private final SpotifyApi spotifyApi;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
@@ -35,7 +42,16 @@ public class MusicServiceImpl implements MusicService{
     private final String SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search?locale=ko-KR,ko&type=track&market=KR&limit=5&offset=0&q=";
     private final String ITUNES_SEARCH_URL = "https://itunes.apple.com/search?limit=1&media=music&term=";
 
+    private final MusicMongoRepository musicMongoRepository;
 
+    @Override
+    public void uploadSongMeta(List<SongReq> songList) {
+        musicMongoRepository.saveAll(songList.stream()
+                .map(SongReq::toEntity)
+                .collect(Collectors.toList()));
+    }
+
+    @Override
     public String searchMusicURI(String artistName, String songName){
         ResponseEntity<String> responseEntity = requestMusicURIToSpotifyAPI(artistName, songName);
 

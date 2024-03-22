@@ -12,11 +12,11 @@ import com.emotionoui.oui.diary.dto.res.SearchDiarySettingRes;
 import com.emotionoui.oui.diary.entity.DailyDiary;
 import com.emotionoui.oui.diary.entity.DailyDiaryCollection;
 import com.emotionoui.oui.diary.entity.Diary;
-import com.emotionoui.oui.diary.entity.MusicCollection;
+import com.emotionoui.oui.music.entity.MusicCollection;
 import com.emotionoui.oui.diary.repository.DailyDiaryMongoRepository;
 import com.emotionoui.oui.diary.repository.DailyDiaryRepository;
 import com.emotionoui.oui.diary.repository.DiaryRepository;
-import com.emotionoui.oui.diary.repository.MusicMongoRepository;
+import com.emotionoui.oui.music.repository.MusicMongoRepository;
 import com.emotionoui.oui.member.entity.AlarmType;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.MemberDiary;
@@ -27,10 +27,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;
@@ -149,7 +147,7 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     // AI를 통한 감정분석 및 음악추천 결과값 받기
-    public String sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary, Member member) throws InterruptedException, ExecutionException {
+    public String sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary, Member member) throws ExecutionException, InterruptedException {
         // 감정분석 AI Url
         String aiServerUrl = "http://ai-server-1/process-data";
         String aiServerUrl2 = "http://ai-server-2/process-data";
@@ -248,8 +246,11 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     // 일기 삭제하기
-    public void deleteDailyDiary(String dailyId){
-        DailyDiaryCollection document = dailyDiaryMongoRepository.findById(dailyId)
+    public void deleteDailyDiary(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        DailyDiaryCollection document = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
                 .orElseThrow(IllegalArgumentException::new);
         document.setIsDeleted(1);
         dailyDiaryMongoRepository.save(document);
@@ -321,7 +322,7 @@ public class DiaryServiceImpl implements DiaryService{
             for(MemberDiary oldMemberDiary : oldMemberDiaryList){
                 Member member = oldMemberDiary.getMember();
                 for (Member newMember : newMemberList) {
-                    if (member.getMemberId() == newMember.getMemberId()) {
+                    if (Objects.equals(member.getMemberId(), newMember.getMemberId())) {
                         continue top;
                     }
                 }
