@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "src/pages/main/components/Card";
 import { Header } from "src/components/control/Header";
 import { BottomNavi } from "src/components/control/BottomNavi";
 import { Drawer } from "src/components/control/Drawer";
 import { Button } from "src/components";
 import { CustomModal } from "./components/Modal";
+import { getDiary } from './api/getDiary';
+import { useQuery } from 'react-query'
 import Slider from "react-slick";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -51,7 +53,8 @@ const Main = () => {
   };
 
   const [ isModalOpen, setIsModalOpen ] = useState( false );
-  
+  const [ diaryCount, setDiaryCount ] = useState(0); 
+  const [ diaryList, setDiaryList ] = useState([]);
   const openModal = () => setIsModalOpen( true );
   const closeModal = () => {
     console.log( '모달 닫기!!!!!!' );
@@ -80,8 +83,18 @@ const Main = () => {
     closeModal();
   };
 
+  const moveDiary = () =>{ // 페이지 이동
+    console.log("111")
+  }
 
+  const { data: temp, refetch } = useQuery([ 'temp', diaryCount ], () => getDiary)
 
+  useEffect(() => {
+    const diaryList = getDiary();
+    refetch();
+    console.log(diaryList);
+  }, [diaryList, refetch]); 
+  
 
   return (
     <>
@@ -95,7 +108,7 @@ const Main = () => {
         <SliderWrapper { ...settings }>
         {cards.map(( card, index ) => (
           <div key={index}>
-            <Card buttonText={ card.buttonText } onClick={ card.type === "addButton" ? openModal : undefined } />
+            <Card buttonText={ card.buttonText } onClick={ card.type === "addButton" ? openModal : moveDiary} />
           </div>
         ))}
           <Card></Card>
