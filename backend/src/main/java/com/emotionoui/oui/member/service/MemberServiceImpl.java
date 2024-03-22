@@ -1,18 +1,14 @@
 package com.emotionoui.oui.member.service;
 
-import com.emotionoui.oui.diary.entity.Diary;
-import com.emotionoui.oui.diary.repository.DiaryRepository;
-import com.emotionoui.oui.main.dto.req.CreateShareDiaryReq;
+import com.emotionoui.oui.member.dto.res.SearchMemberRes;
 import com.emotionoui.oui.member.entity.Member;
-import com.emotionoui.oui.member.entity.MemberDiary;
+import com.emotionoui.oui.member.exception.DeletedMemberException;
 import com.emotionoui.oui.member.exception.NotAddException;
 import com.emotionoui.oui.member.exception.NotFoundMemberException;
-import com.emotionoui.oui.member.repository.MemberDiaryRepository;
-import com.emotionoui.oui.member.dto.req.SearchMemberReq;
+import com.emotionoui.oui.member.dto.req.FindMemberReq;
 import com.emotionoui.oui.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +17,9 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
 
     @Override
-    public String searchMember(String creatorEmail, SearchMemberReq searchMemberReq) throws NotFoundMemberException{
+    public String searchMember(String creatorEmail, FindMemberReq findMemberReq) throws NotFoundMemberException{
 
-        String searchMemberEmail= searchMemberReq.getMemberEmail();
+        String searchMemberEmail= findMemberReq.getMemberEmail();
 
         // 본인이 본인을 검색할 수는 없음
         if(searchMemberEmail.equals(creatorEmail)){
@@ -33,8 +29,31 @@ public class MemberServiceImpl implements MemberService {
         System.out.println("searchMemberEmail: "+searchMemberEmail);
         // 해당 멤버가 존재하는지 확인, 존재하지 않다면 예외처리
         memberRepository.findByEmail(searchMemberEmail).orElseThrow(NotFoundMemberException::new);
-        System.out.println(memberRepository.findByEmail(searchMemberEmail));
-        // 검색한 멤버가 존재하면 해당 멤버의 이메일을 반환해주고, 아니면 예외처리
+
         return searchMemberEmail;
+    }
+
+    public SearchMemberRes getMember(Member member){
+        // 존재하는지, 탈퇴한 멤버인지 확인
+        checkMember(member);
+        // 해당 memberEmail에 해당하는 member 반환
+        SearchMemberRes searchMemberRes = SearchMemberRes.builder()
+                .memberEmail(member.getEmail())
+                .memberId(member.getMemberId())
+                .img(member.getImg())
+                .nickName(member.getNickname())
+                .build();
+
+        return searchMemberRes;
+    }
+
+    /**
+     * 존재하는지, 탈퇴한 멤버인지 확인
+     * @param member
+     */
+    public boolean checkMember(Member member){
+        // 존재하는지, 탈퇴한 멤버인지 확인
+        memberRepository.findByMemberIdAndIsDeleted(member.getMemberId(),member.getIsDeleted()).orElseThrow(DeletedMemberException::new);
+        return true;
     }
 }

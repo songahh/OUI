@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SearchMemberReq {
+public class FindMemberReq {
 
     private String memberEmail;
 }
