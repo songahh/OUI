@@ -48,7 +48,7 @@ public class DailyDiary {
         diary.getDailyDiaryList().add(this);
     }
 
-    public void modifyDailyDate(Date dailyDate){
+    public void updateDailyDate(Date dailyDate){
         this.dailyDate = dailyDate;
     }
 }

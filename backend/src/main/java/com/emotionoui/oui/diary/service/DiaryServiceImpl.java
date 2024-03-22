@@ -4,8 +4,11 @@ import com.emotionoui.oui.calendar.entity.Emotion;
 import com.emotionoui.oui.calendar.repository.EmotionRepository;
 import com.emotionoui.oui.diary.dto.EmotionClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
+import com.emotionoui.oui.diary.dto.req.DecorateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDailyDiaryReq;
+import com.emotionoui.oui.diary.dto.req.UpdateDiarySettingReq;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
+import com.emotionoui.oui.diary.dto.res.SearchDiarySettingRes;
 import com.emotionoui.oui.diary.entity.DailyDiary;
 import com.emotionoui.oui.diary.entity.DailyDiaryCollection;
 import com.emotionoui.oui.diary.entity.Diary;
@@ -14,7 +17,10 @@ import com.emotionoui.oui.diary.repository.DailyDiaryMongoRepository;
 import com.emotionoui.oui.diary.repository.DailyDiaryRepository;
 import com.emotionoui.oui.diary.repository.DiaryRepository;
 import com.emotionoui.oui.diary.repository.MusicMongoRepository;
+import com.emotionoui.oui.member.entity.AlarmType;
 import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.entity.MemberDiary;
+import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.music.service.MusicService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,15 +55,17 @@ public class DiaryServiceImpl implements DiaryService{
     private final DiaryRepository diaryRepository;
     private final EmotionRepository emotionRepository;
     private final MusicMongoRepository musicMongoRepository;
+    private final MemberDiaryRepository memberDiaryRepository;
     private final MusicService musicService;
 
 
     // 일기 생성하기
-    public String createDailyDiary(CreateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
+    public String createDailyDiary(CreateDailyDiaryReq req, Member member) throws IOException, ExecutionException, InterruptedException {
         
         // MongoDB에 넣을 entity 생성
         DailyDiaryCollection dailyDiaryCollection = DailyDiaryCollection.builder()
                 .diaryId(req.getDiaryId())
+                .memberId(member.getMemberId())
                 .content(req.getDailyContent())
                 .isDeleted(0)
                 .build();
@@ -91,7 +99,7 @@ public class DiaryServiceImpl implements DiaryService{
             // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
             if(!Objects.equals(text, "")){
                 // MongoDB에 Spotify URI 리스트 넣기
-                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary);
+                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary, member);
                 List<String> spotifyUriList = findSpotifyUri(musicString);
                 document.setMusic(spotifyUriList);
                 dailyDiaryMongoRepository.save(document);
@@ -141,7 +149,7 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     // AI를 통한 감정분석 및 음악추천 결과값 받기
-    public String sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary) throws InterruptedException, ExecutionException {
+    public String sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary, Member member) throws InterruptedException, ExecutionException {
         // 감정분석 AI Url
         String aiServerUrl = "http://ai-server-1/process-data";
         String aiServerUrl2 = "http://ai-server-2/process-data";
@@ -169,7 +177,7 @@ public class DiaryServiceImpl implements DiaryService{
                         .dailyDiary(dailyDiary)
                         .emotion(emotionRes.getMaxEmotion())
                         .date(dailyDate)
-                        .member(null)
+                        .member(member)
                         .build();
 
                 emotionRepository.save(emotion);
@@ -226,7 +234,7 @@ public class DiaryServiceImpl implements DiaryService{
         DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        dailyDiary.modifyDailyDate(req.getDailyDate());
+        dailyDiary.updateDailyDate(req.getDailyDate());
 
         String mongoId = dailyDiary.getMongoId();
 
@@ -278,5 +286,78 @@ public class DiaryServiceImpl implements DiaryService{
                 .orElseThrow(IllegalArgumentException::new);
 
         return dailyDiaryMongoRepository.findCommentByDailyId(dailyDiary.getMongoId()).getComment();
+    }
+
+    // 다이어리 설정 조회하기
+    public SearchDiarySettingRes searchDiarySetting(Integer diaryId, Integer memberId){
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        AlarmType alarmStatus = memberDiaryRepository.findAlarmByMemberIdAndDiaryId(diaryId, memberId);
+
+        if(diary.getType().toString().equals("개인")){
+            return SearchDiarySettingRes.privateRes(diary, alarmStatus);
+        }else{
+            List<Member> memberList = memberDiaryRepository.findMemberByDiaryId(diaryId);
+            return SearchDiarySettingRes.SharingRes(diary, alarmStatus, memberList);
+        }
+    }
+    
+     // 다이어리 설정 수정하기
+    public void updateDiarySetting(UpdateDiarySettingReq req, Integer diaryId, Integer memberId){
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(IllegalArgumentException::new);
+        diary.updateDiary(req.getName(), req.getTemplateId());
+
+        MemberDiary memberDiary = memberDiaryRepository.findById(memberId)
+                .orElseThrow(IllegalArgumentException::new);
+        memberDiary.updateAlarm(req.getAlarm());
+
+        if(diary.getType().toString().equals("공유")){
+            List<Member> newMemberList = req.getMemberList();
+            List<MemberDiary> oldMemberDiaryList = diary.getMemberDiaryList();
+
+            top:
+            for(MemberDiary oldMemberDiary : oldMemberDiaryList){
+                Member member = oldMemberDiary.getMember();
+                for (Member newMember : newMemberList) {
+                    if (member.getMemberId() == newMember.getMemberId()) {
+                        continue top;
+                    }
+                }
+                oldMemberDiary.updateIsDeleted();
+            }
+
+            for(Member member : newMemberList){
+                MemberDiary rep = memberDiaryRepository.findByMemberId(member.getMemberId());
+                if(rep==null){
+                    MemberDiary newMemberDiary = MemberDiary.builder()
+                            .alarm(AlarmType.ON)
+                            .orders(memberDiaryRepository.countByMemberId(member.getMemberId())+1)
+                            .isDeleted(0)
+                            .diary(diary)
+                            .member(member)
+                            .build();
+
+                    memberDiaryRepository.save(memberDiary);
+                }
+            }
+        }
+    }
+
+
+    // 일기 꾸미기
+    public String decorateDailyDiary(DecorateDailyDiaryReq req, Integer dailyId){
+
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        dailyDiaryCollection.setDecoration(req.getDecoration());
+        dailyDiaryMongoRepository.save(dailyDiaryCollection);
+
+        return dailyDiaryCollection.getId().toString();
     }
 }

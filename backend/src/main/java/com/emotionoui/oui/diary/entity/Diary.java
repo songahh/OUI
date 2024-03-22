@@ -36,8 +36,12 @@ public class Diary {
     @OneToMany(mappedBy = "diary")
     private List<MemberAlarm> memberAlarmList = new ArrayList<>();
 
+    @Column(name="template_id")
+    private Integer templateId;
+
     @Column(name = "type")
-    private Integer type;
+    @Enumerated(EnumType.STRING)
+    private DiaryType type;
 
     @Column(name = "name")
     private String name;
@@ -45,15 +49,22 @@ public class Diary {
     @CreatedDate
     @LastModifiedDate
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "is_deleted")
     private Integer isDeleted;
 
     @Builder
-    public Diary(Integer type, String name, Integer isDeleted){
-        this.type = type;
+    public Diary(DiaryType type, String name, Integer templateId,  Integer isDeleted){
         this.name = name;
+        this.type = type;
+        this.templateId = templateId;
         this.isDeleted = isDeleted;
+    }
+
+    public void updateDiary(String name, Integer templateId){
+        this.name = name;
+        this.templateId = templateId;
+        this.createdAt = LocalDateTime.now();
     }
 }

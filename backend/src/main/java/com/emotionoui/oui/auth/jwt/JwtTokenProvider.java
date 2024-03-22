@@ -18,6 +18,7 @@ public class JwtTokenProvider {
 
     private final JwtUtil jwtUtil;
 
+//    private Long accessTokenExpireTime = 1000 * 15L; // 15초
     private Long accessTokenExpireTime = 1000 * 60 * 60L; // 1시간
 
     private Long refreshTokenExpireTime = 1000 * 60 * 60 * 24 * 3L; // 3일
