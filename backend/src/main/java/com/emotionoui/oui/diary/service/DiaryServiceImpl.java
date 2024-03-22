@@ -149,7 +149,7 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     // AI를 통한 감정분석 및 음악추천 결과값 받기
-    public String sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary, Member member) throws InterruptedException, ExecutionException {
+    public String sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary, Member member) throws ExecutionException, InterruptedException {
         // 감정분석 AI Url
         String aiServerUrl = "http://ai-server-1/process-data";
         String aiServerUrl2 = "http://ai-server-2/process-data";
@@ -248,8 +248,11 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     // 일기 삭제하기
-    public void deleteDailyDiary(String dailyId){
-        DailyDiaryCollection document = dailyDiaryMongoRepository.findById(dailyId)
+    public void deleteDailyDiary(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        DailyDiaryCollection document = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
                 .orElseThrow(IllegalArgumentException::new);
         document.setIsDeleted(1);
         dailyDiaryMongoRepository.save(document);
@@ -321,7 +324,7 @@ public class DiaryServiceImpl implements DiaryService{
             for(MemberDiary oldMemberDiary : oldMemberDiaryList){
                 Member member = oldMemberDiary.getMember();
                 for (Member newMember : newMemberList) {
-                    if (member.getMemberId() == newMember.getMemberId()) {
+                    if (Objects.equals(member.getMemberId(), newMember.getMemberId())) {
                         continue top;
                     }
                 }
