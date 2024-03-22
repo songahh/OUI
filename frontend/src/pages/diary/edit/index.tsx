@@ -1,7 +1,8 @@
 import { fabric } from 'fabric';
 import { BottomSheet } from 'react-spring-bottom-sheet'
 import 'react-spring-bottom-sheet/dist/style.css'
-import { SaveIcon, BackIcon, Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from 'src/components';
+import { SaveIcon, BackIcon } from 'src/components';
+import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from '../components';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
@@ -62,7 +63,7 @@ const DiaryEdit = () => {
         baseURL: 'http://localhost:8080', 
         headers: {
             "Content-Type": "application/json;charset=utf-8",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDY1NzIxLCJleHAiOjE3MTEwNjkzMjF9.qzZ5JuNcYdkSv2kFdzfOVwLVo3xHMmDcO0mZoJ2OO2g"
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDcwMDczLCJleHAiOjE3MTEwNzM2NzN9.Jvu5hJeBOC-0ksi4n6KXV7FnXQFmaKE-P7GesvrY5ls"
         },
         withCredentials: true,
     });
