@@ -5,6 +5,7 @@ import { SaveIcon, BackIcon, Tab, TextboxContent, ImageContent, DrawingContent, 
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
+import useStore from 'src/store';
 import styled from 'styled-components';
 
 const Header = styled.div`
@@ -30,9 +31,10 @@ const BottomSheetHeader = styled.div`
 
 const Content = styled.div`
     padding: 10px;
-`;
+`
 
 const DiaryWrite = () => {
+
     const navigator = useNavigate();
     
     const canvasRef = useRef(null);

@@ -1,6 +1,6 @@
 import useStore from 'src/store'
 import axios from 'axios'
-import cookie from 'react-cookies';
+
 
 const useAxios = axios.create({
   // baseURL: process.env.REACT_APP_BASE_URL,
@@ -9,15 +9,23 @@ const useAxios = axios.create({
   withCredentials: true,
 })
 
+
 useAxios.interceptors.request.use( 
   async( config ) => {
-      const accessToken = useStore();
-      if( accessToken ){
-        config.headers['Authorization'] = `${ accessToken }`
-        console.log(accessToken);
-      }
+      const storedDataString = localStorage.getItem('userStorage');
+      
+      if (storedDataString) {
+        const storedData = JSON.parse(storedDataString);
 
-      return config
+        const accessToken = storedData?.state?.accessToken;
+        
+        if( accessToken ){
+          config.headers['Authorization'] = `Bearer ${ accessToken }` // 앞에 Bearer를 추가해야 요청 성공
+        }
+  
+        return config
+      }
+      
   },
   ( error ) => {
     return Promise.reject( error )
@@ -40,25 +48,20 @@ useAxios.interceptors.response.use(
 
     if( error?.response?.status === 401 || error === 401 || status === 401 ){
 
-      if( localStorage.getItem('refreshToken')){
-        const refreshToken = localStorage.getItem('refreshToken')
-        const data = { "Authorization-refresh" : refreshToken }
-        try{
-          const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/reissue`, { headers : data })
-          useStore.setState({ isLogin: true })
-          useStore.setState({ accessToken: response?.headers?.authorization })
-          localStorage.setItem("accessToken", response?.headers?.authorization )
-          localStorage.setItem("refreshToken", response?.headers[`refresh-token`] )
+      // if( localStorage.getItem('refreshToken')){
+      //   const refreshToken = useStore();
+      //   const data = { "Authorization-refresh" : refreshToken }
+      //   try{
+      //     const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/reissue`, { headers : data })
+      //     useStore.setState({ isLogin: true })
+      //     useStore.setState({ accessToken: response?.headers?.authorization })
 
-          error.config.headers.Authorization = response?.headers?.authorization
-          return axios.request(error.config)
-        } catch( refreshError ){
-          localStorage.removeItem("accessToken")
-          localStorage.removeItem("refreshToken")
-        }
+      //     error.config.headers.Authorization = response?.headers?.authorization
+      //     return axios.request(error.config)
+      //   } catch( refreshError ){
+      //   }
        
-
-      }
+      // }
     }
   }
 )
@@ -77,6 +80,16 @@ export const getAxios =  async ( url: string, params?: any )  => {
 export const postAxios =  async( url: string, data?: any, multi?:any )  =>{
   try{
     const response = await useAxios.post( url, data, multi )
+    console.log(response)
+    return response
+  } catch( error ){
+    return Promise.reject( error )
+  }
+}
+
+export const putAxios =  async( url: string, data?: any )  =>{
+  try{
+    const response = await useAxios.put( url, data )
     console.log(response)
     return response
   } catch( error ){
