@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@DynamicInsert
 @Entity
 @Getter
 @EntityListeners({AuditingEntityListener.class})
@@ -67,4 +70,9 @@ public class Diary {
         this.templateId = templateId;
         this.createdAt = LocalDateTime.now();
     }
+
+//    @PrePersist
+//    public void setting(){
+//        this.type = DiaryType.valueOf("공유");
+//    }
 }

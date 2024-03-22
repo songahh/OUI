@@ -1,16 +1,16 @@
 package com.emotionoui.oui.main.controller;
 
+import com.emotionoui.oui.main.dto.req.CreateShareDiaryReq;
+import com.emotionoui.oui.main.dto.req.SearchMemberReq;
 import com.emotionoui.oui.main.dto.res.SearchDiaryListRes;
 import com.emotionoui.oui.main.service.MainService;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.querydsl.DiaryRepositoryCustom;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,6 +27,7 @@ public class MainController {
      * @param member
      * @return
      */
+    @Transactional
     @GetMapping
     public ResponseEntity<List<SearchDiaryListRes>> getDiaries(@AuthenticationPrincipal Member member){
         List<SearchDiaryListRes> memberDiaries = diaryRepositoryCustom.findDiariesByMemberId(member.getMemberId());
@@ -38,9 +39,16 @@ public class MainController {
      * @param member
      * @return
      */
+    @Transactional
     @PostMapping("/diary")
-    public ResponseEntity<List<Integer>> createShareDiary(@AuthenticationPrincipal Member member){
-        List<Integer> memberList = null;
-        return ResponseEntity.ok(memberList);
+    public ResponseEntity<Void> createShareDiary(@AuthenticationPrincipal Member member, @RequestBody CreateShareDiaryReq createShareDiaryReq){
+        mainService.createShareDiary(member, createShareDiaryReq);
+        // 여기에 민지가 추가된 사람들(createShareDiaryReq.getMembers())에게 알림 보내기
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<String> searchMember(SearchMemberReq searchMemberReq){
+        String searchedMember= mainService.searchMember(searchMemberReq);
+        return ResponseEntity.ok(searchedMember);
     }
 }
