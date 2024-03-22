@@ -1,9 +1,9 @@
 import { useRouter } from '../hooks'
 
 export const routes = [
-    { path: 'diarywrite' },
-    { path: 'diaryedit' },
-    { path: 'diarydeco' },
+    { path: 'diary/write' },
+    { path: 'diary/edit' },
+    { path: 'diary/deco' },
     { path: 'diary' },
     { path: 'calendar' },
     { path: 'home' },
