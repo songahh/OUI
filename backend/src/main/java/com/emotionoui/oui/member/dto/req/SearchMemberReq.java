@@ -1,4 +1,4 @@
-package com.emotionoui.oui.main.dto.req;
+package com.emotionoui.oui.member.dto.req;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

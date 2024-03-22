@@ -1,7 +1,6 @@
 package com.emotionoui.oui.main.controller;
 
 import com.emotionoui.oui.main.dto.req.CreateShareDiaryReq;
-import com.emotionoui.oui.main.dto.req.SearchMemberReq;
 import com.emotionoui.oui.main.dto.res.SearchDiaryListRes;
 import com.emotionoui.oui.main.service.MainService;
 import com.emotionoui.oui.member.entity.Member;
@@ -45,10 +44,5 @@ public class MainController {
         mainService.createShareDiary(member, createShareDiaryReq);
         // 여기에 민지가 추가된 사람들(createShareDiaryReq.getMembers())에게 알림 보내기
         return ResponseEntity.ok().build();
-    }
-
-    public ResponseEntity<String> searchMember(SearchMemberReq searchMemberReq){
-        String searchedMember= mainService.searchMember(searchMemberReq);
-        return ResponseEntity.ok(searchedMember);
     }
 }
