@@ -1,9 +1,8 @@
 import { fabric } from 'fabric';
 import { useEffect, useRef } from 'react';
-import axios, { AxiosHeaders } from 'axios';
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import WebFont from 'webfontloader';
-import cookie from 'react-cookies';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -14,9 +13,9 @@ const Container = styled.div`
 `;
 
 const Diary = () => {
-    const canvasRef = useRef(null);
-    const accessToken = cookie.load('accessToken');
     const navigator = useNavigate();
+    
+    const canvasRef = useRef(null);
     
     useEffect(() => {
         
@@ -35,24 +34,24 @@ const Diary = () => {
             borderColor: '#CDCDCD',
         });
         
-        const dailyDiaryId = 20;
-
         WebFont.load({
             custom: {
-                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'], // 사용하려는 폰트 목록
-                urls: ['src/asset/fonts'] // 폰트를 정의한 CSS 파일의 경로
+                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
+                urls: ['src/asset/fonts']
             },
             active: () => {
                 getDiary(dailyDiaryId);
             }
         });
 
+        const dailyDiaryId = 6;
+
         // Axios 인스턴스 생성
         const api = axios.create({
             baseURL: 'http://localhost:8080', 
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
-                "Cookie": accessToken,
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDY1NzIxLCJleHAiOjE3MTEwNjkzMjF9.qzZ5JuNcYdkSv2kFdzfOVwLVo3xHMmDcO0mZoJ2OO2g"
             },
             withCredentials: true,
         });
@@ -60,8 +59,7 @@ const Diary = () => {
         const getDiary = (dailyDiaryId: number) => {
             api({
                 url: `/diary/${dailyDiaryId}`,
-                method: 'GET',
-                withCredentials: true,
+                method: 'GET'
             })
             .then((resp) => {
                 const data = resp.data;
@@ -73,6 +71,18 @@ const Diary = () => {
                         obj.selectable = false;
                     });
                 });
+                const decoObjects = JSON.parse(data.decoration);
+
+                fabric.util.enlivenObjects(decoObjects, (enlivenedObjects) => {
+                    enlivenedObjects.forEach((obj) => {
+                        obj.selectable = false;
+                        newCanvas.add(obj);
+                    });
+                    newCanvas.renderAll();
+                }, null);
+            })
+            .catch((err) => {
+                console.log("에러발생:", err);
             });
         }
 
@@ -84,8 +94,11 @@ const Diary = () => {
 
     return (
         <Container>
-            <button onClick={() => navigator('/diarywrite')}>일기 쓰기</button>
-            <button onClick={() => navigator('/diaryedit')}>일기 수정</button>
+            <div>
+                <button onClick={() => navigator('/diary/write')}>일기 쓰기</button>
+                <button onClick={() => navigator('/diary/edit')}>일기 수정</button>
+                <button onClick={() => navigator('/diary/deco')}>일기 꾸미기</button>
+            </div>
             <canvas id="canvas" style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
         </Container>
     )
