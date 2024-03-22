@@ -1,26 +1,29 @@
 import { create } from 'zustand'
+import { persist } from "zustand/middleware";
 
-const useStore = create<MainStore>( ( set, get ) => ( {
 
-  session: null,
-  setSession: ( session ) => set( { session } ),
+const useStore = create(
 
-  accessToken: '',
-  setAccessToken: ( accessToken ) => set( { accessToken } ),
+  persist<MainStore>(
+    ( set ) => ({
 
-  isLogin: false,
-  setIsLogin: ( isLogin ) => set( { isLogin } ),
+      accessToken: '',
+      setAccessToken: ( accessToken ) => set( { accessToken } ),
 
-  userId : '',
-  setUserId: ( userId ) => set( { userId } ),
+      isLogin: false,
+      setIsLogin: ( isLogin ) => set( { isLogin } )
 
-}))
+    }),
+    {
+      name: 'userStorage',
+    },
+  ),
+);
 
 export default useStore
 
+
 type MainStore = {
-  session: Session,
-  setSession: ( session: Session ) => void
 
   accessToken: string,
   setAccessToken: ( accessToken: string ) => void
@@ -28,13 +31,4 @@ type MainStore = {
   isLogin: boolean
   setIsLogin: ( isLogin: boolean ) => void
 
-  userId : string
-  setUserId: ( userId: string ) => void
-}
-
-type Session = {
-  id: number,
-  email: string,
-  nickname: string,
-  profileImage: string,
 }

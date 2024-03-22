@@ -3,7 +3,7 @@ import useStore from '../store'
 import tmp1 from 'src/asset/images/tmp1.png'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
-import { MyCalendarType } from 'src/types'
+import { MyCalendarType, ScheduleType } from 'src/types'
 
 const DayWrapper = styled.div`
   display: flex;
@@ -62,12 +62,11 @@ const Day = ( props: DayProps ) =>{
 
     const navigator = useNavigate()
 
-    const { index, day } = props
-    // const myLists = myCalendar?.filter(( list ) => list.datetime.substring(5, 10) === format( day, 'MM-dd' ))
-
+    const { day, calendars } = props
     const { updateDate, updateModal } = useStore()
 
     const todos = ["Test1", 'Test2', 'Test3', "test4"]
+    // const todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
 
     function listTodo (e, date): void{
         console.log(date)
@@ -84,28 +83,13 @@ const Day = ( props: DayProps ) =>{
     return(
         <DayWrapper>
             
-            <DayClick onClick={ (e) => listTodo(e, day) }>
+            <DayClick onClick={ (e) => listTodo( e, day ) }>
             { format( day, 'd' ) }
             </DayClick>
-            {/* { myLists?.map(( myList ) => {
-                return(
-                    <EmotionWrapper>
-                        <img src={ myList.emotion } alt='' style={{ height: '100%' }}/>
-                    </EmotionWrapper>
-                    <div>
-                        myList.todos?.map((todo) => (
-                            <div>
-                                { todo }
-                            </div>
-                        ))
-                    </div>
-                )
-            })} */}
             <EmotionWrapper onClick={ goMyDiary }>
                 <img src={ tmp1 } alt='' style={{ height: '100%' }}/>
             </EmotionWrapper>
             <TodoWrapper>
-
             {
                 todos.slice(0, 3).map((index) => (
                     <TodoItemWrapperContainer key={index}>
@@ -114,6 +98,16 @@ const Day = ( props: DayProps ) =>{
                     </TodoItemWrapperContainer>
                   ))
             }
+            {/* {
+                todos?.map(( todo, index ) =>{
+                    return(
+                        <TodoItemWrapperContainer key={index}>
+                        <TodoHeaderWrapper/>
+                        <TodoItemWrapper >{todo.title}</TodoItemWrapper>
+                    </TodoItemWrapperContainer>
+                    )
+                })
+            } */}
             </TodoWrapper>
         </DayWrapper>
     )
@@ -126,5 +120,5 @@ type DayProps = {
     children?: React.ReactNode
     index?: number,
     day?: string,
-    calendars: MyCalendarType[]
+    calendars: MyCalendarType
 }

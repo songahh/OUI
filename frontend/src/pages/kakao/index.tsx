@@ -1,50 +1,55 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import useStore from "src/store";
-import axios from "axios";
+import { useEffect, useRef } from 'react'
+import { getLogin } from './api'
+import { useMutation } from 'react-query'
+import { useNavigate } from 'react-router-dom'
+import useStore from 'src/store'
 
 const Kakao = () => {
-  const navigate = useNavigate();
-  const { accessToken, setAccessToken } = useStore();
-  // const { testData, setTestData } = useStore();
-  useEffect(() => {
-    const REDIRECT_URI = '/auth/login/kakao'; 
-    const code = new URL(window.location.href).searchParams.get("code");
-    console.log(code);
 
-    const kakaoLogin = async () => {
-      // try {
-      //   const res = await api.get(`${REDIRECT_URI}?code=${code}`);
-      //   const { accessToken } = res.data;
-      //   axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-      //   console.log(accessToken)
-      //   // navigate("/main");
-      // } catch (error) {
-      //   console.log("로그인 에러 발생", error);
-      // }
-      axios.get(`${REDIRECT_URI}?code=${code}`).then((response) => {
-        const { accessToken } = response.data;
-        setAccessToken(accessToken);
-        // axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-        
-        if (response.status === 200) {
-          console.log(accessToken);
-          navigate("/main");
-        }
+  const navigator = useNavigate()
+
+  const { setAccessToken, setIsLogin } = useStore()
+
+  const isPost = useRef<boolean>(false)
+  
+  // useMutation => 비동기 작업 처리
+  const kakaoMutations = useMutation( getLogin, {
+    onSuccess: (res) => {
+      setAccessToken( res?.data?.accessToken ) // 어떤 속성이 null 또는 undefined일 경우 에러방지하고 그냥 undefined 반환
+
+      setIsLogin( true )
+      navigator('/main')
+
+    },
+    onError: ( err ) => {
+      console.log( err )
+      alert( "로그인 실패했습니다" )
+      navigator( '/login' )
+    } 
+  })
+
     
-      }).catch((error) => {
-          console.log(error);
-        });
-    };
+  const urlParam = new URLSearchParams( window.location.search )
+  const code = urlParam.get( 'code' )
 
-    kakaoLogin();
-  }, [navigate]); // navigate 함수를 의존성 배열에 추가
+  /**
+   * useEffect => code가 변경될 때마다 실행
+   * code는 카카오 로그인 후에 URL 쿼리 파람에서 가져옴 
+   * isPost.current가 true이면 이미 요청을 보냈다는 것을 의미하므로, 다시 요청 x
+   * 그렇지 않으면 kakaoMutations.mutateAsync(code)를 호출하여 로그인 시도
+   */
+  useEffect(()=>{
+    if( isPost.current ) return
 
-  return (
-    <div>
-      <h1>로그인 중입니다.</h1>
-    </div>
-  );
-};
+    isPost.current = true
+    kakaoMutations.mutateAsync( code )
 
-export default Kakao;
+  }, [ code, kakaoMutations])
+
+
+  return(<div></div>)
+  
+}
+
+export default Kakao
+
