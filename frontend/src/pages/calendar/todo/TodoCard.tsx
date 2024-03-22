@@ -1,5 +1,4 @@
 import { format } from 'date-fns'
-import { useNavigate } from 'react-router-dom'
 import edit from 'src/asset/images/edit.png'
 import trash from 'src/asset/images/trash.png'
 import useStore from '../store'
@@ -35,7 +34,6 @@ const TodoBody = styled.div`
 
 const TodoCard = ( props: TodoCardProps ) =>{
 
-    const navigator = useNavigate();
 
     const { modalContent, setModalContent } = useStore();
 
