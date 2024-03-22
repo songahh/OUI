@@ -36,12 +36,12 @@ public class StatisticsController {
     }
 
     @GetMapping("/my/week")
-    public ResponseEntity<List<EmotionClass>> getMyWeekEmotion(MyWeeklyEmotionReq req){
+    public ResponseEntity<?> getMyWeekEmotion(MyWeeklyEmotionReq req){
         System.out.println("req.getDate() = " + req.getDate());
         System.out.println("req.getDiaryId() = " + req.getDiaryId());
-        statisticsService.getMyWeek(req.getDiaryId(), req.getDate());
 
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return new ResponseEntity<>(statisticsService.getMyWeek(req.getDiaryId(), req.getDate()),HttpStatus.OK);
     }
 
     public static String getCurrentWeekOfMonth(LocalDate localDate) {

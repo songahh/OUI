@@ -41,7 +41,7 @@ public class StatisticsService{
         return map;
     }
 
-    public void getMyWeek(Integer diaryId, LocalDate end){
+    public HashMap<Date, double[]> getMyWeek(Integer diaryId, LocalDate end){
         LocalDate start = end.minusDays(6);
 
         Date startDate = Date.from(start.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -55,13 +55,31 @@ public class StatisticsService{
         List<EmotionClass> temp = mongoIdList.stream()
                 .map(e -> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId()).getEmotion())
                 .toList();
-        for(EmotionClass t:temp){
-            System.out.println("t.toString() = " + t.toString());
-        }
-        
-        // 감정이 db에 어떻게 저장되는지 확인해야 함
-        // 주간 우울 행복 그래프 api를 분류해야하는지
+        int size = temp.size();
 
-        return ;
+
+        HashMap<Date, double[]> weeklytotalEmotion = new HashMap<>();
+        HashMap<Date, Integer> countMap = new HashMap<>();
+
+        for(int i = 0; i < size; i++) {
+            Date date = mongoIdList.get(i).getDate();
+            double[] currentEmotions = new double[]{temp.get(i).getHappy(), temp.get(i).getSad()};
+            if (weeklytotalEmotion.containsKey(date)) {
+                countMap.put(date,countMap.get(date)+1);
+                double[] existingEmotions = weeklytotalEmotion.get(date);
+                existingEmotions[0] += currentEmotions[0];
+                existingEmotions[1] += currentEmotions[1];
+            } else {
+                weeklytotalEmotion.put(date, currentEmotions);
+                countMap.put(date,1);
+            }
+        }
+
+        weeklytotalEmotion.forEach((date, emotions) -> {
+            emotions[0] *= (double) 100 /countMap.get(date);
+            emotions[1] *= (double) 100 /countMap.get(date);
+        });
+
+        return weeklytotalEmotion;
     }
 }
