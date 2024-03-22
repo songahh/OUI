@@ -3,17 +3,18 @@ import axios from 'axios'
 import cookie from 'react-cookies';
 
 const useAxios = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL,
-  timeout: 10000
+  // baseURL: process.env.REACT_APP_BASE_URL,
+  baseURL: 'http://localhost:8080',
+  timeout: 10000,
+  withCredentials: true,
 })
-
-
 
 useAxios.interceptors.request.use( 
   async( config ) => {
       const accessToken = useStore();
       if( accessToken ){
         config.headers['Authorization'] = `${ accessToken }`
+        console.log(accessToken);
       }
 
       return config
@@ -65,8 +66,9 @@ useAxios.interceptors.response.use(
 
 export const getAxios =  async ( url: string, params?: any )  => {
   try {
-    const response = await useAxios.get( url, { params } )
-    return response?.data
+
+    const response = await useAxios.get(url)
+    return response
   } catch( error ){
     return Promise.reject(error)
   }
