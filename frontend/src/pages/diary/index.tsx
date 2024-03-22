@@ -51,7 +51,7 @@ const Diary = () => {
             baseURL: 'http://localhost:8080', 
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
-                "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDY1NzIxLCJleHAiOjE3MTEwNjkzMjF9.qzZ5JuNcYdkSv2kFdzfOVwLVo3xHMmDcO0mZoJ2OO2g"
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDcwMDczLCJleHAiOjE3MTEwNzM2NzN9.Jvu5hJeBOC-0ksi4n6KXV7FnXQFmaKE-P7GesvrY5ls"
             },
             withCredentials: true,
         });
