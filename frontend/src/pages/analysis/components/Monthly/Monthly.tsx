@@ -30,6 +30,7 @@ const IconWrapper = styled.div`
 
 const Monthly = () => {
 
+
     const images = {
         sad: sad,
         nervous: nervous,
