@@ -9,12 +9,10 @@ import {
     PointElement,
     LineElement,
     Tooltip,
-    Legend,
 } from "chart.js";
 import { useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Switch } from "./components/Switch";
-import { Box } from "@mui/material";
 import { BottomNavi } from "src/components/control/BottomNavi";
 import styled from 'styled-components';
 import Monthly from "./components/Monthly/Monthly";
@@ -47,16 +45,16 @@ const BoxWrapper = styled.div`
 
 const GraphWrapper = styled.div`
     width: 100%;
-    max-width: 800px; // 그래프의 최대 너비 설정
-    height: 30vh; // 그래프의 높이 설정
-    margin: auto; // 가로 중앙 정렬
+    max-width: 800px; 
+    height: 30vh; 
+    margin: auto; 
 
     @media (max-width: 768px) {
-        height: 25vh; // 태블릿에서의 높이 조정
+        height: 25vh; 
     }
 
     @media (max-width: 480px) {
-        height: 20vh; // 모바일에서의 높이 조정
+        height: 20vh;
     }
 `;
 
