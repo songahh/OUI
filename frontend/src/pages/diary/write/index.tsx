@@ -39,7 +39,7 @@ const DiaryWrite = () => {
     const navigator = useNavigate();
 
     const {state} = useLocation();
-    const {diaryId} = state;
+    const { diaryId } = state;
     console.log(diaryId);
     
     const canvasRef = useRef(null);
@@ -199,9 +199,6 @@ const DiaryWrite = () => {
             canvas.renderAll();
         }
     };
-
-    // 임시 diaryId ////////
-    const diaryId = 1;
 
     const writeDiary = useMutation( postDiary );
     
