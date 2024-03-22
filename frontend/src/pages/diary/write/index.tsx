@@ -34,7 +34,7 @@ const Content = styled.div`
 
 const DiaryWrite = () => {
     const navigator = useNavigate();
-
+    
     const canvasRef = useRef(null);
     const textboxRef = useRef<fabric.Textbox>(null);
     
@@ -207,7 +207,7 @@ const DiaryWrite = () => {
     const saveDiary = () => {
         // string으로 전달
         const diaryToString = JSON.stringify(canvas.toJSON());
-
+        
         api({
             url: '/diary',
             method: 'POST',
