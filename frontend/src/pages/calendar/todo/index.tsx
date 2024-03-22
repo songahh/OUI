@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { LeftIcon, RightIcon } from 'src/components'
 import { useMutation, useQuery } from 'react-query'
+import saveTodo from 'src/asset/images/saveTodo.png'
 import { postTodo } from '../api'
 import useStore from '../store';
 import { format } from 'date-fns';
@@ -75,7 +76,7 @@ const Todo = () => {
       return
     }
     colors.push(todoColor)
-    await makeTodo.mutateAsync({ title: 'String', content: 'String', date: 'Date' })
+    await makeTodo.mutateAsync({ title: title, content: memo, date: format(clickDate, 'yyyy-MM-dd' ) })
     navigator( '/calendar' )
   }
 
@@ -87,10 +88,10 @@ const Todo = () => {
     </div>
   <TodoTitle>
     <div style={{ fontSize:'20px'}}>일정 추가</div>
-    <div style={{ fontSize: '10px', marginLeft: '2%' }}> { format(clickDate, 'yyyy-MM-dd' ) }</div>
+    <div style={{ fontSize: '10px', marginLeft: '2%' }}>{ format(clickDate, 'yyyy-MM-dd' )}</div>
   </TodoTitle>
   <div style={{marginTop:'2%'}}>
-    <RightIcon size= { 20 } onClick={ RegistTodo }/>
+    <img src={ saveTodo } alt='' style={{ height: '40px', cursor: 'pointer' }} onClick={ RegistTodo }/>
   </div>
   </TodoHeaderWrapper>
   <TodoWrapper>

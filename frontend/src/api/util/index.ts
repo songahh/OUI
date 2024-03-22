@@ -69,8 +69,7 @@ useAxios.interceptors.response.use(
 
 export const getAxios =  async ( url: string, params?: any )  => {
   try {
-
-    const response = await useAxios.get(url)
+    const response = await useAxios.get(url, { params })
     return response
   } catch( error ){
     return Promise.reject(error)
