@@ -41,3 +41,6 @@ out/
 
 ### spotify-key ###
 spotify-secret.properties
+
+### firebase-key ###
+firebase_service_key.json
