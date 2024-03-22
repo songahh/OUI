@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { LeftIcon, RightIcon } from 'src/components'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
+import { postTodo } from '../api'
 import useStore from '../store';
 import { format } from 'date-fns';
 import styled from 'styled-components'
@@ -61,14 +62,22 @@ const Todo = () => {
   const moveBack = () =>{
     navigator( '/calendar' )
   }
-  const RegistTodo = () =>{
-    colors.push(todoColor)
-    navigator( '/calendar' )
-  }
 
   const setColor = (color) => {
     setTodoColor(color)
   };
+
+  const makeTodo = useMutation( postTodo )
+
+  const RegistTodo = async () => {
+    if( title === '' ) {
+      alert('제목 입력하세요')
+      return
+    }
+    colors.push(todoColor)
+    await makeTodo.mutateAsync({ title: 'String', content: 'String', date: 'Date' })
+    navigator( '/calendar' )
+  }
 
   return(
     <>

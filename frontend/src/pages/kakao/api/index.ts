@@ -1,1 +1,1 @@
-export * from './getLogin';
+export * from './getLogin'
