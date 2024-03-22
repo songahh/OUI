@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 import styled from 'styled-components';
@@ -99,8 +100,6 @@ const PrettoSlider = styled(Slider)({
 });
 
 const ImageContent = ( props: ContentProps ) => {
-  const { penWidth, handlePenWidth, penColor, handlePenColor } = props;
-
   const colorPalette = [
     "#262626",
     "#F09690",
@@ -110,6 +109,35 @@ const ImageContent = ( props: ContentProps ) => {
     "#C0DEFF",
     "#BDB5FF",
   ];
+  
+  const { canvas } = props;
+  
+  const [ penColor, setPenColor ] = useState('#000000');
+  const [ penWidth, setPenWidth ] = useState(10);
+
+  // 펜 굵기
+  const handlePenWidth = (event: any) => {
+    const width = event.target.value;
+    setPenWidth(parseInt(width, 10) || 1);
+
+    if(!canvas) return;
+
+    const pen = canvas.freeDrawingBrush;
+    pen.width = width;
+    canvas.renderAll();
+  }
+
+  // 펜 색상
+  const handlePenColor = (event: any) => {
+    const color = event.target.value;
+    setPenColor(color);
+
+    if(!canvas) return;
+
+    const pen = canvas.freeDrawingBrush;
+    pen.color = color;
+    canvas.renderAll();
+  } 
 
   return (
     <ContentWrapper>
@@ -152,8 +180,5 @@ const ImageContent = ( props: ContentProps ) => {
 export default ImageContent;
 
 type ContentProps = {
-  penWidth?: number,
-  handlePenWidth?: (e: any) => void,
-  penColor?: string,
-  handlePenColor?: (e: any) => void,
+  canvas: fabric.Canvas,
 }

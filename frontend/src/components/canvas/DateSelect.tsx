@@ -8,42 +8,72 @@ const SelectLabel = styled.span`
 `;
 
 const DateSelect = (props: DateSelectProps) => {
-  const { onDateChange, dailyDate } = props;
+  const { selectedDate, setSelectedDate } = props;
 
-  const dailyYear = new Date(dailyDate).getFullYear();
-  const dailyMonth = new Date(dailyDate).getMonth() + 1;
-  const dailyDay = new Date(dailyDate).getDate();
+  const currentDate = new Date();
+  const initialDate = selectedDate ? new Date(props.selectedDate) : currentDate;
 
-  const [ year, setYear ] = useState((dailyYear));
-  const [ month, setMonth ] = useState(dailyMonth);
-  const [ day, setDay ] = useState(dailyDay);
-  const [ daysInMonth, setDaysInMonth ] = useState([]);
+  const selectedYear = new Date(initialDate).getFullYear();
+  const selectedMonth = new Date(initialDate).getMonth() + 1;
+  const selectedDay = new Date(initialDate).getDate();
+
+  const [year, setYear] = useState(selectedYear);
+  const [month, setMonth] = useState(selectedMonth);
+  const [day, setDay] = useState(selectedDay);
+  const [daysInMonth, setDaysInMonth] = useState([]);
+
+  useEffect(() => {
+    const date = new Date(selectedDate || currentDate);
+    setYear(date.getFullYear());
+    setMonth(date.getMonth() + 1);
+    setDay(date.getDate());
+  }, [ selectedDate ]);
 
   useEffect(() => {
     const updateDaysInMonth = () => {
       const days = new Date(year, month, 0).getDate();
       let daysArray = Array.from({ length: days }, (_, i) => i + 1);
-
+      
       // 현재 선택된 연도와 월이 오늘 날짜의 연도와 월과 같으면 오늘 일자 이후를 제거
       if (year === new Date().getFullYear() && month === new Date().getMonth() + 1) {
         daysArray = daysArray.filter(day => day <= new Date().getDate());
       }
-
+      
       setDaysInMonth(daysArray);
+
+      // 현재 선택된 일자가 새로운 월에 존재하지 않는 경우, 마지막 날짜로 설정
+      if (!daysArray.includes(day)) {
+        setDay(daysArray[daysArray.length - 1]);
+      }
     };
 
     updateDaysInMonth();
 
     const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    onDateChange && onDateChange(formattedDate);
-  }, [ year, month, day, onDateChange ]);
+    setSelectedDate(formattedDate);
+  }, [ year, month, day ]);
+
+  const handleYearChange = (e: any) => {
+    const selectedYear = parseInt(e.target.value, 10);
+    setYear(selectedYear);
+  };
+
+  const handleMonthChange = (e: any) => {
+    const selectedMonth = parseInt(e.target.value, 10);
+    setMonth(selectedMonth);
+  };
+
+  const handleDayChange = (e: any) => {
+    const selectedDay = parseInt(e.target.value, 10);
+    setDay(selectedDay);
+  };
 
   return (
     <div>
       <Select 
         value={ year } 
         style={{ fontSize: "20px" }} 
-        onChange={(e) => setYear(e.target.value as number)}
+        onChange={ handleYearChange }
         MenuProps={{
           PaperProps: {
             style: {
@@ -62,7 +92,7 @@ const DateSelect = (props: DateSelectProps) => {
       <Select 
         value={ month } 
         style={{ fontSize: "20px" }} 
-        onChange={(e) => setMonth(e.target.value as number)}
+        onChange={ handleMonthChange }
         MenuProps={{
           PaperProps: {
             style: {
@@ -81,7 +111,7 @@ const DateSelect = (props: DateSelectProps) => {
       <Select 
         value={ day } 
         style={{ fontSize: "20px" }} 
-        onChange={(e) => setDay(e.target.value as number)}
+        onChange={ handleDayChange }
         MenuProps={{
           PaperProps: {
             style: {
@@ -89,6 +119,7 @@ const DateSelect = (props: DateSelectProps) => {
             },
           },
         }}
+        multiple={ false}
       >
         {daysInMonth.map((day) => (
           <MenuItem key={ day } value={ day }>
@@ -104,8 +135,6 @@ const DateSelect = (props: DateSelectProps) => {
 export default DateSelect;
 
 type DateSelectProps = {
-  dailyDate: string,
-  onDateChange?: (formattedDate: string) => void;
+  selectedDate?: string,
+  setSelectedDate?: React.Dispatch<React.SetStateAction<string>>,
 }
-
-
