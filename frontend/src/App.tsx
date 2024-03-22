@@ -1,11 +1,10 @@
-import './App.css';
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useState } from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import routers from './pages/router'
-import { StyledEngineProvider } from '@mui/material/styles';
 import useStore from './store'
+import { StyledEngineProvider } from '@mui/material/styles';
 import styled from 'styled-components';
 
 
@@ -20,7 +19,7 @@ const AppWrapper = styled.div`
 const queryClient = new QueryClient() // QueryClient 생성
 
 function App() {
-
+  
   const [ router ] = useState( createBrowserRouter( routers ))
 
   return (
