@@ -26,4 +26,8 @@ public class MusicCollection {
     private String songName;
     private String spotifyUrl;
 
+    public void setSpotifyUrl(String uri){
+        this.spotifyUrl = uri;
+    }
+
 }

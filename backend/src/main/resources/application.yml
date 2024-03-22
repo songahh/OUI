@@ -51,8 +51,8 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
   data:
     mongodb:
-      host: localhost
-      port: 27017
+      host: ${MONGODB_HOST}
+      port: ${MONGODB_PORT}
       database: diary
       username: ${MONGODB_USERNAME}
       password: ${MONGODB_PASSWORD}
