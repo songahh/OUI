@@ -5,8 +5,8 @@ import { SaveIcon, BackIcon } from 'src/components';
 import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from '../components';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
-import useStore from 'src/store';
+import { useMutation } from 'react-query';
+import { postDiary } from '../api';
 import styled from 'styled-components';
 
 const Header = styled.div`
@@ -200,36 +200,24 @@ const DiaryWrite = () => {
         }
     };
 
-    // Axios 인스턴스 생성
-    const api = axios.create({
-        baseURL: 'http://localhost:8080', 
-        headers: {
-            "Content-Type": "application/json;charset=utf-8",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDcwMDczLCJleHAiOjE3MTEwNzM2NzN9.Jvu5hJeBOC-0ksi4n6KXV7FnXQFmaKE-P7GesvrY5ls"
-        },
-        withCredentials: true,
-    });
+    // 임시 diaryId ////////
+    const diaryId = 1;
+
+    const writeDiary = useMutation( postDiary );
     
     // 저장
-    const saveDiary = () => {
+    const saveDiary = async () => {
         // string으로 전달
         const diaryToString = JSON.stringify(canvas.toJSON());
         
-        api({
-            url: '/diary',
-            method: 'POST',
-            data: {
-                diaryId: 1,
-                dailyDate: selectedDate,
-                dailyContent: diaryToString,
-            },
-        })
-        .then(() => {
-            navigator('/diary')
-        })
-        .catch((err) => {
-            console.log("에러발생:", err);
-        });
+        const data = {
+            diaryId,
+            dailyDate: selectedDate,
+            dailyContent: diaryToString,
+        };
+
+        await writeDiary.mutateAsync(data);
+        navigator('/diary');
     }
 
     return (
