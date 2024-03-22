@@ -110,6 +110,7 @@ const Calendar = () => {
   const today = format(currentMonth, 'yyyy-MM-01')
 
   const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getCalendar( today ))
+
   useEffect(() => { refetch() }, [ currentMonth, refetch ])
 
   return(
@@ -134,7 +135,7 @@ const Calendar = () => {
             </ModalPortal>
         }
             <DateList/>
-            <DayList list = { days } calendars = { calendars }/>
+            <DayList list = { days } calendars = { calendars?.data }/>
           </CalendarWrapper>
   )
 }
