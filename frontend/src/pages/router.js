@@ -1,8 +1,10 @@
 import { useRouter } from '../hooks'
 
 export const routes = [
-    { path: 'diary/write' },
+    { path: 'diary/write'},
+    { path: 'diary/write', dynamicPath: `diary/write/:diaryId` },
     { path: 'diary/edit' },
+    { path: 'diary/edit', dynamicPath: `diary/edit/:diaryId` },
     { path: 'diary/deco' },
     { path: 'diary' },
     { path: 'calendar' },

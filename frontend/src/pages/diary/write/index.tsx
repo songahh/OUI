@@ -3,7 +3,7 @@ import { BottomSheet } from 'react-spring-bottom-sheet'
 import 'react-spring-bottom-sheet/dist/style.css'
 import { SaveIcon, BackIcon } from 'src/components';
 import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from '../components';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import useStore from 'src/store';
@@ -37,6 +37,10 @@ const Content = styled.div`
 const DiaryWrite = () => {
 
     const navigator = useNavigate();
+
+    const {state} = useLocation();
+    const {diaryId} = state;
+    console.log(diaryId);
     
     const canvasRef = useRef(null);
     const textboxRef = useRef<fabric.Textbox>(null);
