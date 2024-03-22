@@ -1,6 +1,7 @@
 package com.emotionoui.oui.member.controller;
 
 import com.emotionoui.oui.member.dto.req.FindMemberReq;
+import com.emotionoui.oui.member.dto.req.UpdateMemberReq;
 import com.emotionoui.oui.member.dto.res.SearchMemberRes;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.service.MemberService;
@@ -8,10 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,14 +20,13 @@ public class MemberController {
     private final MemberService memberService;
 
     /**
-     * 회원정보 가져오기
+     * 회원 정보 가져오기
      * @param member
      * @return
      */
     @GetMapping
-    public ResponseEntity<SearchMemberRes> getMember(@AuthenticationPrincipal Member member){
-        // 만약 탈퇴한 회원이라면 예외처리
-        SearchMemberRes searchMemberRes = memberService.getMember(member);
+    public ResponseEntity<SearchMemberRes> searchMember(@AuthenticationPrincipal Member member){
+        SearchMemberRes searchMemberRes = memberService.searchMember(member);
         return ResponseEntity.ok(searchMemberRes);
     }
 
@@ -38,9 +36,24 @@ public class MemberController {
      * @return 추가할 memberEmail
      */
     @GetMapping("/search")
-    public ResponseEntity<String> searchMember(@AuthenticationPrincipal Member member, @RequestBody FindMemberReq findMemberReq){
+    public ResponseEntity<String> findMember(@AuthenticationPrincipal Member member, @RequestBody FindMemberReq findMemberReq){
         String creatorEmail = member.getEmail();
-        String searchedMember= memberService.searchMember(creatorEmail, findMemberReq);
+        String searchedMember= memberService.findMember(creatorEmail, findMemberReq);
         return ResponseEntity.ok(searchedMember);
     }
+
+    /**
+     * 회원 정보 수정
+     * @param member
+     * @return
+     */
+    @PutMapping
+    public ResponseEntity<Void> updateMember(@AuthenticationPrincipal Member member, UpdateMemberReq updateMemberReq){
+        System.out.println(updateMemberReq.getImgUrl());
+        memberService.updateMember(member, updateMemberReq);
+        return ResponseEntity.ok().build();
+    }
+
 }
+
+

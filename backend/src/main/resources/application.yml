@@ -68,3 +68,16 @@ jwt:
 spotify:
   client-id: ${SPOTIFY_CLIENT_ID}
   client-secret: ${SPOTIFY_CLIENT_SECRET}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET} # {버킷명}
+    credentials:
+      access-key: ${S3_ACCESS}
+      secret-key: ${S3_SECRET}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
