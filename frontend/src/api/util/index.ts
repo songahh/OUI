@@ -9,68 +9,66 @@ const useAxios = axios.create({
   withCredentials: true,
 })
 
-// useAxios.interceptors.request.use( 
-//   async( config ) => {
-//       const accessToken = useStore();
-//       if( accessToken ){
-//         config.headers['Authorization'] = `${ accessToken }`
-//         console.log(accessToken);
-//       }
+useAxios.interceptors.request.use( 
+  async( config ) => {
+      const accessToken = useStore();
+      if( accessToken ){
+        config.headers['Authorization'] = `${ accessToken }`
+        console.log(accessToken);
+      }
 
-//       return config
-//   },
-//   ( error ) => {
-//     return Promise.reject( error )
-//   }
-// )
+      return config
+  },
+  ( error ) => {
+    return Promise.reject( error )
+  }
+)
 
-// useAxios.interceptors.response.use(
+useAxios.interceptors.response.use(
 
-//   async( response ) => {
-//     return response
-//   },
-//   async( error ) => {
-//     const { status } = error
+  async( response ) => {
+    return response
+  },
+  async( error ) => {
+    const { status } = error
 
-//     console.log(error)
+    console.log(error)
 
-//     if( error?.response?.status === 409 ){
-//       return error.response
-//     }
+    if( error?.response?.status === 409 ){
+      return error.response
+    }
 
-//     if( error?.response?.status === 401 || error === 401 || status === 401 ){
+    if( error?.response?.status === 401 || error === 401 || status === 401 ){
 
-//       if( localStorage.getItem('refreshToken')){
-//         const refreshToken = localStorage.getItem('refreshToken')
-//         const data = { "Authorization-refresh" : refreshToken }
-//         try{
-//           const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/reissue`, { headers : data })
-//           useStore.setState({ isLogin: true })
-//           useStore.setState({ accessToken: response?.headers?.authorization })
-//           localStorage.setItem("accessToken", response?.headers?.authorization )
-//           localStorage.setItem("refreshToken", response?.headers[`refresh-token`] )
+      if( localStorage.getItem('refreshToken')){
+        const refreshToken = localStorage.getItem('refreshToken')
+        const data = { "Authorization-refresh" : refreshToken }
+        try{
+          const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/reissue`, { headers : data })
+          useStore.setState({ isLogin: true })
+          useStore.setState({ accessToken: response?.headers?.authorization })
+          localStorage.setItem("accessToken", response?.headers?.authorization )
+          localStorage.setItem("refreshToken", response?.headers[`refresh-token`] )
 
-//           error.config.headers.Authorization = response?.headers?.authorization
-//           return axios.request(error.config)
-//         } catch( refreshError ){
-//           localStorage.removeItem("accessToken")
-//           localStorage.removeItem("refreshToken")
-//         }
+          error.config.headers.Authorization = response?.headers?.authorization
+          return axios.request(error.config)
+        } catch( refreshError ){
+          localStorage.removeItem("accessToken")
+          localStorage.removeItem("refreshToken")
+        }
        
 
-//       }
-//     }
-//   }
-// )
+      }
+    }
+  }
+)
 
 
 export const getAxios =  async ( url: string, params?: any )  => {
   try {
 
-    const temp = 'http://localhost:8080'
-    console.log(temp+url)
-    const response = await useAxios.get(temp+url)
-    return response?.data.accessToken;
+    const response = await useAxios.get(url)
+    return response
   } catch( error ){
     return Promise.reject(error)
   }

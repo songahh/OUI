@@ -6,6 +6,7 @@ import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from '.
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
+import {Cookies} from 'react-cookie'
 import useStore from 'src/store';
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
@@ -44,10 +45,6 @@ const Content = styled.div`
 
 const DiaryWrite = () => {
 
-
-    const accessToken = useStore(state => state.accessToken);
-
-    console.log(accessToken);
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
     
@@ -60,6 +57,10 @@ const DiaryWrite = () => {
     const [ penWidth, setPenWidth ] = useState(5);
     const [ selectedDate, setSelectedDate ] = useState('');
     
+    const accessToken = useStore(state => state.accessToken);
+
+    console.log(accessToken);
+
     useEffect(() => {
         // 캔버스 생성
         const newCanvas = new fabric.Canvas(canvasRef.current, {
@@ -350,6 +351,7 @@ const DiaryWrite = () => {
         baseURL: 'http://localhost:8080', 
         headers: {
             "Content-Type": "application/json;charset=utf-8",
+            "Authorization": `Bearer ${accessToken}` 
         },
         withCredentials: true,
     });
