@@ -96,11 +96,12 @@ const Day = ( props: DayProps ) =>{
                         )
                     })
                 }
-                <img src={ tmp1 } alt='' style={{ height: '100%' }}/>
+                {/* <img src={ tmp1 } alt='' style={{ height: '100%' }}/> */}
             </EmotionWrapper>
             <TodoWrapper>
             {
                 todos?.map(( todo, index ) =>{
+                    if(index<3)
                     return(
                         <TodoItemWrapperContainer key={ index }>
                             <TodoHeaderWrapper/>

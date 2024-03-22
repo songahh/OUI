@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "src/pages/main/components/Card";
 import { Header } from "src/components/control/Header";
 import { BottomNavi } from "src/components/control/BottomNavi";
@@ -8,6 +8,7 @@ import { CustomModal } from "./components/Modal";
 import { getDiary } from './api/getDiary';
 import { useQuery } from 'react-query'
 import Slider from "react-slick";
+import { useNavigate } from 'react-router-dom'
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styled from "styled-components";
@@ -52,6 +53,8 @@ const Main = () => {
     speed: 500,
   };
 
+  const navigator = useNavigate()
+
   const [ isModalOpen, setIsModalOpen ] = useState( false );
   const [ diaryCount, setDiaryCount ] = useState(0); 
   const [ diaryList, setDiaryList ] = useState([]);
@@ -62,11 +65,11 @@ const Main = () => {
   }
 
   const [cards, setCards] = useState([
-    { id: 1, buttonText: "1", type: "card" },
-    { id: 2, buttonText: "2", type: "card" },
-    { id: 3, buttonText: "3", type: "card" },
-    { id: 4, buttonText: "4", type: "card" },
-    { id: 5, buttonText: "카드 추가", type: "addButton" },
+    { id: 1, buttonText: "1", isDiary: "diary", type: '개인' },
+    { id: 2, buttonText: "2", isDiary: "diary" , type: '개인'},
+    { id: 3, buttonText: "3", isDiary: "diary", type: '개인' },
+    { id: 4, buttonText: "4", isDiary: "diary", type: '공유' },
+    { id: 5, buttonText: "카드 추가", isDiary: "addButton" },
   ]);
 
 
@@ -76,25 +79,20 @@ const Main = () => {
 
     const newCardNumber = cards.length; 
     const newCards = cards.slice( 0, -1 ); 
-    const newCard = { id: newCardNumber, buttonText: `${ key }`, type: "card" };
+    const newCard = { id: newCardNumber, buttonText: `${ key }`, isDiary: "diary" };
     const addButtonCard = cards[ cards.length - 1 ]; 
     setCards([ ...newCards, newCard, addButtonCard ]);
     console.log( '추가 완료!!!!!' );
     closeModal();
   };
 
-  const moveDiary = () =>{ // 페이지 이동
-    console.log("111")
+  const moveDiary = (type) => {
+    type=='개인' && 
+    navigator('/calendar', {state : {diaryId: 1, type: '개인'}})
+    type=='공유' && 
+    navigator('/calendar', {state : {diaryId: 3, type: '공유'}})
   }
 
-  const { data: temp, refetch } = useQuery([ 'temp', diaryCount ], () => getDiary)
-
-  useEffect(() => {
-    const diaryList = getDiary();
-    refetch();
-    console.log(diaryList);
-  }, [diaryList, refetch]); 
-  
 
   return (
     <>
@@ -108,11 +106,11 @@ const Main = () => {
         <SliderWrapper { ...settings }>
         {cards.map(( card, index ) => (
           <div key={index}>
-            <Card buttonText={ card.buttonText } onClick={ card.type === "addButton" ? openModal : moveDiary} />
-          </div>
+            <Card buttonText={ card.buttonText } onClick={ card.isDiary === "addButton" ? openModal : () => moveDiary(card?.type) } />
+          </div> 
         ))}
-          <Card></Card>
-          <Card></Card>
+          <Card/>
+          <Card/>
         </SliderWrapper>
       </div>
     </div>
