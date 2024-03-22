@@ -1,6 +1,6 @@
 package com.emotionoui.oui.music.service;
 
-import com.emotionoui.oui.music.MusicException;
+import com.emotionoui.oui.common.exception.MusicException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

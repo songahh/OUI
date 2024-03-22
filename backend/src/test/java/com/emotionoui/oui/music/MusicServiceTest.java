@@ -34,7 +34,7 @@ public class MusicServiceTest {
     @DisplayName("노래명, 가수명으로 Spotify URI를 반환한다.")
     @Test
     void getSpotifyURI() throws Exception{
-        String uri = musicService.searchMusicURI("TWS (투어스)", "첫 만남은 계획대로 되지 않아");
-        assertEquals("spotify:track:0aZG8KWrpRnsGL0loUkfSj", uri);
+        String uri = musicService.searchMusicURI("임창정", "소주 한 잔");
+        assertEquals("spotify:track:10if3nqm7OS7qrV45v9GOg", uri);
     }
 }
