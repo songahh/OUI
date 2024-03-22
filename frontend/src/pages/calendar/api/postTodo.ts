@@ -4,8 +4,7 @@ import { postAxios } from 'src/api/util'
 
 export const postTodo = async (data:dataType) => {
     try{
-        const response = await postAxios('/schedule/my', data);
-        return response
+        return await postAxios('/schedule/my', data);
     }catch(err){
         throw err
     }
