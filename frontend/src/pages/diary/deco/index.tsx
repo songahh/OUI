@@ -5,7 +5,8 @@ import { SaveIcon, BackIcon } from 'src/components';
 import { Tab, ImageContent, DrawingContent } from '../components';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
+import { useMutation, useQuery } from 'react-query';
+import { getDiary, postDiaryDeco } from '../api';
 import WebFont from 'webfontloader';
 import styled from 'styled-components';
 
@@ -41,19 +42,26 @@ const DiaryEdit = () => {
     const canvasRef = useRef(null);
     
     const [ canvas, setCanvas ] = useState(null);
+    const [ isFontLoaded, setIsFontLoaded ] = useState(false);
     const [ activeTool, setActiveTool ] = useState("image");
     
-    const api = axios.create({
-        baseURL: 'http://localhost:8080', 
-        headers: {
-            "Content-Type": "application/json;charset=utf-8",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDcwMDczLCJleHAiOjE3MTEwNzM2NzN9.Jvu5hJeBOC-0ksi4n6KXV7FnXQFmaKE-P7GesvrY5ls"
-        },
-        withCredentials: true,
-    });
+    useEffect(() => {        
+        WebFont.load({
+            custom: {
+                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
+                urls: ['src/asset/fonts']
+            },
+            active: () => {
+                setIsFontLoaded(true);
+            }
+        });
+    }, []);
 
     //////////// 임시 dailyDiaryId
-    const dailyDiaryId = 6;
+    const dailyDiaryId = 9;
+    const { data: dailyDiary } = useQuery('dailyDiary', () => getDiary(dailyDiaryId), {
+        enabled: isFontLoaded
+    });
 
     useEffect(() => {
         // 캔버스 생성
@@ -73,52 +81,33 @@ const DiaryEdit = () => {
 
         setCanvas(newCanvas);
 
-        WebFont.load({
-            custom: {
-                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
-                urls: ['src/asset/fonts']
-            },
-            active: () => {
-                getDiary(dailyDiaryId);
-            }
-        });
-        
-        const getDiary = (dailyDiaryId: number) => {
-            api({
-                url: `/diary/${dailyDiaryId}`,
-                method: 'GET'
-            })
-            .then((resp) => {
-                const data = resp.data;
-
-                // 1. 일기 작성자가 쓴 일기 -> 백그라운드로 선택되지 않게!
-                const dailyContent = data.dailyContent;
-                // JSON으로부터 캔버스 로드 후, 모든 객체를 선택 불가능하게 설정
-                newCanvas.loadFromJSON(dailyContent, () => {
-                    newCanvas.renderAll();
-                    // 모든 객체를 순회하면서 selectable 속성을 false로 설정
-                    newCanvas.forEachObject((obj) => {
-                        obj.selectable = false;
-                    });
-                });
-
-                // 2. 친구들이 꾸민 객체들
-                const decoObjects = JSON.parse(data.decoration);
-                fabric.util.enlivenObjects(decoObjects, (enlivenedObjects: any) => {
-                    enlivenedObjects.forEach((obj: any) => {
-                        obj.selectable = true;
-                        newCanvas.add(obj); // 각 객체를 캔버스에 추가
-                    });
-                    newCanvas.renderAll(); // 모든 객체가 추가된 후 캔버스를 다시 그림
-                }, null);
+        // 1. 일기 작성자가 쓴 일기 -> 백그라운드로 선택되지 않게!
+        const dailyContent = dailyDiary?.data?.dailyContent;
+        // JSON으로부터 캔버스 로드 후, 모든 객체를 선택 불가능하게 설정
+        newCanvas.loadFromJSON(dailyContent, () => {
+            newCanvas.renderAll();
+            // 모든 객체를 순회하면서 selectable 속성을 false로 설정
+            newCanvas.forEachObject((obj) => {
+                obj.selectable = false;
             });
-        }
+        });
+
+        // 2. 친구들이 꾸민 객체들
+        const decoObjects = dailyDiary ? JSON.parse(dailyDiary?.data?.decoration) : null;
+        fabric.util.enlivenObjects(decoObjects, (enlivenedObjects: any) => {
+            enlivenedObjects.forEach((obj: any) => {
+                obj.selectable = true;
+                newCanvas.add(obj); // 각 객체를 캔버스에 추가
+            });
+            newCanvas.renderAll(); // 모든 객체가 추가된 후 캔버스를 다시 그림
+        }, null);
+            
 
         // 언마운트 시 캔버스 정리
         return () => {
             newCanvas.dispose();
         };
-    }, []);
+    }, [ dailyDiary ]);
 
     // 객체 선택 시 삭제 버튼 추가
     useEffect(() => {
@@ -202,7 +191,7 @@ const DiaryEdit = () => {
         };
     }, [ canvas, activeTool ]);
 
-    // 마우스가 지나가는 객체를 확인하여 삭제
+    // 마우스가 지나가는 객체를 확인하여 삭제(selectable 객체만 삭제)
     const handleMouseOver = (event: any) => {
         if (activeTool === 'eraser' && event.target && event.target.selectable && event.target.type === 'path') {
             canvas.remove(event.target);
@@ -210,34 +199,31 @@ const DiaryEdit = () => {
         }
     };
 
+    const decoDiary = useMutation( postDiaryDeco );
+
     // 저장
-    const saveDiary = () => {
+    const saveDiary = async () => {
         // canvas에서 selectable이 true인 객체들만 필터링
         const decoObjects = canvas.getObjects().filter((obj: any) => obj.selectable);
 
         // 필터링된 객체들을 JSON 문자열로 변환
-        const decoString = JSON.stringify(decoObjects.map((obj: any) => obj.toJSON()));
+        const decoration = JSON.stringify(decoObjects.map((obj: any) => obj.toJSON()));
 
-        api({
-            url: `/diary/decorate/${dailyDiaryId}`,
-            method: 'POST',
-            data: {
-                diaryId: 1,
-                decoration: decoString,
-            },
-        })
-        .then((resp) => {
-            navigator(`/diary`);
-        })
-        .catch((err) => {
-            console.log("에러발생:", err)
-        });
+        const data = {
+            dailyDiaryId: dailyDiaryId,
+            // 임시 diaryId ////////
+            diaryId: 1,
+            decoration: decoration,
+        }
+
+        await decoDiary.mutateAsync(data);
+        navigator('/diary');
     }
 
     return (
         <Container>
             <Header>
-                <BackIcon onClick={() => { navigator('/diary') }} />
+                <BackIcon onClick={ () => { navigator('/diary') }} />
                 <SaveIcon onClick={ saveDiary }/>
             </Header>
             <canvas style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>

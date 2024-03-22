@@ -4,6 +4,7 @@ import { DateList, DayList, MyModal }  from './components'
 import writeDiary from 'src/asset/images/writeDiary.png'
 import { LeftIcon, RightIcon } from 'src/components'
 import { useQuery } from 'react-query'
+import { useLocation, useNavigate } from 'react-router-dom'
 import useStore from './store';
 import { createPortal } from 'react-dom'
 import useDate from 'src/util/date'
@@ -71,6 +72,12 @@ const Modal = styled.div`
 
 const Calendar = () => {
 
+  const navigator = useNavigate()
+
+  const {state} = useLocation();
+  const {diaryId, type} = state;
+  console.log(diaryId, type);
+
   const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() 
   const { startDate, endDate } = calculateDateRange()
   const { isModalOpened, updateModal} = useStore() // Day 컴포넌트에서 업데이트 된 상태 가져오기
@@ -92,6 +99,11 @@ const Calendar = () => {
       </ModalBackground>,
       document.body
     )
+  }
+
+  const goDiaryWrite = () =>{
+
+    navigator(`/diary/write/${diaryId}`, {state: {diaryId:  diaryId}})
   }
   
 
@@ -121,7 +133,7 @@ const Calendar = () => {
               <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
               <RightIcon size= { 20 } onClick={ moveNextMonth }/>
             </CalendarHeaderMiddleWrapper>
-            <CalendarHeaderRightWrapper>
+            <CalendarHeaderRightWrapper onClick={goDiaryWrite}>
                 <img src={ writeDiary } alt='' style={{ height: '40px'}}/>
                 <div style={{ marginTop: '10px', borderBottom: '1px solid', paddingBottom:'2px'}}>일기 쓰기</div>
             </CalendarHeaderRightWrapper>
