@@ -13,7 +13,7 @@ const Kakao = () => {
   const { data, status } = useQuery(['login', code], () => getLogin(code), {
     enabled: !!code, 
     onSuccess: (response) => {
-      setAccessToken(response);
+      setAccessToken(response.data.accessToken);
     },
   });
 

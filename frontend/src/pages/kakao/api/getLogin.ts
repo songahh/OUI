@@ -1,12 +1,9 @@
-import { getAxios } from "src/api/util"
+import axios from "axios"
 
-// interface CodeType{
-//     code: String
-// }
 
 export const getLogin = async ( params: String ) => {
-    try{
-        return await getAxios(`/auth/login/kakao?code=${params}` )
+    try{        
+        return await axios.get( `/auth/login/kakao?code=${params}`)
     }catch( err ){
         console.log( err )
     }
