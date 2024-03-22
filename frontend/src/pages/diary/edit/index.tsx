@@ -5,7 +5,8 @@ import { SaveIcon, BackIcon } from 'src/components';
 import { Tab, TextboxContent, ImageContent, DrawingContent, DateSelect } from '../components';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
+import { useMutation, useQuery } from 'react-query';
+import { getDiary, putDiary } from '../api';
 import WebFont from 'webfontloader';
 import styled from 'styled-components';
 
@@ -41,7 +42,7 @@ const DiaryEdit = () => {
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
 
-    const [textboxProps, setTextboxProps] = useState({
+    const [ textboxProps, setTextboxProps ] = useState({
         selectedFont: 'Dovemayo',
         fontWeight: 'normal',
         textAlign: 'left',
@@ -56,20 +57,27 @@ const DiaryEdit = () => {
     const todayDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
     const [ canvas, setCanvas ] = useState(null);
+    const [ isFontLoaded, setIsFontLoaded ] = useState(false);
     const [ activeTool, setActiveTool ] = useState("textbox");
     const [ selectedDate, setSelectedDate ] = useState(todayDate);
     
-    const api = axios.create({
-        baseURL: 'http://localhost:8080', 
-        headers: {
-            "Content-Type": "application/json;charset=utf-8",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhhcHB5MzE1MzE1QGhhbm1haWwubmV0IiwiaWF0IjoxNzExMDcwMDczLCJleHAiOjE3MTEwNzM2NzN9.Jvu5hJeBOC-0ksi4n6KXV7FnXQFmaKE-P7GesvrY5ls"
-        },
-        withCredentials: true,
-    });
+    useEffect(() => {        
+        WebFont.load({
+            custom: {
+                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
+                urls: ['src/asset/fonts']
+            },
+            active: () => {
+                setIsFontLoaded(true);
+            }
+        });
+    }, []);
 
     //////////// 임시 dailyDiaryId
-    const dailyDiaryId = 6;
+    const dailyDiaryId = 9;
+    const { data: dailyDiary } = useQuery('dailyDiary', () => getDiary(dailyDiaryId), {
+        enabled: isFontLoaded
+    });
 
     useEffect(() => {
         // 캔버스 생성
@@ -89,49 +97,28 @@ const DiaryEdit = () => {
 
         setCanvas(newCanvas);
 
-        WebFont.load({
-            custom: {
-                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
-                urls: ['src/asset/fonts']
-            },
-            active: () => {
-                getDiary(dailyDiaryId);
-            }
-        });
-        
-        // 수정할 일기 조회
-        const getDiary = (dailyDiaryId: number) => {
-            api({
-                url: `/diary/${dailyDiaryId}`,
-                method: 'GET'
-            })
-            .then((resp) => {
-                const data = resp.data;
+        setSelectedDate(dailyDiary?.data?.dailyDate.substring(0, 10));
 
-                setSelectedDate(data.dailyDate.substring(0, 10));
-
-                newCanvas.loadFromJSON(data.dailyContent, () => {
-                    newCanvas.renderAll();
-                    newCanvas.forEachObject((obj) => {
-                        if(obj.type === "textbox") {
-                            textboxRef.current = obj;
-                            setTextboxProps({
-                                selectedFont: textboxRef.current.fontFamily,
-                                fontWeight: textboxRef.current.fontWeight,
-                                textAlign: textboxRef.current.textAlign,
-                                fontColor: textboxRef.current.fill,
-                            });
-                        }
+        newCanvas.loadFromJSON(dailyDiary?.data?.dailyContent, () => {
+            newCanvas.renderAll();
+            newCanvas.forEachObject((obj) => {
+                if(obj.type === "textbox") {
+                    textboxRef.current = obj;
+                    setTextboxProps({
+                        selectedFont: textboxRef.current.fontFamily,
+                        fontWeight: textboxRef.current.fontWeight,
+                        textAlign: textboxRef.current.textAlign,
+                        fontColor: textboxRef.current.fill,
                     });
-                });
+                }
             });
-        }
+        });
 
         // 언마운트 시 캔버스 정리
         return () => {
             newCanvas.dispose();
         };
-    }, []);
+    }, [ dailyDiary ]);
 
     // 객체 선택 시 삭제 버튼 추가
     useEffect(() => {
@@ -242,25 +229,21 @@ const DiaryEdit = () => {
         }
     };
 
+    const editDiary = useMutation( putDiary );
+
     // 저장
-    const saveDiary = () => {
+    const saveDiary = async () => {
         // string으로 전달
         const diaryToString = JSON.stringify(canvas.toJSON());
 
-        api({
-            url: `/diary/${dailyDiaryId}`,
-            method: 'PUT',
-            data: {
-                dailyDate: selectedDate,
-                dailyContent: diaryToString,
-            },
-        })
-        .then(() => {
-            navigator(`/diary`);
-        })
-        .catch((err) => {
-            console.log("에러발생:", err);
-        });
+        const data = { 
+            dailyDiaryId: dailyDiaryId, 
+            dailyDate: selectedDate, 
+            dailyContent: diaryToString 
+        };
+
+        await editDiary.mutateAsync(data);
+        navigator('/diary');
     }
 
     return (

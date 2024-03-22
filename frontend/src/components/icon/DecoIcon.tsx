@@ -5,13 +5,13 @@ const ButtonWrapper = styled.button<{ size: number}>`
     display: flex;
     width: ${( props ) => props.size }px;
     padding: 0px;
-    margin: 10px;
+    margin: 20px;
     border: none;
     cursor: pointer;
     background-color: transparent;
 `
 
-const PalleteIcon = ( props: IconProps ) => {
+const DecoIcon = ( props: IconProps ) => {
     const { size = 40, onClick } = props;
 
     return (
@@ -28,7 +28,7 @@ const PalleteIcon = ( props: IconProps ) => {
     )
 }
 
-export default PalleteIcon;
+export default DecoIcon;
 
 type IconProps = {
     size?: number,
