@@ -2,7 +2,8 @@ spring:
   encoding: UTF-8
   config:
     import:
-      - optional:file:.env[.properties]
+      - optional:env/env.yml
+      - optional:env/firebase_service_key.json
   server:
     port: 8080
     servlet:

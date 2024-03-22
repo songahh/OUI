@@ -14,9 +14,7 @@ FROM openjdk:17-ea-4-jdk-slim
 WORKDIR /app
 
 # 빌더 이미지에서 jar 파일만 복사
-COPY --from=builder /build/build/libs/oui-0.0.1-SNAPSHOT.jar .
-# .env 파일 복사
-COPY .env /app/.env
+COPY --from=builder /build/build/libs/oui.backend-0.0.1-SNAPSHOT.jar .
 
 EXPOSE 8080
 
@@ -27,5 +25,5 @@ ENTRYPOINT [                                                \
    "-jar",                                                 \
    "-Djava.security.egd=file:/dev/./urandom",              \
    "-Dsun.net.inetaddr.ttl=0",                             \
-   "oui-0.0.1-SNAPSHOT.jar"                             \
+   "oui.backend-0.0.1-SNAPSHOT.jar"                             \
 ]
