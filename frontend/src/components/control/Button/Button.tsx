@@ -11,6 +11,7 @@ const ButtonWrapper = styled.button`
     &:hover {
         background-color: #e0e0e0;
     }
+    font-size: 40px;
 `;
 
 const iconPaths = {
