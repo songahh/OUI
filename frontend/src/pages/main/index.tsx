@@ -3,7 +3,8 @@ import { Card } from "src/pages/main/components/Card";
 import { Header } from "src/components/control/Header";
 import { Button } from "src/components";
 import { CustomModal } from "./components/Modal";
-import { getDiary } from './api/getDiary';
+import { getDiary, getMember, postCreateDiary } from './api';
+import ya from 'src/asset/images/ya.jpg';
 import { useQuery } from 'react-query'
 import Slider from "react-slick";
 import { useNavigate } from 'react-router-dom'
@@ -97,6 +98,15 @@ const UserRecord = styled.div`
   }
 `;
 
+const ProfileImage = styled.img`
+  width: 30%;
+  max-width: 150px;
+  max-height: 150px;
+  height: 30%;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
 
 const Main = () => {
 
@@ -112,9 +122,11 @@ const Main = () => {
   const navigator = useNavigate()
 
   const [ isModalOpen, setIsModalOpen ] = useState( false );
-  const [ diaryCount, setDiaryCount ] = useState(0); 
-  const [ diaryList, setDiaryList ] = useState([]);
-  const [userName, setUserName] = useState("");
+  const [ diaryList, setDiaryList ] = useState( [] );
+  const [ userName, setUserName ] = useState( "" );
+  const [ userImage, setUserImage ] = useState( null );
+  const [ modalSubmitted, setModalSubmitted ] = useState( false );
+
 
   const openModal = () => setIsModalOpen( true );
   const closeModal = () => {
@@ -123,11 +135,26 @@ const Main = () => {
   }
 
 
-  const addCard = ( props: { title: any; key: any; members: any; } ) => {
+  const addCard = ( props: { title: string; key: number; members: String[]; } ) => {
     const { title, key, members } = props;
-    const newEntry = { id: diaryList.length + 1, title, key, members };
-    setDiaryList([ ...diaryList, newEntry ]);
-    closeModal();
+    const templateId = key; 
+    const data = {
+      diaryName: title,
+      templateId: templateId,
+      members: members,
+    };
+  
+    try {
+      const response = postCreateDiary( data ).then(
+        ()=>{
+          setModalSubmitted( true );
+        }
+      );
+      console.log( '추가추가:', response );
+      closeModal();
+    } catch ( error ) {
+      console.error( '생성실패:', error );
+    }
   };
 
   const cards = diaryList.map(( diary ) => ({
@@ -151,29 +178,40 @@ const Main = () => {
     navigator('/calendar', {state : {diaryId: id, type: type}})
   }
 
-  const { data, refetch } = useQuery([ 'diaryData' ], getDiary, {
-    onSuccess: (res) => {
+  const { data: diaryData, refetch: refetchDiary } = useQuery(['diaryData'], getDiary, {
+    onSuccess: ( res ) => {
       const updatedDiaryList = res.data.map(( diary: { createdAt: any[]; }) => ({
         ...diary,
         createdAt: `${ diary.createdAt[0] }.${ diary.createdAt[1] }.${ diary.createdAt[2] }`,
       }));
       setDiaryList( updatedDiaryList );
-      setUserName( res.data[0].memberId ); 
       console.log( res.data );
     }
   });
-
+  
+  const { data: memberData, refetch: refetchMember } = useQuery(['memberData'], getMember, {
+    onSuccess: ( res ) => {
+      setUserImage( res.data.img );
+      setUserName( res.data.nickName );
+      console.log( res.data );
+    }
+  });
+  
   useEffect(() => {
-    refetch();
-  }, [ refetch ]);
+    if ( modalSubmitted ) {
+      refetchDiary();
+      refetchMember();
+      setModalSubmitted( false );
+    }
+  }, [ modalSubmitted, refetchDiary, refetchMember]);
 
 
   return (
     <>
     <Header>
-    <Button path='/diary/write' btType='bell' name="temp"></Button>
+      <ProfileImage src={ userImage || ya } alt="유저 프로필 이미지" />
+      <Button path='/diary/write' btType='bell' name="temp"></Button>
     </Header>
-    <hr/>
     <YellowBox>
         {userName && <UserRecord style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold' }}>{ userName }님의 감정기록 :)</UserRecord>}
     </YellowBox>
@@ -188,19 +226,12 @@ const Main = () => {
         ))}
           <Card/>
           <Card/>
-          <Card/>
         </SliderWrapper>
       </div>
     </div>
-    <CustomModal isOpen={ isModalOpen } closeModal={ closeModal } isFinish={ addCard }></CustomModal>
+    <CustomModal isOpen={ isModalOpen } closeModal={ closeModal } isFinish={ addCard } />
     </>
   );
-}
-
-type addProps = {
-  title?: string;
-  key?: number;
-  members?: string[];
 }
 
 export default Main;
