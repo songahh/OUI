@@ -3,7 +3,8 @@ import { Card } from "src/pages/main/components/Card";
 import { Header } from "src/components/control/Header";
 import { Button } from "src/components";
 import { CustomModal } from "./components/Modal";
-import { getDiary } from './api/getDiary';
+import { getDiary, getMember } from './api';
+import ya from 'src/asset/images/ya.jpg';
 import { useQuery } from 'react-query'
 import Slider from "react-slick";
 import { useNavigate } from 'react-router-dom'
@@ -97,6 +98,15 @@ const UserRecord = styled.div`
   }
 `;
 
+const ProfileImage = styled.img`
+  width: 30%;
+  max-width: 150px;
+  max-height: 150px;
+  height: 30%;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
 
 const Main = () => {
 
@@ -114,7 +124,10 @@ const Main = () => {
   const [ isModalOpen, setIsModalOpen ] = useState( false );
   const [ diaryCount, setDiaryCount ] = useState(0); 
   const [ diaryList, setDiaryList ] = useState([]);
-  const [userName, setUserName] = useState("");
+  const [ userName, setUserName ] = useState("");
+  const [ userImage, setUserImage ] = useState(null);
+
+
 
   const openModal = () => setIsModalOpen( true );
   const closeModal = () => {
@@ -151,29 +164,37 @@ const Main = () => {
     navigator('/calendar', {state : {diaryId: id, type: type}})
   }
 
-  const { data, refetch } = useQuery([ 'diaryData' ], getDiary, {
+  const { data: diaryData, refetch: refetchDiary } = useQuery(['diaryData'], getDiary, {
     onSuccess: (res) => {
-      const updatedDiaryList = res.data.map(( diary: { createdAt: any[]; }) => ({
+      const updatedDiaryList = res.data.map((diary: { createdAt: any[]; }) => ({
         ...diary,
-        createdAt: `${ diary.createdAt[0] }.${ diary.createdAt[1] }.${ diary.createdAt[2] }`,
+        createdAt: `${diary.createdAt[0]}.${diary.createdAt[1]}.${diary.createdAt[2]}`,
       }));
-      setDiaryList( updatedDiaryList );
-      setUserName( res.data[0].memberId ); 
-      console.log( res.data );
+      setDiaryList(updatedDiaryList);
+      console.log(res.data);
     }
   });
-
+  
+  const { data: memberData, refetch: refetchMember } = useQuery(['memberData'], getMember, {
+    onSuccess: (res) => {
+      setUserImage(res.data.img);
+      setUserName(res.data.nickName);
+      console.log(res.data);
+    }
+  });
+  
   useEffect(() => {
-    refetch();
-  }, [ refetch ]);
+    refetchDiary();
+    refetchMember();
+  }, [refetchDiary, refetchMember]);
 
 
   return (
     <>
     <Header>
-    <Button path='/diary/write' btType='bell' name="temp"></Button>
+      <ProfileImage src={userImage || ya} alt="유저 프로필 이미지" />
+      <Button path='/diary/write' btType='bell' name="temp"></Button>
     </Header>
-    <hr/>
     <YellowBox>
         {userName && <UserRecord style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold' }}>{ userName }님의 감정기록 :)</UserRecord>}
     </YellowBox>

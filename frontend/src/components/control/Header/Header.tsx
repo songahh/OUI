@@ -13,7 +13,6 @@ const HeaderItem = styled.div`
   display: flex;
   justify-content: center;
   flex-grow: 1;
-  
   &:first-child {
     justify-content: flex-start;
   }
