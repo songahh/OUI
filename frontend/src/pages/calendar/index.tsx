@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { addDays, addMonths, format, subMonths } from 'date-fns'
-import { DateList, DayList, MyModal }  from './components'
+import { DateList, DayList, MyModal, ShareModal }  from './components'
 import writeDiary from 'src/asset/images/writeDiary.png'
 import { LeftIcon, RightIcon } from 'src/components'
 import { useQuery } from 'react-query'
@@ -61,8 +61,8 @@ const ModalBackground = styled.div`
 `
     
 const Modal = styled.div`
-  width: 100%;
   height: 50%;
+  width: 100%;
   background-color: #FFF;
   position: fixed;
   bottom: 0;
@@ -74,9 +74,12 @@ const Calendar = () => {
 
   const navigator = useNavigate()
 
-  const {state} = useLocation();
-  const {diaryId, type} = state;
-  console.log(diaryId, type);
+  // const {state} = useLocation();
+  // const {diaryId, type} = state;
+  // console.log(diaryId, type);
+
+  const diaryId = 1
+  const type='공유' 
 
   const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() 
   const { startDate, endDate } = calculateDateRange()
@@ -139,11 +142,18 @@ const Calendar = () => {
             </CalendarHeaderRightWrapper>
             </CalendarHeaderWrapper>
             
-        { 
-          isModalOpened 
+        {/* { 
+          isModalOpened && type=='개인'
           && 
             <ModalPortal onClose={ closeModal }>
               <Modal><MyModal></MyModal></Modal>
+            </ModalPortal>
+        } */}
+        { 
+          isModalOpened && type=='공유'
+          && 
+            <ModalPortal onClose={ closeModal }>
+              <Modal><ShareModal></ShareModal></Modal>
             </ModalPortal>
         }
             <DateList/>
