@@ -1,13 +1,14 @@
 package com.emotionoui.oui.statistics.controller;
 
-import com.emotionoui.oui.diary.dto.EmotionClass;
-import com.emotionoui.oui.statistics.dto.req.MyMonthlyEmotionReq;
-import com.emotionoui.oui.statistics.dto.req.MyWeeklyEmotionReq;
+import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.statistics.dto.req.StatisticsReq;
+import com.emotionoui.oui.statistics.dto.res.DiaryEmotionRes;
 import com.emotionoui.oui.statistics.service.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.time.DayOfWeek;
@@ -25,23 +26,26 @@ public class StatisticsController {
     private final StatisticsService statisticsService;
 
     @GetMapping("/my/month")
-    public ResponseEntity<HashMap<String, Integer>> getMyMonthEmotion(MyMonthlyEmotionReq req){
+    public ResponseEntity<HashMap<String, Double>> getMyMonthEmotion(StatisticsReq req){
 
-        int month = req.getDate().getMonth().getValue();
-        int year = req.getDate().getYear();
         Integer diaryId = req.getDiaryId();
-        HashMap<String, Integer> emotions =statisticsService.getMyMonth(diaryId,year,month);
+        HashMap<String, Double> emotions =statisticsService.getMyMonth(diaryId,req.getDate());
 
         return new ResponseEntity<>(emotions,HttpStatus.OK);
     }
 
     @GetMapping("/my/week")
-    public ResponseEntity<?> getMyWeekEmotion(MyWeeklyEmotionReq req){
+    public ResponseEntity<HashMap<Date, double[]>> getMyWeekEmotion(StatisticsReq req){
         System.out.println("req.getDate() = " + req.getDate());
         System.out.println("req.getDiaryId() = " + req.getDiaryId());
 
-
         return new ResponseEntity<>(statisticsService.getMyWeek(req.getDiaryId(), req.getDate()),HttpStatus.OK);
+    }
+
+    @GetMapping("/{diaryId}")
+    public ResponseEntity<DiaryEmotionRes> getDiaryEmotion(@AuthenticationPrincipal Member member, StatisticsReq req){
+        DiaryEmotionRes res = statisticsService.getDiaryEmotion(member,req.getDiaryId(),req.getDate());
+        return new ResponseEntity<>(res,HttpStatus.OK);
     }
 
     public static String getCurrentWeekOfMonth(LocalDate localDate) {

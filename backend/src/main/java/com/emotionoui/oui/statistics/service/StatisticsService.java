@@ -1,20 +1,20 @@
 package com.emotionoui.oui.statistics.service;
 
-import com.emotionoui.oui.calendar.entity.Emotion;
 import com.emotionoui.oui.diary.dto.EmotionClass;
+import com.emotionoui.oui.diary.entity.DailyDiaryCollection;
 import com.emotionoui.oui.diary.repository.DailyDiaryMongoRepository;
 import com.emotionoui.oui.diary.repository.DailyDiaryRepository;
+import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.statistics.dto.WeeklyMongoDto;
+import com.emotionoui.oui.statistics.dto.res.DiaryEmotionRes;
 import com.emotionoui.oui.statistics.repository.StatisticsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -26,21 +26,26 @@ public class StatisticsService{
     private final DailyDiaryMongoRepository dailyDiaryMongoRepository;
     private final DailyDiaryRepository dailyDiaryRepository;
 
+    //개인 월 감정
+    public HashMap<String, Double> getMyMonth(Integer diaryId, LocalDate date) {
 
-    public HashMap<String,Integer> getMyMonth(Integer diaryId,int year,int month) {
+        LocalDate startOfMonth = date.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate endOfMonth = date.with(TemporalAdjusters.lastDayOfMonth());
 
-        List<String> emotions = statisticsRepository.getMyMonth(diaryId, year, month)
-                .stream()
-                .map(Emotion::getEmotion)
+        //LocalDate -> Date
+        Date start = Date.from(startOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date end = Date.from(endOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        List<WeeklyMongoDto> mongoIdList = dailyDiaryRepository.getMongoIdByDiaryId(diaryId,start,end);
+
+        List<EmotionClass> temp = mongoIdList.stream()
+                .map(e -> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId()).getEmotion())
                 .toList();
-        HashMap<String,Integer> map = new HashMap<>();
-        for(String emotion:emotions){
-            map.put(emotion, map.getOrDefault(emotion, 0) + 1);
-        }
 
-        return map;
+        return calculate(temp);
     }
 
+    //개인 주 감정
     public HashMap<Date, double[]> getMyWeek(Integer diaryId, LocalDate end){
         LocalDate start = end.minusDays(6);
 
@@ -48,7 +53,7 @@ public class StatisticsService{
         Date endDate = Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant());
         System.out.println(" endDate = " +  endDate);
         //일주일치 일기 몽고 id
-        List<WeeklyMongoDto> mongoIdList = dailyDiaryRepository.getMyWeek(diaryId,startDate,endDate);
+        List<WeeklyMongoDto> mongoIdList = dailyDiaryRepository.getMongoIdByDiaryId(diaryId,startDate,endDate);
         mongoIdList.sort(WeeklyMongoDto::compareTo);
 
         //몽고id로 감정들 가져오기
@@ -74,12 +79,67 @@ public class StatisticsService{
                 countMap.put(date,1);
             }
         }
-
+        // 일별 평균 계산
         weeklytotalEmotion.forEach((date, emotions) -> {
             emotions[0] *= (double) 100 /countMap.get(date);
             emotions[1] *= (double) 100 /countMap.get(date);
         });
 
         return weeklytotalEmotion;
+    }
+
+    //다이어리 월 감정
+    public DiaryEmotionRes getDiaryEmotion(Member member, Integer diaryId, LocalDate date){
+
+        LocalDate startOfMonth = date.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate endOfMonth = date.with(TemporalAdjusters.lastDayOfMonth());
+
+        //LocalDate -> Date
+        Date start = Date.from(startOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date end = Date.from(endOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        List<WeeklyMongoDto> mongoIdList = dailyDiaryRepository.getMongoIdByDiaryId(diaryId,start,end);
+
+        // 작성자id와 해당 월 감정list
+        Map<String, List<EmotionClass>> temp = mongoIdList.stream()
+                .map(e -> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId())) // 각 ID에 대한 Emotion 정보 조회
+                .collect(Collectors.toMap(
+                        DailyDiaryCollection::getNickname,
+                        e -> {
+                            List<EmotionClass> list = new ArrayList<>();
+                            list.add(e.getEmotion()); // 초기 값으로 EmotionClass 인스턴스의 리스트 생성
+                            return list;
+                        },
+                        (existingList, newList) -> { // 같은 키에 대한 값이 이미 존재할 경우, 리스트를 병합
+                            existingList.addAll(newList);
+                            return existingList;
+                        }
+                ));
+
+        return DiaryEmotionRes.of(member,temp);
+
+    }
+
+    public static HashMap<String, Double> calculate(List<EmotionClass> emotions) {
+        HashMap<String, Double> emotionSums = new HashMap<>();
+
+        // 초기값 설정
+        emotionSums.put("happy", 0.0);
+        emotionSums.put("comfortable", 0.0);
+        emotionSums.put("embarrassed", 0.0);
+        emotionSums.put("angry", 0.0);
+        emotionSums.put("doubtful", 0.0);
+        emotionSums.put("sad", 0.0);
+
+        for (EmotionClass emotion : emotions) {
+            emotionSums.put("happy", emotionSums.get("happy") + emotion.getHappy());
+            emotionSums.put("comfortable", emotionSums.get("comfortable") + emotion.getComfortable());
+            emotionSums.put("embarrassed", emotionSums.get("embarrassed") + emotion.getEmbarrassed());
+            emotionSums.put("angry", emotionSums.get("angry") + emotion.getAngry());
+            emotionSums.put("doubtful", emotionSums.get("doubtful") + emotion.getDoubtful());
+            emotionSums.put("sad", emotionSums.get("sad") + emotion.getSad());
+        }
+
+        return emotionSums;
     }
 }

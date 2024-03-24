@@ -68,6 +68,7 @@ public class DiaryServiceImpl implements DiaryService{
                 .memberId(member.getMemberId())
                 .content(req.getDailyContent())
                 .isDeleted(0)
+                .nickname(member.getNickname())
                 .build();
 
         // MongoDB에 dailyDiary 정보 저장

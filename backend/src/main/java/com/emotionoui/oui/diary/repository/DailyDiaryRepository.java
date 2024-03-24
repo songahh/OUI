@@ -15,6 +15,6 @@ public interface DailyDiaryRepository extends JpaRepository<DailyDiary, Integer>
     @Query(value = "SELECT new com.emotionoui.oui.statistics.dto.WeeklyMongoDto(d.mongoId,d.dailyDate) " +
             "FROM DailyDiary d " +
             "WHERE d.diary.id = :diaryId AND d.dailyDate BETWEEN :start AND :end")
-    List<WeeklyMongoDto> getMyWeek(Integer diaryId, Date start, Date end);
+    List<WeeklyMongoDto> getMongoIdByDiaryId(Integer diaryId, Date start, Date end);
 
 }
