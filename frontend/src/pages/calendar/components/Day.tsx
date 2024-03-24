@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import useStore from '../store'
-import tmp1 from 'src/asset/images/tmp1.png'
 import styled from 'styled-components'
+import angry from 'src/asset/images/emotion/angry.png'
 import { useNavigate } from 'react-router-dom'
 import { MyCalendarType, ScheduleType } from 'src/types'
 
@@ -92,7 +92,7 @@ const Day = ( props: DayProps ) =>{
                 {
                     diaries?.map(( diary, index ) => {
                         return(
-                            <img src={ tmp1 } alt='' style={{ height: '100%' }} key={ index }/>
+                            <img src={ angry } alt='' style={{ height: '100%' }} key={ index }/>
                         )
                     })
                 }

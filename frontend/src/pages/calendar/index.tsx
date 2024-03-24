@@ -6,6 +6,7 @@ import { LeftIcon, RightIcon } from 'src/components'
 import { useQuery } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useStore from './store';
+import angry from 'src/asset/images/emotion/angry.png'
 import { createPortal } from 'react-dom'
 import useDate from 'src/util/date'
 import styled from 'styled-components'
@@ -38,6 +39,7 @@ const CalendarHeaderRightWrapper =styled.button `
   margin-right: 10px;
   margin-top: 10px;
   border: none;
+  cursor: pointer;
   background-color: transparent;
 `
 
@@ -79,7 +81,7 @@ const Calendar = () => {
   // console.log(diaryId, type);
 
   const diaryId = 1
-  const type='공유' 
+  const [ type, setType ] = useState('공유') 
 
   const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() 
   const { startDate, endDate } = calculateDateRange()
@@ -105,8 +107,23 @@ const Calendar = () => {
   }
 
   const goDiaryWrite = () =>{
+    if(type==='개인'){
+      navigator(`/diary/write/${diaryId}`, {state: {diaryId:  diaryId}})
 
-    navigator(`/diary/write/${diaryId}`, {state: {diaryId:  diaryId}})
+    }else{ //공유일 때
+      console.log("!!")
+      const handleBackgroundClick = (e) => {
+        ( e.target === e.currentTarget ) && closeModal()
+      }
+      createPortal(
+        <ModalBackground onClick={ handleBackgroundClick }>
+          <div><img src={ angry }/></div>
+        </ModalBackground>,
+        document.body
+      )
+    }
+
+
   }
   
 
@@ -136,19 +153,18 @@ const Calendar = () => {
               <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
               <RightIcon size= { 20 } onClick={ moveNextMonth }/>
             </CalendarHeaderMiddleWrapper>
-            <CalendarHeaderRightWrapper onClick={goDiaryWrite}>
+            <CalendarHeaderRightWrapper onClick={ goDiaryWrite }>
                 <img src={ writeDiary } alt='' style={{ height: '40px'}}/>
                 <div style={{ marginTop: '10px', borderBottom: '1px solid', paddingBottom:'2px'}}>일기 쓰기</div>
             </CalendarHeaderRightWrapper>
             </CalendarHeaderWrapper>
-            
-        {/* { 
+        { 
           isModalOpened && type=='개인'
           && 
             <ModalPortal onClose={ closeModal }>
               <Modal><MyModal></MyModal></Modal>
             </ModalPortal>
-        } */}
+        }
         { 
           isModalOpened && type=='공유'
           && 
