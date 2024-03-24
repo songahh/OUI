@@ -2,9 +2,9 @@ import { fabric } from 'fabric';
 import { Drawer, EditIcon, DecoIcon, DeleteIcon } from 'src/components';
 import { Canvas } from './components';
 import { useState, useEffect, useRef } from 'react';
-import { useQuery } from 'react-query';
-import { useNavigate } from "react-router-dom";
-import { getDiary } from './api';
+import { useQuery, useMutation } from 'react-query';
+import { useNavigate, useLocation } from "react-router-dom";
+import { getDiary, deleteDiary } from './api';
 import styled from 'styled-components';
 
 const Header = styled.div`
@@ -36,6 +36,9 @@ const Tab = styled.button<{ $isDeco: boolean }>`
 
 const Diary = () => {
     const navigator = useNavigate();
+
+    const { state } = useLocation();
+    const { diaryId } = state;
     
     const canvasRef = useRef(null);
     const [ canvas, setCanvas ] = useState<fabric.Canvas>(null);
@@ -74,6 +77,13 @@ const Diary = () => {
         }
     }, [ dailyDiary, isDeco ]);
 
+    const removeDiary = useMutation( deleteDiary );
+
+    const onClick = async () => {
+        await removeDiary.mutateAsync(dailyDiaryId);
+        navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId}});
+    }
+
     return (
         <Container>
             <Header>
@@ -86,7 +96,7 @@ const Diary = () => {
                     {((type === '개인') || (type ==='공유' && !isDeco)) && (
                         <EditIcon size={ 55 } onClick={() => navigator(`/diary/edit/${ dailyDiaryId }`, {state: {dailyDiaryId: dailyDiaryId}})} />
                     )}
-                    <DeleteIcon size={ 55 } onClick={() => navigator('/diary/write')} />
+                    <DeleteIcon size={ 55 } onClick={ onClick } />
                 </div>
             </Header>
             {(type === '공유') && (
