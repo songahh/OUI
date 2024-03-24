@@ -4,6 +4,7 @@ import TodoList from "../todo/TodoList"
 import { format } from "date-fns"
 import Todo from "../todo"
 import { useState } from "react"
+import { DiaryList } from "../diary"
 
 const ShareModalWrapper = styled.div`
   margin: auto; 
@@ -104,10 +105,11 @@ const ShareModal = () => {
         !modalContent && !isSchedule &&  //일기 리스트 나열
         <>
         <ModalHeaderWrapper>
-        <HeaderBoxWrapper color= 'trans' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
-        <HeaderBoxWrapper color= 'white' onClick={ ClickDiary }>일기</HeaderBoxWrapper>
-      </ModalHeaderWrapper>
+            <HeaderBoxWrapper color= 'trans' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
+            <HeaderBoxWrapper color= 'white' onClick={ ClickDiary }>일기</HeaderBoxWrapper>
+        </ModalHeaderWrapper>
         <DateWrapper> { format(clickDate, 'yyyy-MM-dd' ) }</DateWrapper>
+        <DiaryList/>
         </>
       }
     </ShareModalWrapper>
