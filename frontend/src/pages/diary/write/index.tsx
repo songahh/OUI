@@ -72,13 +72,14 @@ const DiaryWrite = () => {
         };
 
         await writeDiary.mutateAsync(data);
-        navigator('/diary');
+        // 일기를 쓰면 어디로 돌아가야 하지..?
+        navigator(`/diary`, {state: {diaryId: diaryId}});
     }
 
     return (
         <Container>
             <Header>
-                <BackIcon size={ 40 } onClick={ () => { navigator('/diary') } }/>
+                <BackIcon size={ 40 } onClick={ () => { navigator('/diary', { state: {diaryId: diaryId}}) } }/>
                 <DateSelect setSelectedDate={ setSelectedDate }/>
                 <SaveIcon size={ 70 } onClick={ saveDiary }/>
             </Header>
