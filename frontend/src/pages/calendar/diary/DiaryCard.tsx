@@ -11,7 +11,7 @@ const CardWrapper = styled.img`
 `
 
 const TodoInside = styled.div`
-    display: flex;
+  display: flex;
   height: 100%;
 `
 
