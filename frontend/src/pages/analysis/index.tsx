@@ -14,8 +14,9 @@ import { useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Switch } from "./components/Switch";
 import { BottomNavi } from "src/components/control/BottomNavi";
-import styled from 'styled-components';
 import Monthly from "./components/Monthly/Monthly";
+import styled from 'styled-components';
+
 
 ChartJS.register(
     CategoryScale,
@@ -30,6 +31,10 @@ ChartJS.register(
 const SwitchWrapper = styled(Switch)`
     display: flex;
     margin-left: auto;
+
+    .TitleWrapper{
+        align-items: flex-start;
+    }
 `;
 
 const BoxWrapper = styled.div`
@@ -48,6 +53,10 @@ const GraphWrapper = styled.div`
     max-width: 800px; 
     height: 30vh; 
     margin: auto; 
+
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
 
     @media (max-width: 768px) {
         height: 25vh; 
