@@ -120,6 +120,7 @@ public class QuerydslRepositoryImpl implements QuerydslRepositoryCustom {
 
     }
 
+    // 공유 다이어리 나가기
     @Override
     public void exitSharDiaryByMemberIdAndDiaryId(int diaryId, int memberId) {
         QMemberDiary memberDiary = QMemberDiary.memberDiary;
@@ -127,8 +128,24 @@ public class QuerydslRepositoryImpl implements QuerydslRepositoryCustom {
         queryFactory
                 .update(memberDiary)
                 .set(memberDiary.isDeleted,1)
-                .where(memberDiary.diary.id.eq(diaryId).and(memberDiary.member.memberId.eq(memberId)))
+                .where(memberDiary.diary.id.eq(diaryId)
+                        .and(memberDiary.member.memberId.eq(memberId)))
                 .execute();
+    }
+
+    // 다이어리 순서 바꾸기
+    @Override
+    public void chaneOrderByMemberIdAndDiaryId(int memberId, int diaryId, int newOrder) {
+        QMemberDiary memberDiary = QMemberDiary.memberDiary;
+
+        queryFactory
+                .update(memberDiary)
+                .set(memberDiary.orders, newOrder)
+                .where(memberDiary.member.memberId.eq(memberId)
+                        .and(memberDiary.diary.id.eq(diaryId))
+                        .and(memberDiary.isDeleted.eq(0)))
+                .execute();
+
     }
 
 }

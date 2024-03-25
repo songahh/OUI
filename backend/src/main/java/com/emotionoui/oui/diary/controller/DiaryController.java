@@ -7,8 +7,12 @@ import com.emotionoui.oui.diary.dto.req.UpdateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDiarySettingReq;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
 import com.emotionoui.oui.diary.dto.res.SearchDiarySettingRes;
+import com.emotionoui.oui.diary.entity.Diary;
+import com.emotionoui.oui.diary.exception.NotExitPrivateDiaryException;
+import com.emotionoui.oui.diary.repository.DiaryRepository;
 import com.emotionoui.oui.diary.service.DiaryService;
 import com.emotionoui.oui.member.entity.Member;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -27,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 public class DiaryController {
 
     private final DiaryService diaryService;
+    private final DiaryRepository diaryRepository;
 
     // , @AuthenticationPrincipal Member member
     // 일기 게시글 작성하기
@@ -94,8 +100,14 @@ public class DiaryController {
     }
 
     // 다이어리 나가기
+    @Transactional
     @PutMapping("/{diaryId}/delete")
     public ResponseEntity<?> exitShareDiary(@PathVariable("diaryId") Integer diaryId, @AuthenticationPrincipal Member member){
+        // 공유 다이어리인지 확인
+        Optional<Diary> diary = diaryRepository.findById(diaryId);
+        if(!diary.get().getType().equals("공유")){
+            throw new NotExitPrivateDiaryException();
+        }
         diaryService.exitShareDiary(diaryId, member.getMemberId());
         return ResponseEntity.ok().build();
     }

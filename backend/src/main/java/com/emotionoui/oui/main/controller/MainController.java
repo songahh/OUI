@@ -1,5 +1,6 @@
 package com.emotionoui.oui.main.controller;
 
+import com.emotionoui.oui.main.dto.req.ChangeOrderReq;
 import com.emotionoui.oui.main.dto.req.CreateShareDiaryReq;
 import com.emotionoui.oui.main.dto.res.SearchDiaryListRes;
 import com.emotionoui.oui.main.service.MainService;
@@ -43,6 +44,20 @@ public class MainController {
     public ResponseEntity<Void> createShareDiary(@AuthenticationPrincipal Member member, @RequestBody CreateShareDiaryReq createShareDiaryReq){
         mainService.createShareDiary(member, createShareDiaryReq);
         // 여기에 민지가 추가된 사람들(createShareDiaryReq.getMembers())에게 알림 보내기
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 다이어리 순서 바꾸기
+     * @param member
+     * @param orderList
+     * @return
+     */
+    @Transactional
+    @PutMapping("/order")
+    public ResponseEntity<Void> changeOrder(@AuthenticationPrincipal Member member, @RequestBody List<ChangeOrderReq> orderList){
+        // orderList를 돌며 해당 diary에 해당 newOrder 넣어주기
+        mainService.changeOrder(member.getMemberId(), orderList);
         return ResponseEntity.ok().build();
     }
 }
