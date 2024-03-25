@@ -1,5 +1,6 @@
 package com.emotionoui.oui.querydsl;
 
+import com.emotionoui.oui.diary.entity.DiaryType;
 import com.emotionoui.oui.diary.entity.QDiary;
 import com.emotionoui.oui.main.dto.res.SearchDiaryListRes;
 import com.emotionoui.oui.member.entity.QMemberAlarm;
@@ -41,7 +42,9 @@ public class QuerydslRepositoryImpl implements QuerydslRepositoryCustom {
                 ))
                 .from(memberDiary) // memberDiary 테이블을 기준으로 조회
                 .join(memberDiary.diary, diary) // memberDiary와 diary를 조인(memberDiary.diary는 memberDiary 테이블과 diary 테이블을 연결하는 외래키)
-                .where(memberDiary.member.memberId.eq(memberId).and(memberDiary.isDeleted.eq(0))) // memberId가 주어진 memberId와 일치하고, 삭제처리 되지 않은 행만 조회
+                .where(memberDiary.member.memberId.eq(memberId) // memberId가 주어진 memberId와 일치하고,
+                        .and(memberDiary.isDeleted.eq(0))
+                        .and(diary.isDeleted.eq(0))) // 삭제처리 되지 않은 행만 조회
                 .orderBy(memberDiary.orders.asc()) // orders 컬럼을 기준으로 오름차순 정렬
                 .fetch();
     }
@@ -107,9 +110,25 @@ public class QuerydslRepositoryImpl implements QuerydslRepositoryCustom {
                         JPAExpressions.select(memberDiary.diary.id)
                                 .from(memberDiary)
                                 .join(memberDiary.diary, diary)
-                                .where(memberDiary.member.memberId.eq(memberId).and(diary.isDeleted.eq(0)))))
+                                .where(memberDiary.member.memberId.eq(memberId)
+                                        .and(diary.isDeleted.eq(0))
+                                        .and(diary.type.eq(DiaryType.valueOf("개인"))) // 개인다이어리만 탈퇴 처리
+                                )
+                )
+                )
                 .execute();
 
+    }
+
+    @Override
+    public void exitSharDiaryByMemberIdAndDiaryId(int diaryId, int memberId) {
+        QMemberDiary memberDiary = QMemberDiary.memberDiary;
+
+        queryFactory
+                .update(memberDiary)
+                .set(memberDiary.isDeleted,1)
+                .where(memberDiary.diary.id.eq(diaryId).and(memberDiary.member.memberId.eq(memberId)))
+                .execute();
     }
 
 }

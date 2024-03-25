@@ -22,6 +22,7 @@ import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.MemberDiary;
 import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.music.service.MusicService;
+import com.emotionoui.oui.querydsl.QuerydslRepositoryCustom;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +56,7 @@ public class DiaryServiceImpl implements DiaryService{
     private final MusicMongoRepository musicMongoRepository;
     private final MemberDiaryRepository memberDiaryRepository;
     private final MusicService musicService;
+    private final QuerydslRepositoryCustom querydslRepositoryCustom;
 
 
     // 일기 생성하기
@@ -360,5 +362,12 @@ public class DiaryServiceImpl implements DiaryService{
         dailyDiaryMongoRepository.save(dailyDiaryCollection);
 
         return dailyDiaryCollection.getId().toString();
+    }
+
+    // 다이어리 나가기
+    @Override
+    public void exitShareDiary(Integer diaryId, int memberId) {
+        // 멤버 다이어리 DB에서 삭제처리하기
+        querydslRepositoryCustom.exitSharDiaryByMemberIdAndDiaryId(diaryId, memberId);
     }
 }
