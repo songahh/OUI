@@ -28,8 +28,10 @@ const DiaryWrite = () => {
 
     const { state } = useLocation();
     const { diaryId } = state;
-    console.log(diaryId);
     
+    // const diaryId = 39;
+    // const type = '공유';
+
     const canvasRef = useRef(null);
     const textboxRef = useRef<fabric.Textbox>(null);
     
@@ -60,6 +62,10 @@ const DiaryWrite = () => {
 
     const writeDiary = useMutation( postDiary );
     
+    const goCalendar = () => {
+        navigator(`/calendar`, {state: {diaryId: diaryId}});
+    }
+
     // 저장
     const saveDiary = async () => {
         // string으로 전달
@@ -72,14 +78,13 @@ const DiaryWrite = () => {
         };
 
         await writeDiary.mutateAsync(data);
-        // 일기를 쓰면 어디로 돌아가야 하지..?
-        navigator(`/diary`, {state: {diaryId: diaryId}});
+        goCalendar();
     }
 
     return (
         <Container>
             <Header>
-                <BackIcon size={ 40 } onClick={ () => { navigator('/diary', { state: {diaryId: diaryId}}) } }/>
+                <BackIcon size={ 40 } onClick={ goCalendar }/>
                 <DateSelect setSelectedDate={ setSelectedDate }/>
                 <SaveIcon size={ 70 } onClick={ saveDiary }/>
             </Header>

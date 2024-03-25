@@ -8,6 +8,7 @@ export const routes = [
     { path: 'diary/deco' },
     { path: 'diary/deco', dynamicPath: `diary/deco/:dailyDiaryId` },
     { path: 'diary' },
+    { path: 'diary', dynamicPath: `diary/:dailyDiaryId` },
     { path: 'calendar' },
     { path: 'calendar', dynamicPath: `calendar/:diaryId` },
     { path: 'main' },

@@ -1,11 +1,13 @@
 import { fabric } from 'fabric';
 import { Drawer, EditIcon, DecoIcon, DeleteIcon } from 'src/components';
 import { Canvas } from './components';
+import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from 'react-query';
 import { useNavigate, useLocation } from "react-router-dom";
 import { getDiary, deleteDiary } from './api';
 import styled from 'styled-components';
+import albumImage from '../../asset/images/album.png';
 
 const Header = styled.div`
     width: 93%;
@@ -34,11 +36,60 @@ const Tab = styled.button<{ $isDeco: boolean }>`
     font-size: 22px;
 `;
 
+const ResultSection = styled.div`
+    width: 90%;
+    text-align: left; 
+    margin-top: 70px; 
+    margin-bottom: 40px;
+`
+
+const Title = styled.span`
+    font-size: 30px;
+    font-weight: bold; 
+    margin: 10px;
+`;
+
+const Emotion = styled.div`
+    width: 160px; 
+    height: 80px;
+    border: 5px solid white;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 30px;
+    background-color: #FFC814;
+    font-size: 30px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+`
+
+const Comment = styled.div`
+    height: auto;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 60px;
+    background-color: white;
+    border-radius: 20px;
+    font-size: 24px;
+`
+
+const Player = styled.div`
+    height: 300px;
+    padding: 30px;
+    margin-top: 20px;
+    margin-bottom: 60px;
+    background-color: white;
+    border-radius: 20px;
+    font-size: 24px;
+    display: flex;
+`
+
 const Diary = () => {
     const navigator = useNavigate();
 
     const { state } = useLocation();
-    const { diaryId } = state;
+    const { dailyDiaryId, type } = state;
     
     const canvasRef = useRef(null);
     const [ canvas, setCanvas ] = useState<fabric.Canvas>(null);
@@ -46,8 +97,8 @@ const Diary = () => {
     const [ isDeco, setIsDeco ] = useState<boolean>(true);
 
     // 임시 dailyDiaryId ////////
-    const dailyDiaryId = 18;
-    let type = '공유';
+    // const dailyDiaryId = 24;
+    // let type = '공유';
     ////////////////////////////
 
     const { data: dailyDiary } = useQuery('dailyDiary', () => getDiary(dailyDiaryId), {
@@ -81,7 +132,7 @@ const Diary = () => {
 
     const onClick = async () => {
         await removeDiary.mutateAsync(dailyDiaryId);
-        navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId}});
+        // navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId}});
     }
 
     return (
@@ -106,6 +157,24 @@ const Diary = () => {
                 </div>
             )}
             <Canvas canvasRef={ canvasRef } canvas={ canvas } setCanvas={ setCanvas } setIsFontLoaded={ setIsFontLoaded } />
+            <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ paddingTop: "30px", marginBottom: "20px" }} />
+            <div style={{ fontSize: "24px" }}>분석 결과 보러 가기</div>
+            <ResultSection>
+                <Title>나의 감정은?</Title>
+                <div style={{ marginTop: "20px", marginBottom: "60px", display: "flex" }}>
+                    <Emotion># 느긋</Emotion>
+                    <Emotion># 기쁨</Emotion>
+                </div>
+                <Title>AI 코멘트</Title>
+                <Comment>
+                    코멘트 ...
+                </Comment>
+                <Title>추천 음악</Title>
+                <Player>
+                    <img src={ albumImage } alt="album" />
+                    
+                </Player>
+            </ResultSection>
         </Container>
     )
 };
