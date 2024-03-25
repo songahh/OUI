@@ -16,7 +16,7 @@ public class ShareCalendarRes {
     private Integer diaryId;
 
     @JsonProperty("date")
-    private Date date;
+    private String date;
 
     @JsonProperty("members")
     private ArrayList<MyCalendarRes> calendarResList;

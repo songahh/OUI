@@ -34,6 +34,8 @@ public class Schedule {
 
     private Date date;
 
+    private String color;
+
 
     @CreatedDate
     @LastModifiedDate
@@ -57,12 +59,13 @@ public class Schedule {
     }
 
     @Builder
-    public Schedule(Integer scheduleId, Member member, String title, String content, Date date, Integer isDeleted, LocalDateTime createdAt) {
+    public Schedule(Integer scheduleId, Member member, String title, String content, Date date, String color, Integer isDeleted, LocalDateTime createdAt) {
         this.scheduleId = scheduleId;
         this.member = member;
         this.title = title;
         this.content = content;
         this.date = date;
+        this.color = color;
         this.createdAt = createdAt;
         this.isDeleted = isDeleted;
 
