@@ -80,6 +80,7 @@ public class AuthController {
      * @param member
      * @return
      */
+    @Transactional
     @GetMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal Member member) {
         // 레디스에서 리프레시토큰 삭제
@@ -89,7 +90,7 @@ public class AuthController {
     }
 
     /**
-     * 가입된 유저확인 & 회원가입
+     * 가입된 유저확인 & 회원가입(개인 다이어리 생성)
      *
      * @param kakaoLoginRes
      * @return
@@ -121,10 +122,13 @@ public class AuthController {
             authServiceImpl.createPrivateDiary(kakaoMember);
         }
 
-        // 탈퇴한 회원이라면 가입처리
+        // 탈퇴한 회원이라면 가입처리 후 개인 다이어리 생성
         if (kakaoMember.getIsDeleted()==1){
             kakaoMember.setIsDeleted(0);
             memberRepository.save(kakaoMember);
+
+            // 개인 다이어리 생성
+            authServiceImpl.createPrivateDiary(kakaoMember);
         }
     }
 

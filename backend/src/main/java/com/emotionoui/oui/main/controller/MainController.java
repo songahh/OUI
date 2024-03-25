@@ -4,7 +4,7 @@ import com.emotionoui.oui.main.dto.req.CreateShareDiaryReq;
 import com.emotionoui.oui.main.dto.res.SearchDiaryListRes;
 import com.emotionoui.oui.main.service.MainService;
 import com.emotionoui.oui.member.entity.Member;
-import com.emotionoui.oui.querydsl.DiaryRepositoryCustom;
+import com.emotionoui.oui.querydsl.QuerydslRepositoryCustom;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MainController {
 
-    private final DiaryRepositoryCustom diaryRepositoryCustom;
+    private final QuerydslRepositoryCustom querydslRepositoryCustom;
     private final MainService mainService;
     /**
      * 모든 다이어리 가져오기
@@ -29,7 +29,7 @@ public class MainController {
     @Transactional
     @GetMapping
     public ResponseEntity<List<SearchDiaryListRes>> getDiaries(@AuthenticationPrincipal Member member){
-        List<SearchDiaryListRes> memberDiaries = diaryRepositoryCustom.findDiariesByMemberId(member.getMemberId());
+        List<SearchDiaryListRes> memberDiaries = querydslRepositoryCustom.findDiariesByMemberId(member.getMemberId());
         return ResponseEntity.ok(memberDiaries);
     }
 

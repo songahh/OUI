@@ -8,5 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface PreferenceRepository extends JpaRepository<Preference, Integer> {
-    Optional<Preference> findByMemberMemberIdAndIsDeleted(Integer memberId, Integer isDeleted);
 }
