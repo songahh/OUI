@@ -102,7 +102,7 @@ const Calendar = () => {
 
   const { state}  = useLocation();
   const { diaryId, type } = state;
-  console.log(diaryId, type);
+  console.log( diaryId, type );
 
   const [ isDiaryWrite, setIsDiaryWrite ] = useState<boolean>(false);
   const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() 
