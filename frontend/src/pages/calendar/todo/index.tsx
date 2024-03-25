@@ -53,20 +53,22 @@ const Todo = () => {
 
   const navigator = useNavigate()
 
-  const { clickDate } = useStore()
+  const { clickDate, setModalContent } = useStore()
   const [ title, setTitle ] = useState('')
   const [ memo, setMemo ] = useState('')
   const [ todoColor, setTodoColor ] = useState('BBDED6')
-  
+
   const colors = [ '#BBDED6', '#FFE17D', '#C0DEFF', '#F7EDE2', '#A1A7C4' ] 
 
   const moveBack = () =>{
-    navigator( '/calendar' )
+    setModalContent()
   }
 
   const setColor = (color) => {
     setTodoColor(color)
   };
+
+  
 
   const makeTodo = useMutation( postTodo )
 
@@ -76,8 +78,9 @@ const Todo = () => {
       return
     }
     colors.push(todoColor)
-    await makeTodo.mutateAsync({ title: title, content: memo, date: format(clickDate, 'yyyy-MM-dd' ) })
-    navigator( '/calendar' )
+    await makeTodo.mutateAsync({ title: title, content: memo, date: format(clickDate, 'yyyy-MM-dd' ), color:todoColor });
+    // setModalContent()
+    window.location.reload()
   }
 
   return(

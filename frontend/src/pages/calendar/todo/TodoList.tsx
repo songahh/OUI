@@ -11,18 +11,16 @@ const TodoListWrapper = styled.div`
   padding-bottom: 12px;
 `
 
-const TodoList = () => {
+const TodoList = (props) => {
 
-    const colors = [ '#BBDED6', '#FFE17D', '#C0DEFF', '#F7EDE2', '#A1A7C4' ] 
+  const { schedules } = props
 
   return(
     <TodoListWrapper>
       {
-        colors?.map( ( color, index ) => {
+        schedules?.map( ( schedule, index ) => {
           return(
-            <TodoCard key={ index } color={ color }>
-              !!
-            </TodoCard>
+            <TodoCard key={ index } schedule = { schedule }/>
           )
         })
       }

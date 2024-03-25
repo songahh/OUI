@@ -13,5 +13,6 @@ export const postTodo = async (data:dataType) => {
 interface dataType{
     title: String,
     content: String,
-    date: String
+    date: String,
+    color: String,
 }
