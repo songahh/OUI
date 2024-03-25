@@ -35,9 +35,6 @@ const DayList = ( props ) => {
     startDate: `${ format( list[0], 'yyyy-MM-dd' )}`,
     endDate: `${ format( list[ list.length-1 ], 'yyyy-MM-dd' )}`,
   }
-  
-  // const { data: myCalednar } = useQuery<MyCalendarType[]>([ 'MyCalendar', param ], () => getMyCalendar( param ))
-
 
   return(
     <DayListWrapper>
