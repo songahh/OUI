@@ -51,10 +51,10 @@ public class StatisticsService{
 
         Date startDate = Date.from(start.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date endDate = Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        System.out.println(" endDate = " +  endDate);
         //일주일치 일기 몽고 id
         List<WeeklyMongoDto> mongoIdList = dailyDiaryRepository.getMongoIdByDiaryId(diaryId,startDate,endDate);
         mongoIdList.sort(WeeklyMongoDto::compareTo);
+
 
         //몽고id로 감정들 가져오기
         List<EmotionClass> temp = mongoIdList.stream()
@@ -66,8 +66,20 @@ public class StatisticsService{
         HashMap<Date, double[]> weeklytotalEmotion = new HashMap<>();
         HashMap<Date, Integer> countMap = new HashMap<>();
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+
+        while (!calendar.getTime().after(endDate)) {
+            Date currentDate = calendar.getTime();
+
+            weeklytotalEmotion.putIfAbsent(currentDate, new double[]{0.0,0.0});
+            countMap.putIfAbsent(currentDate, 0);
+            calendar.add(Calendar.DATE, 1);
+        }
+
         for(int i = 0; i < size; i++) {
             Date date = mongoIdList.get(i).getDate();
+
             double[] currentEmotions = new double[]{temp.get(i).getHappy(), temp.get(i).getSad()};
             if (weeklytotalEmotion.containsKey(date)) {
                 countMap.put(date,countMap.get(date)+1);
@@ -79,10 +91,17 @@ public class StatisticsService{
                 countMap.put(date,1);
             }
         }
-        // 일별 평균 계산
+
+        weeklytotalEmotion.forEach((key,value)->{
+            System.out.println(key + ":" + Arrays.toString(value));
+        });
+
+        //일별 평균 계산
         weeklytotalEmotion.forEach((date, emotions) -> {
-            emotions[0] *= (double) 100 /countMap.get(date);
-            emotions[1] *= (double) 100 /countMap.get(date);
+            if(countMap.get(date) > 0){
+                emotions[0] *= (double) 100 /countMap.get(date);
+                emotions[1] *= (double) 100 /countMap.get(date);
+            }
         });
 
         return weeklytotalEmotion;
