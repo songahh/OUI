@@ -21,16 +21,22 @@ public class Alarm {
     @Column(name = "alarm_id")
     private Integer id;
 
-    private String type;
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private AlarmContentType type;
 
-    private String message;
+    private String title;
+    private String content;
+    private String link;
 
     @OneToMany(mappedBy="alarm")
     private List<MemberAlarm> memberAlarmList = new ArrayList<>();
 
     @Builder
-    public Alarm(String type, String message) {
+    public Alarm(AlarmContentType type, String title, String content,String link) {
         this.type = type;
-        this.message = message;
+        this.title = title;
+        this.content = content;
+        this.link = link;
     }
 }

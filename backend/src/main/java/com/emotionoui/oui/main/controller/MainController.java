@@ -1,5 +1,6 @@
 package com.emotionoui.oui.main.controller;
 
+import com.emotionoui.oui.alarm.service.AlarmService;
 import com.emotionoui.oui.main.dto.req.ChangeOrderReq;
 import com.emotionoui.oui.main.dto.req.CreateShareDiaryReq;
 import com.emotionoui.oui.main.dto.res.SearchDiaryListRes;
@@ -21,6 +22,7 @@ public class MainController {
 
     private final QuerydslRepositoryCustom querydslRepositoryCustom;
     private final MainService mainService;
+    private final AlarmService alarmService;
     /**
      * 모든 다이어리 가져오기
      *
@@ -42,8 +44,9 @@ public class MainController {
     @Transactional
     @PostMapping("/diary")
     public ResponseEntity<Void> createShareDiary(@AuthenticationPrincipal Member member, @RequestBody CreateShareDiaryReq createShareDiaryReq){
-        mainService.createShareDiary(member, createShareDiaryReq);
-        // 여기에 민지가 추가된 사람들(createShareDiaryReq.getMembers())에게 알림 보내기
+        int diaryId = mainService.createShareDiary(member, createShareDiaryReq);
+        // 초대된 사람들에게 알림 보내기
+        alarmService.inviteDiary(createShareDiaryReq.getMembers(), diaryId, member.getNickname());
         return ResponseEntity.ok().build();
     }
 

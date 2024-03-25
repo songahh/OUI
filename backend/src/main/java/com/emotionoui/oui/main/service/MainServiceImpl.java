@@ -24,13 +24,13 @@ public class MainServiceImpl implements MainService {
     private final QuerydslRepositoryCustom querydslRepositoryCustom;
 
     @Override
-    public void createShareDiary(Member member, CreateShareDiaryReq createShareDiaryReq) {
+    public Integer createShareDiary(Member member, CreateShareDiaryReq createShareDiaryReq) {
         // 다이어리 생성
-        Diary newDiary = Diary.builder()
+        Diary diary = Diary.builder()
                 .name(createShareDiaryReq.getDiaryName())
                 .templateId(createShareDiaryReq.getTemplateId())
                 .build();
-        diaryRepository.save(newDiary);
+        Diary newDiary = diaryRepository.save(diary);
 
         // 공유 다이어리를 생성한 사람(member.getMemberId)을 memberDiary DB에 생성
         MemberDiary newMemberDiary = MemberDiary.builder()
@@ -39,6 +39,8 @@ public class MainServiceImpl implements MainService {
                 .orders(memberDiaryRepository.countByMemberId(member.getMemberId())+1)
                 .build();
         memberDiaryRepository.save(newMemberDiary);
+
+        return newDiary.getId();
     }
 
     @Override
