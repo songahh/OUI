@@ -89,8 +89,9 @@ const Day = ( props: DayProps ) =>{
     }
 
     const goMyDiary = (diary) =>{
+        console.log("diaryId",diary.diary.daily_diary_id)
         // 여기 전체 데이터를 넘겨준다?
-        navigator(`/diary/${diary?.daily_diary_id}`, {state : {dailyDiaryId: diary?.daily_diary_id, type: '개인'}})
+        navigator(`/diary/${diary.diary.daily_diary_id}`, {state : {dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type}})
     }
 
 
