@@ -15,8 +15,6 @@ import java.util.Date;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleReq {
 
-    private int memberId;
-
     private String title;
 
     private String content;
@@ -25,12 +23,15 @@ public class ScheduleReq {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date date;
 
-    public Schedule toEntity(Member member, String title, String content, Date date) {
+    private  String color;
+
+    public Schedule toEntity(Member member, String title, String content, Date date, String color) {
         return Schedule.builder()
                 .member(member)
                 .title(title)
                 .content(content)
                 .date(date)
+                .color(color)
                 .isDeleted(0)
                 .createdAt(LocalDateTime.now())
                 .build();

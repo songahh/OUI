@@ -23,6 +23,9 @@ public class CalendarDiaryDto {
     @JsonProperty("emotion")
     private String emotion;
 
+    @JsonProperty("type")
+    private String type;
+
 
 
     public static CalendarDiaryDto of(Emotion emotion) {
@@ -33,6 +36,7 @@ public class CalendarDiaryDto {
                 .dailyDiaryId(emotion.getDailyDiary().getId())
                 .date(localDate.toString())
                 .emotion(emotion.getEmotion())
+                .type(String.valueOf(emotion.getDailyDiary().getDiary().getType()))
                 .build();
 
     }

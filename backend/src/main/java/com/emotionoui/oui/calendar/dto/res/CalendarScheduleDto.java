@@ -26,6 +26,9 @@ public class CalendarScheduleDto {
     @JsonProperty("date")
     private String date;
 
+    @JsonProperty("color")
+    private String color;
+
     public static CalendarScheduleDto of(Schedule schedule){
 
         LocalDate localDate = LocalDate.ofInstant(schedule.getDate().toInstant(), ZoneId.systemDefault());
@@ -36,6 +39,7 @@ public class CalendarScheduleDto {
                 .title(schedule.getTitle())
                 .content(schedule.getContent())
                 .date(localDate.toString())
+                .color(schedule.getColor())
                 .build();
     }
 
