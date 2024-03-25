@@ -45,11 +45,15 @@ public class DailyDiaryCollection {
     // 코멘트 내용
     private String comment;
 
+    // 작성자 닉네임
+    private String nickname;
+
     @Builder
-    public DailyDiaryCollection(Integer diaryId, Integer memberId, String content, Integer isDeleted){
+    public DailyDiaryCollection(Integer diaryId, Integer memberId, String content, Integer isDeleted,String nickname){
         this.diaryId = diaryId;
         this.memberId = memberId;
         this.content = content;
         this.isDeleted = isDeleted;
+        this.nickname = nickname;
     }
 }

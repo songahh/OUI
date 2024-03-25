@@ -22,15 +22,16 @@ public class FcmInfo {
     @JoinColumn(name="member_id")
     private Member member;
 
-//    private String deviceId;
-
     private String deviceToken;
 
     @Builder
-    public FcmInfo(Member member, String deviceId, String deviceToken) {
+    public FcmInfo(Member member, String deviceToken) {
         this.member = member;
-//        this.deviceId = deviceId;
         this.deviceToken = deviceToken;
-//        member.setFcmInfo(this);
+        member.setFcmInfo(this);
+    }
+
+    public void updateDeviceToken(String deviceToken){
+        this.deviceToken = deviceToken;
     }
 }

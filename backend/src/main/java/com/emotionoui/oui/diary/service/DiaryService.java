@@ -25,4 +25,6 @@ public interface DiaryService {
     SearchDiarySettingRes searchDiarySetting(Integer diaryId, Integer memberId);
     void updateDiarySetting(UpdateDiarySettingReq req, Integer diaryId, Integer memberId);
     String decorateDailyDiary(DecorateDailyDiaryReq req, Integer dailyId);
+
+    void exitShareDiary(Integer diaryId, int memberId);
 }
