@@ -31,7 +31,11 @@ const PlusButton = styled.button`
   cursor: pointer;
 `
 
-const MyModal = () => {
+const MyModal = (props) => {
+
+  const { schedules } = props
+
+  console.log(schedules)
 
   const [ modalContent, setModalContent ] = useState(true);
 
@@ -41,6 +45,7 @@ const MyModal = () => {
     setModalContent(!modalContent)
   }
 
+  const todos = schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( clickDate, 'MM-dd'))
 
   return(
     <MyModalWrapper>
@@ -48,10 +53,10 @@ const MyModal = () => {
       <>
       <ModalHeaderWrapper>
         <div style={{ fontSize:'30px'}}>일정</div>
-        <div style={{ fontSize: '20px', marginLeft: '2%' }}> { format(clickDate, 'yyyy-MM-dd' ) }</div>
+        <div style={{ fontSize: '20px', marginLeft: '2%' }}> { format( clickDate, 'yyyy-MM-dd' )}</div>
       </ModalHeaderWrapper>
         <PlusButton onClick={ createTodo }>+</PlusButton>
-        <TodoList/>
+        <TodoList schedules = { todos }/>
       </>
       }{
         !modalContent &&

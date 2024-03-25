@@ -133,6 +133,14 @@ const Calendar = () => {
     )
   }
 
+  const loadDiary = () => {
+    
+  }
+
+  const goWrite = () => {
+
+  }
+
   const WriteModalPortal = ({ onClose  }) => { 
     const handleBackgroundClick = (e) => {
       ( e.target === e.currentTarget ) && onClose()
@@ -141,8 +149,8 @@ const Calendar = () => {
       <WriteModalBackground onClick={ handleBackgroundClick }>
         <WriteModal>
           <div style={{display:'flex', height:'100%', justifyContent: 'space-around'}}>
-            <img src={loadMyDiary} alt=''/>
-            <img src={goToWriteDiary} alt=''/>
+            <img src={ loadMyDiary } alt='' onClick={ loadDiary } style={{cursor:'pointer'}}/>
+            <img src={ goToWriteDiary } alt='' onClick={ goWrite } style={{cursor:'pointer'}}/>
           </div>
         </WriteModal>
       </WriteModalBackground>,
@@ -178,8 +186,10 @@ const Calendar = () => {
 
   const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getCalendar( today ))
 
-  useEffect(() => { refetch() }, [ currentMonth, refetch ])
+  console.log("Calendar", calendars)
 
+  useEffect(() => { refetch() }, [ currentMonth, refetch ])
+  
   return(
           <CalendarWrapper>
             <CalendarHeaderWrapper>
@@ -197,7 +207,7 @@ const Calendar = () => {
           isModalOpened && type=='개인'
           && 
             <ModalPortal onClose={ closeModal }>
-              <Modal><MyModal></MyModal></Modal>
+              <Modal><MyModal schedules= { calendars?.data?.schedules }></MyModal></Modal>
             </ModalPortal>
         }
         { 
