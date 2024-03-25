@@ -2,6 +2,11 @@ import { format } from 'date-fns'
 import useStore from '../store'
 import styled from 'styled-components'
 import angry from 'src/asset/images/emotion/angry.png'
+import embarrass from 'src/asset/images/emotion/embarrass.png'
+import joy from 'src/asset/images/emotion/joy.png'
+import nervous from 'src/asset/images/emotion/nervous.png'
+import relax from 'src/asset/images/emotion/relax.png'
+import sad from 'src/asset/images/emotion/sad.png'
 import { useNavigate } from 'react-router-dom'
 import { MyCalendarType, ScheduleType } from 'src/types'
 
@@ -70,8 +75,16 @@ const Day = ( props: DayProps ) =>{
     const diaries = calendars?.diaries?.filter(( diary ) => diary?.date?.substring(5, 10) === format( day, 'MM-dd'))
     const todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
 
+    const emotionImg = {
+        angry: angry,
+        embarrass: embarrass,
+        joy: joy,
+        nervous: nervous,
+        relax: relax,
+        sad: sad,
+    }
+
     function listTodo (e, date): void{
-        console.log(date)
         updateDate( date )
         updateModal()
     }
@@ -80,6 +93,7 @@ const Day = ( props: DayProps ) =>{
         // 여기 전체 데이터를 넘겨준다?
         navigator('/diary')
     }
+
 
     
     return(
@@ -91,8 +105,11 @@ const Day = ( props: DayProps ) =>{
             <EmotionWrapper onClick={ goMyDiary }>
                 {
                     diaries?.map(( diary, index ) => {
+                        const emotionPath = `src/asset/images/emotion/${diary.emotion}.png`
+                        console.log(emotionPath, "Emotion")
                         return(
                             <img src={ angry } alt='' style={{ height: '100%' }} key={ index }/>
+                            // import angry from 'src/asset/images/emotion/angry.png'
                         )
                     })
                 }

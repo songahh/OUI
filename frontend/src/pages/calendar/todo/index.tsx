@@ -109,7 +109,7 @@ const Todo = () => {
     {
       colors?.map((color, index) => {
         return(
-          <ColorBox color={ color } selected={color === todoColor} onClick={() => setColor(color)}/>
+          <ColorBox key={ index } color={ color } selected={color === todoColor} onClick={() => setColor(color)}/>
         )
       })
     }
