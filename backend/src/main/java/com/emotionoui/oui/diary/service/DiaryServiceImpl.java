@@ -1,5 +1,6 @@
 package com.emotionoui.oui.diary.service;
 
+import com.emotionoui.oui.alarm.service.AlarmService;
 import com.emotionoui.oui.calendar.entity.Emotion;
 import com.emotionoui.oui.calendar.repository.EmotionRepository;
 import com.emotionoui.oui.diary.dto.EmotionClass;
@@ -56,6 +57,7 @@ public class DiaryServiceImpl implements DiaryService{
     private final MusicMongoRepository musicMongoRepository;
     private final MemberDiaryRepository memberDiaryRepository;
     private final MusicService musicService;
+    private final AlarmService alarmService;
     private final QuerydslRepositoryCustom querydslRepositoryCustom;
 
 
@@ -86,7 +88,7 @@ public class DiaryServiceImpl implements DiaryService{
                 .build();
 
         // MariaDB에 dailyDiary 정보(몽고디비ID 포함) 저장
-        dailyDiaryRepository.save(dailyDiary);
+        DailyDiary newDailyDiary = dailyDiaryRepository.save(dailyDiary);
         Date dailyDate = req.getDailyDate();
 
         String text = null;
@@ -110,6 +112,9 @@ public class DiaryServiceImpl implements DiaryService{
             e.printStackTrace();
             log.info("텍스트 파일 위치를 찾을 수 없습니다.");
         }
+
+        // 공유 다이어리일 시 친구들에게 본인 일기 알람 전송
+        alarmService.sendFriendDiary(diary, newDailyDiary.getId(), member);
 
         return document.getId().toString();
     }
