@@ -1,6 +1,6 @@
-package com.emotionoui.oui.diary.repository;
+package com.emotionoui.oui.music.repository;
 
-import com.emotionoui.oui.diary.entity.MusicCollection;
+import com.emotionoui.oui.music.entity.MusicCollection;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -7,19 +7,21 @@ import com.emotionoui.oui.auth.exception.MemberNotFoundException;
 import com.emotionoui.oui.auth.jwt.JwtTokenProvider;
 import com.emotionoui.oui.auth.redis.RedisPrefix;
 import com.emotionoui.oui.auth.redis.RedisService;
+import com.emotionoui.oui.diary.entity.Diary;
+import com.emotionoui.oui.diary.entity.DiaryType;
+import com.emotionoui.oui.diary.repository.DiaryRepository;
 import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.entity.MemberDiary;
+import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.member.repository.MemberRepository;
-import com.emotionoui.oui.schedule.entity.Schedule;
-import com.emotionoui.oui.schedule.repository.ScheduleRepository;
+import com.emotionoui.oui.querydsl.QuerydslRepositoryCustom;
 import com.emotionoui.oui.survey.entity.Preference;
 import com.emotionoui.oui.survey.repository.PreferenceRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +37,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class AuthService {
+public class AuthServiceImpl{
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String REST_API_KEY;
     @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
@@ -48,7 +50,9 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final RedisService redisService;
     private final PreferenceRepository preferenceRepository;
-    private final ScheduleRepository scheduleRepository;
+    private final DiaryRepository diaryRepository;
+    private final MemberDiaryRepository memberDiaryRepository;
+    private final QuerydslRepositoryCustom querydslRepositoryCustom;
 
     /**
      * 카카오에서 유저 정보(email) 받아오기
@@ -176,29 +180,47 @@ public class AuthService {
         return jwtTokenProvider.createAccessToken(email);
     }
 
+    // 가입 시 개인 다이어리 생성
+    public void createPrivateDiary(Member member) {
+        // diary DB에 추가
+        Diary newDiary = Diary.builder()
+                .name("My Diary")
+                .templateId(1)
+                .type(DiaryType.개인)
+                .build();
+        diaryRepository.save(newDiary);
+
+        // 다이어리를 생성한 사람(member.getMemberId)을 memberDiary DB에 추가
+        MemberDiary newMemberDiary = MemberDiary.builder()
+                .member(member)
+                .diary(newDiary)
+                .orders(1)
+                .build();
+        memberDiaryRepository.save(newMemberDiary);
+    }
+
+
     public void deleteMember(Member member) {
         // redis에서 삭제
         String key = RedisPrefix.REFRESH_TOKEN.prefix() + member.getEmail();
         redisService.deleteValues(key);
-        // db에서 isDeleted == 1 로 바꾸기(탈퇴처리)
+        // db에서 isDeleted = 1 로 바꾸기(탈퇴처리)
         member.setIsDeleted(1);
         memberRepository.save(member);
         // 해당 사용자와 연관된 정보도 삭제처리하기
-        // 회원 취향
-        Optional<Preference> optionalPreference = preferenceRepository.findByMemberMemberIdAndIsDeleted(member.getMemberId(), 0); // 0은 삭제되지 않은 상태를 나타냄
-        if (optionalPreference.isPresent()) {
-            Preference preference = optionalPreference.get();
-            preference.changeIsDelete();
-            preferenceRepository.save(preference);
-        }
-        // 회원 일정
-        Optional<Schedule> optionalSchedule= scheduleRepository.findByMemberMemberIdAndIsDeleted(member.getMemberId(), 0);
-        if(optionalSchedule.isPresent()){
-            Schedule schedule = optionalSchedule.get();
-            schedule.changeIsDelete();;
-            scheduleRepository.save(schedule);
-        }
-        // 회원 다이어리
-        // 회원 알람
+        // 다이어리 삭제
+        querydslRepositoryCustom.deleteDiaryByMemberId(member.getMemberId());
+
+        // 회원 취향 삭제
+        querydslRepositoryCustom.deletePreferenceByMemberId(member.getMemberId());
+
+        // 회원 일정 삭제
+        querydslRepositoryCustom.deleteSchedleByMemberId(member.getMemberId());
+
+        // 회원 다이어리(회원 id에 해당하는 행 isDeleted = 1 처리
+        querydslRepositoryCustom.deleteMemberDiaryByMemberId(member.getMemberId());
+
+        // 회원 알람(회원 id에 해당하는 행 isDeleted = 1 처리)
+        querydslRepositoryCustom.deleteAlarmByMemberId(member.getMemberId());
     }
 }

@@ -1,4 +1,4 @@
-package com.emotionoui.oui.common.config;
+package com.emotionoui.oui.querydsl.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

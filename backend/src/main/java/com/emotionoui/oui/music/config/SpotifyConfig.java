@@ -7,15 +7,14 @@ import org.springframework.context.annotation.PropertySource;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 
-
-@PropertySource("classpath:spotify-secret.properties")
+@PropertySource("classpath:application.yml")
 @Configuration
 public class SpotifyConfig {
 
-    @Value("${clientId}")
+    @Value("${spotify.client-id}")
     private String clientId;
 
-    @Value("${clientSecret}")
+    @Value("${spotify.client-secret}")
     private String clientSecret;
 
 
@@ -33,5 +32,4 @@ public class SpotifyConfig {
                 .clientCredentials()
                 .build();
     }
-
 }

@@ -22,6 +22,8 @@ public class FcmInfo {
     @JoinColumn(name="member_id")
     private Member member;
 
+//    private String deviceId;
+
     private String deviceToken;
 
     @Builder

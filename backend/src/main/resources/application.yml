@@ -2,7 +2,8 @@ spring:
   encoding: UTF-8
   config:
     import:
-      - optional:file:.env[.properties]
+      - optional:env/env.yml
+      - optional:env/firebase_service_key.json
   server:
     port: 8080
     servlet:
@@ -51,8 +52,8 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
   data:
     mongodb:
-      host: localhost
-      port: 27017
+      host: ${MONGODB_HOST}
+      port: ${MONGODB_PORT}
       database: diary
       username: ${MONGODB_USERNAME}
       password: ${MONGODB_PASSWORD}
@@ -63,3 +64,20 @@ spring:
 jwt:
   header: Authorization
   secret: ${JWT_KEY}
+
+spotify:
+  client-id: ${SPOTIFY_CLIENT_ID}
+  client-secret: ${SPOTIFY_CLIENT_SECRET}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET} # {버킷명}
+    credentials:
+      access-key: ${S3_ACCESS}
+      secret-key: ${S3_SECRET}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false

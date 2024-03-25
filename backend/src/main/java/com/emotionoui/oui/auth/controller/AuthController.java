@@ -5,30 +5,22 @@ import com.emotionoui.oui.auth.exception.LoginFailureException;
 import com.emotionoui.oui.auth.jwt.JwtTokenProvider;
 import com.emotionoui.oui.auth.redis.RedisPrefix;
 import com.emotionoui.oui.auth.redis.RedisService;
-import com.emotionoui.oui.auth.service.AuthService;
+import com.emotionoui.oui.auth.service.AuthServiceImpl;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.repository.MemberRepository;
-import com.emotionoui.oui.schedule.entity.Schedule;
-import com.emotionoui.oui.survey.entity.Preference;
-import com.emotionoui.oui.survey.repository.PreferenceRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Scanner;
 
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -36,10 +28,9 @@ import java.util.Scanner;
 public class AuthController {
 
     private final MemberRepository memberRepository;
-    private final AuthService authService;
+    private final AuthServiceImpl authServiceImpl;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
-    private final PreferenceRepository preferenceRepository;
 
     /**
      * kakao로그인
@@ -48,11 +39,12 @@ public class AuthController {
      * @param response
      * @return
      */
+    @Transactional
     @GetMapping("/login/kakao")
     public ResponseEntity<?> kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) {
         try {
             // 카카오에서 사용자 email 받아오기
-            KakaoLoginRes kakaoLoginRes = authService.kakaoLogin(code, response);
+            KakaoLoginRes kakaoLoginRes = authServiceImpl.kakaoLogin(code, response);
             // 받아온 email로 jwt access, refresh 토큰 만들기
             String accessToken = jwtTokenProvider.createAccessToken(kakaoLoginRes.getEmail());
             String refreshToken = jwtTokenProvider.createRefreshToken(kakaoLoginRes.getEmail());
@@ -88,6 +80,7 @@ public class AuthController {
      * @param member
      * @return
      */
+    @Transactional
     @GetMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal Member member) {
         // 레디스에서 리프레시토큰 삭제
@@ -97,7 +90,7 @@ public class AuthController {
     }
 
     /**
-     * 가입된 유저확인 & 회원가입
+     * 가입된 유저확인 & 회원가입(개인 다이어리 생성)
      *
      * @param kakaoLoginRes
      * @return
@@ -122,13 +115,20 @@ public class AuthController {
         // 가입되지 않은 회원이라면 회원가입
         if (kakaoMember == null) {
             kakaoMember = new Member(email, memberNickname);
+            // 회원가입
             memberRepository.save(kakaoMember);
+
+            // 개인 다이어리 생성
+            authServiceImpl.createPrivateDiary(kakaoMember);
         }
 
-        // 탈퇴한 회원이라면 가입처리
+        // 탈퇴한 회원이라면 가입처리 후 개인 다이어리 생성
         if (kakaoMember.getIsDeleted()==1){
             kakaoMember.setIsDeleted(0);
             memberRepository.save(kakaoMember);
+
+            // 개인 다이어리 생성
+            authServiceImpl.createPrivateDiary(kakaoMember);
         }
     }
 
@@ -168,7 +168,7 @@ public class AuthController {
             // 레디스에 저장된 리프레시토큰과 지금 받아온 리프레시 토큰이 같다면
             if (savedRefreshToken.equals(refreshToken)) {
                 // authService의 generateNewAccessToken 메서드를 호출하여 새로운 accessToken, refreshToken을 발급
-                String newAccessToken = authService.generateNewAccessToken(refreshToken);
+                String newAccessToken = authServiceImpl.generateNewAccessToken(refreshToken);
                 String newRefreshToken = jwtTokenProvider.createRefreshToken(email);
 
                 // 새로운 refreshToken을 쿠키에 담아서 반환하는 메소드를 호출.
@@ -202,15 +202,10 @@ public class AuthController {
     @Transactional
     @PutMapping
     public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal Member member){
-        authService.deleteMember(member);
+        authServiceImpl.deleteMember(member);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/check")
-    public ResponseEntity<Void> check(@RequestParam int num){
-        System.out.println("체크체크");
-        return ResponseEntity.ok().build();
-    }
 }
 
 

@@ -3,6 +3,7 @@ package com.emotionoui.oui.member.exhandler;
 import com.emotionoui.oui.member.exception.DeletedMemberException;
 import com.emotionoui.oui.member.exception.NotAddException;
 import com.emotionoui.oui.member.exception.NotFoundMemberException;
+import com.emotionoui.oui.member.exception.NotUpdateMemberException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,6 +53,16 @@ public class MemberExceptionHandler {
         makeErrorMessage(errorMessage, e);
 
         errorMessage.append("탈퇴한 회원입니다.");
+        return ResponseEntity.badRequest().body(errorMessage.toString());
+    }
+    @ExceptionHandler(NotUpdateMemberException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ResponseEntity<String> NotUpdateMemberExceptionHandler(NotUpdateMemberException e) {
+        StringBuilder errorMessage = new StringBuilder();
+
+        makeErrorMessage(errorMessage, e);
+
+        errorMessage.append("회원 정보 수정에 실패했습니다.");
         return ResponseEntity.badRequest().body(errorMessage.toString());
     }
 }
