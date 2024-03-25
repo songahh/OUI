@@ -1,49 +1,53 @@
 import { fabric } from 'fabric';
 import { Drawer, EditIcon, DecoIcon, DeleteIcon } from 'src/components';
+import { Canvas } from './components';
 import { useState, useEffect, useRef } from 'react';
-import { useQuery } from 'react-query';
-import { useNavigate } from "react-router-dom";
-import { getDiary } from './api';
-import WebFont from 'webfontloader';
+import { useQuery, useMutation } from 'react-query';
+import { useNavigate, useLocation } from "react-router-dom";
+import { getDiary, deleteDiary } from './api';
 import styled from 'styled-components';
 
 const Header = styled.div`
-    width: 95%;
+    width: 93%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 10px;
+    height: 60px;
+    margin: 30px 0;
 `
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #F9F3EE;
+`;
+
+const Tab = styled.button<{ $isDeco: boolean }>`
+    width: 150px; 
+    height: 60px; 
+    background-color: ${( props ) => props.$isDeco ? "#FFFEFC" : "#EEEEEE"}; 
+    font-color: ${( props ) => props.$isDeco ? "#262626" : "#9E9D9D"}; 
+    font-weight: ${( props ) => props.$isDeco ? "bold" : "normal"}; 
+    border: none;
+    border-radius: 10px 10px 0 0;
+    margin-left: 20px;
+    font-size: 22px;
 `;
 
 const Diary = () => {
     const navigator = useNavigate();
+
+    const { state } = useLocation();
+    const { diaryId } = state;
     
     const canvasRef = useRef(null);
-    // 폰트 로딩 상태 관리
-    const [ isFontLoaded, setIsFontLoaded ] = useState(false);
-    
-    useEffect(() => {        
-        WebFont.load({
-            custom: {
-                families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
-                urls: ['src/asset/fonts']
-            },
-            active: () => {
-                setIsFontLoaded(true);
-            }
-        });
-    }, []);
+    const [ canvas, setCanvas ] = useState<fabric.Canvas>(null);
+    const [ isFontLoaded, setIsFontLoaded ] = useState<boolean>(false);
+    const [ isDeco, setIsDeco ] = useState<boolean>(true);
 
     // 임시 dailyDiaryId ////////
-    const dailyDiaryId = 9;
-    const type = '개인';
+    const dailyDiaryId = 18;
+    let type = '공유';
     ////////////////////////////
 
     const { data: dailyDiary } = useQuery('dailyDiary', () => getDiary(dailyDiaryId), {
@@ -51,57 +55,57 @@ const Diary = () => {
     });
 
     useEffect(() => {
-        // 캔버스 생성
-        const newCanvas = new fabric.Canvas(canvasRef.current, {
-            width: 950,
-            height: 900,
-            backgroundColor: '#FFFEFC'
-        });
+        if(!canvas) return;
 
-        fabric.Object.prototype.set({
-            cornerSize: 10,
-            cornerStyle: 'rect',
-            transparentCorners: false,
-            cornerColor: '#CDCDCD',
-            borderColor: '#CDCDCD',
-        });
-
-        newCanvas.loadFromJSON(dailyDiary?.data?.dailyContent, () => {
-            newCanvas.renderAll();
-            newCanvas.forEachObject((obj) => {
+        canvas.loadFromJSON(dailyDiary?.data?.dailyContent, () => {
+            canvas.renderAll();
+            canvas.forEachObject((obj) => {
                 obj.selectable = false;
             });
         });
-        
-        // 공유일기에서 '꾸민 일기'일 경우에만 랜더링
-        const decoObjects = dailyDiary ? JSON.parse(dailyDiary?.data?.decoration) : null;
-        fabric.util.enlivenObjects(decoObjects, (enlivenedObjects: any) => {
-            enlivenedObjects.forEach((obj: any) => {
-                obj.selectable = false;
-                newCanvas.add(obj);
-            });
-            newCanvas.renderAll();
-        }, null);
 
-        // 언마운트 시 캔버스 정리
-        return () => {
-            newCanvas.dispose();
-        };
-    }, [ dailyDiary ]);
+        if(type === '공유' && isDeco) {
+            // 공유일기에서 '꾸민 일기'일 경우에만 랜더링
+            const decoObjects = dailyDiary ? JSON.parse(dailyDiary?.data?.decoration) : null;
+            fabric.util.enlivenObjects(decoObjects, (enlivenedObjects: any) => {
+                enlivenedObjects.forEach((obj: any) => {
+                    obj.selectable = false;
+                    canvas.add(obj);
+                });
+                canvas.renderAll();
+            }, null);
+        }
+    }, [ dailyDiary, isDeco ]);
+
+    const removeDiary = useMutation( deleteDiary );
+
+    const onClick = async () => {
+        await removeDiary.mutateAsync(dailyDiaryId);
+        navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId}});
+    }
 
     return (
         <Container>
             <Header>
                 <Drawer />
-                <div style={{ display: "flex", alignItems: "center"}}>
-                    <EditIcon onClick={() => navigator('/diary/edit')} />
-                    <DecoIcon onClick={() => navigator('/diary/deco')} />
-                    <DeleteIcon onClick={() => navigator('/diary/write')} />
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    {(type === '공유' && isDeco) && (
+                        <DecoIcon size={ 55 } onClick={() => navigator(`/diary/deco/${ dailyDiaryId }`, {state: {dailyDiaryId: dailyDiaryId}})} />
+                    )}
+                    {/* 공유일기 + 원본일기 -> 본인 일기일 때만 버튼이 나와야 함 */}
+                    {((type === '개인') || (type ==='공유' && !isDeco)) && (
+                        <EditIcon size={ 55 } onClick={() => navigator(`/diary/edit/${ dailyDiaryId }`, {state: {dailyDiaryId: dailyDiaryId}})} />
+                    )}
+                    <DeleteIcon size={ 55 } onClick={ onClick } />
                 </div>
             </Header>
-            <div>
-            </div>
-            <canvas id="canvas" style={{ border: "1px solid #9E9D9D"  }} ref={ canvasRef }/>
+            {(type === '공유') && (
+                <div style={{ width: "93%" }}>
+                    <Tab onClick={() => setIsDeco(true)} $isDeco={ isDeco }>꾸민 일기</Tab>
+                    <Tab onClick={() => setIsDeco(false)} $isDeco={ !isDeco }>원본 일기</Tab>
+                </div>
+            )}
+            <Canvas canvasRef={ canvasRef } canvas={ canvas } setCanvas={ setCanvas } setIsFontLoaded={ setIsFontLoaded } />
         </Container>
     )
 };
