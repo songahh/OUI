@@ -7,6 +7,8 @@ build
 .env
 .env.local
 .env.*.local
+./public/mainPage.html
+./src/pages/components/control/NotificationModal.tsx
 
 # Log files
 npm-debug.log*
