@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "src/pages/main/components/Card";
 import { Header } from "src/components/control/Header";
-import { BottomNavi } from "src/components/control/BottomNavi";
-import { Drawer } from "src/components/control/Drawer";
 import { Button } from "src/components";
 import { CustomModal } from "./components/Modal";
+import { getDiary, getMember, postCreateDiary } from './api';
+import ya from 'src/asset/images/ya.jpg';
+import { useQuery } from 'react-query'
 import Slider from "react-slick";
 import { useNavigate } from 'react-router-dom'
 import 'slick-carousel/slick/slick.css';
@@ -13,7 +14,6 @@ import styled from "styled-components";
 
 const SliderWrapper = styled( Slider )`
   
-
   .slick-track{
     display: flex;
     margin: 0 -10px;
@@ -30,6 +30,13 @@ const SliderWrapper = styled( Slider )`
     transition: transform 0.5s ease, opacity 0.5s ease;
   }
 
+  .slick-slide > div { 
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+
   .slick-center {
     transform: scale(1); 
     opacity: 1;
@@ -38,7 +45,68 @@ const SliderWrapper = styled( Slider )`
     justifyContent: center; 
     z-index: 10;
   }
+
+  .slick-slide:not(.slick-center) > div {
+    background-image: none !important; 
+  }
+
 `;
+
+
+const YellowBox = styled.div`
+
+  width: 500px;
+  height: 8vh;
+  background-color: #FFE17D;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  margin-top: 4vh;
+  margin-bottom: 4vh;
+  align-items: center;
+  margin-left: 5%;
+  @media (max-width: 768px) {
+    margin-left: 2%; 
+    width: 50vw;
+  }
+
+  @media (max-width: 480px) {
+    margin-left: 1%; 
+    width: 50vw;
+    height: 4vh;
+  }
+  position: relative;
+`;
+
+const UserRecord = styled.div`
+  position: absolute;
+  top: -40px; 
+  background: transparent;
+  padding: 5px 10px;
+  border: 0px;
+  font-size: 60px;
+  font-family: "Dovemayo",
+  @media (max-width: 768px) {
+    font-size: 35px;
+    top: -30px; 
+  }
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+    top: -20px; 
+  }
+`;
+
+const ProfileImage = styled.img`
+  width: 30%;
+  max-width: 150px;
+  max-height: 150px;
+  height: 30%;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
 
 const Main = () => {
 
@@ -54,58 +122,106 @@ const Main = () => {
   const navigator = useNavigate()
 
   const [ isModalOpen, setIsModalOpen ] = useState( false );
-  
+  const [ diaryList, setDiaryList ] = useState( [] );
+  const [ userName, setUserName ] = useState( "" );
+  const [ userImage, setUserImage ] = useState( null );
+  const [ modalSubmitted, setModalSubmitted ] = useState( false );
+
+
   const openModal = () => setIsModalOpen( true );
   const closeModal = () => {
     console.log( '모달 닫기!!!!!!' );
     setIsModalOpen( false );
   }
 
-  const [cards, setCards] = useState([
-    { id: 1, buttonText: "1", isDiary: "diary", type: '개인' },
-    { id: 2, buttonText: "2", isDiary: "diary" , type: '개인'},
-    { id: 3, buttonText: "3", isDiary: "diary", type: '개인' },
-    { id: 4, buttonText: "4", isDiary: "diary", type: '공유' },
-    { id: 5, buttonText: "카드 추가", isDiary: "addButton" },
-  ]);
 
-
-  const addCard = ( props:addProps ) => { // 카드 추가 완료
-    console.log(props);
+  const addCard = ( props: { title: string; key: number; members: String[]; } ) => {
     const { title, key, members } = props;
-
-    const newCardNumber = cards.length; 
-    const newCards = cards.slice( 0, -1 ); 
-    const newCard = { id: newCardNumber, buttonText: `${ key }`, isDiary: "diary" };
-    const addButtonCard = cards[ cards.length - 1 ]; 
-    setCards([ ...newCards, newCard, addButtonCard ]);
-    console.log( '추가 완료!!!!!' );
-    closeModal();
+    const templateId = key; 
+    const data = {
+      diaryName: title,
+      templateId: templateId,
+      members: members,
+    };
+  
+    try {
+      const response = postCreateDiary( data ).then(
+        ()=>{
+          setModalSubmitted( true );
+        }
+      );
+      console.log( '추가추가:', response );
+      closeModal();
+    } catch ( error ) {
+      console.error( '생성실패:', error );
+    }
   };
 
+  const cards = diaryList.map(( diary ) => ({
+    id: diary.diaryId,
+    buttonText: diary.createdAt,
+    isDiary: "diary",
+    template: diary.templateId,
+    type: diary.type,
+  })).concat({
+    id: diaryList.length,
+    buttonText: "카드 추가",
+    isDiary: "addButton",
+    template: -1,
+    type: "",
+  });
 
-  const moveDiary = (type) => {
+  const moveDiary = ( type: string, id: number ) => {
     type=='개인' && 
-    navigator('/calendar', {state : {diaryId: 1, type: '개인'}})
+    navigator('/calendar', {state : {diaryId: id, type: type}})
     type=='공유' && 
-    navigator('/calendar', {state : {diaryId: 3, type: '공유'}})
+    navigator('/calendar', {state : {diaryId: id, type: type}})
   }
 
+  const { data: diaryData, refetch: refetchDiary } = useQuery(['diaryData'], getDiary, {
+    onSuccess: ( res ) => {
+      const updatedDiaryList = res.data.map(( diary: { createdAt: any[]; }) => ({
+        ...diary,
+        createdAt: `${ diary.createdAt[0] }.${ diary.createdAt[1] }.${ diary.createdAt[2] }`,
+      }));
+      setDiaryList( updatedDiaryList );
+      console.log( res.data );
+    }
+  });
+  
+  const { data: memberData, refetch: refetchMember } = useQuery(['memberData'], getMember, {
+    onSuccess: ( res ) => {
+      setUserImage( res.data.img );
+      setUserName( res.data.nickName );
+      console.log( res.data );
+    }
+  });
+  
+  useEffect(() => {
+    if ( modalSubmitted ) {
+      refetchDiary();
+      refetchMember();
+      setModalSubmitted( false );
+    }
+  }, [ modalSubmitted, refetchDiary, refetchMember]);
 
 
   return (
     <>
     <Header>
-    <Drawer></Drawer>
-    <Button path='/diary/write' btType='user' name="temp"></Button>
+      <ProfileImage src={ userImage || ya } alt="유저 프로필 이미지" />
+      <Button path='/diary/write' btType='bell' name="temp"></Button>
     </Header>
-    <hr></hr>
+    <YellowBox>
+        {userName && <UserRecord style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold' }}>{ userName }님의 감정기록 :)</UserRecord>}
+    </YellowBox>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <div className="slider-container" style={{ minHeight: '100%', minWidth: '100%' }}>      
         <SliderWrapper { ...settings }>
         {cards.map(( card, index ) => (
           <div key={index}>
-            <Card buttonText={ card.buttonText } onClick={ card.isDiary === "addButton" ? openModal : () => moveDiary(card?.type) } />
+            <Card buttonText={ card.buttonText } templateId={ card.template } 
+              onClick={ card.isDiary === "addButton" ? openModal : () => moveDiary( card?.type, card.id ) } />
           </div> 
         ))}
           <Card/>
@@ -113,16 +229,9 @@ const Main = () => {
         </SliderWrapper>
       </div>
     </div>
-    <CustomModal isOpen={ isModalOpen } closeModal={ closeModal } isFinish={ addCard }></CustomModal>
-    <BottomNavi></BottomNavi>
+    <CustomModal isOpen={ isModalOpen } closeModal={ closeModal } isFinish={ addCard } />
     </>
   );
-}
-
-type addProps = {
-  title?: string;
-  key?: number;
-  members?: string[];
 }
 
 export default Main;
