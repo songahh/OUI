@@ -1,6 +1,9 @@
 import { Drawer } from "src/components/control/Drawer";
 import { Button } from "src/components/control/Button";
 import { Header } from "src/components/control/Header";
+import { gettWeekly, getMember } from "./api/";
+import { useQuery } from 'react-query'
+
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -10,12 +13,13 @@ import {
     LineElement,
     Tooltip,
 } from "chart.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Switch } from "./components/Switch";
 import { BottomNavi } from "src/components/control/BottomNavi";
-import styled from 'styled-components';
 import Monthly from "./components/Monthly/Monthly";
+import styled from 'styled-components';
+
 
 ChartJS.register(
     CategoryScale,
@@ -30,6 +34,10 @@ ChartJS.register(
 const SwitchWrapper = styled(Switch)`
     display: flex;
     margin-left: auto;
+
+    .TitleWrapper{
+        align-items: flex-start;
+    }
 `;
 
 const BoxWrapper = styled.div`
@@ -49,6 +57,10 @@ const GraphWrapper = styled.div`
     height: 30vh; 
     margin: auto; 
 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+
     @media (max-width: 768px) {
         height: 25vh; 
     }
@@ -63,38 +75,68 @@ const GraphWrapper = styled.div`
 const Analysis = () => {
 
     const [ keyType, setKeyType ] = useState( 1 ); 
+    const [ happyDataSet, setHappyDataSet ] = useState( {
+        labels: [],
+        datasets: [],
+    } );
+    const [ sadDataSet, setSadDataSet ] = useState( {
+        labels: [],
+        datasets: [],
+    } ); 
+    const [ userName, setUserName ] = useState('')
+    const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
 
-    const happyData = {
-        labels: [ '일', '월', '화', '수', '목', '금', '토'],
-        datasets: [
-          {
-            data: [33, 53, 85, 41, 44, 65,10],
-            fill: true,
-            backgroundColor: "white",
-            borderColor: "#FFDD6B",
-            pointBackgroundColor: "#FFDD6B",
-            pointBorderWidth: 2,
-            pointBorderColor: "#FFC814",
-            
-          }
-        ]
-    };
+    const { data: memberData, refetch: refetchMember } = useQuery(['memberData'], getMember, {
+        onSuccess: ( res ) => {
+          setUserName( res.data.nickName );
+          console.log( res.data );
+        }
+      });
 
-    const sadData = {
-        labels: [ '일', '월', '화', '수', '목', '금', '토'],
-        datasets: [
-          {
-            data: [33, 53, 85, 41, 44, 65,10],
-            fill: true,
-            backgroundColor: "white",
-            borderColor: "#C0DEFF",
-            pointBackgroundColor: "#C0DEFF",
-            pointBorderWidth: 2,
-            pointBorderColor: "#88B3E2",
-            
-          }
-        ]
-    };
+
+    useEffect(()=>{
+        gettWeekly({ diaryId:19, date: '2024-03-21' }).then(( res )=>{
+            const tempDayLabel = [];
+            const tempHappyData = [];
+            const tempSadData = [];
+
+            Object.keys(res.data).sort().forEach((key,value)=>{
+                tempHappyData.push( res.data[key][0] )
+                tempSadData.push( res.data[key][1] )
+                console.log( res.data[key][1] )
+                const temp = new Date(key)
+                tempDayLabel.push(daysOfWeek[temp.getDay()])
+            })
+
+
+            setHappyDataSet({
+                labels: tempDayLabel,
+                datasets: [{
+                    data: tempHappyData,
+                    fill: true,
+                    backgroundColor: "white",
+                    borderColor: "#FFDD6B",
+                    pointBackgroundColor: "#FFDD6B",
+                    pointBorderWidth: 2,
+                    pointBorderColor: "#FFC814",
+                }]
+              });
+      
+              setSadDataSet({
+                labels: tempDayLabel,
+                datasets: [{
+                    data: tempSadData,
+                    fill: true,
+                    backgroundColor: "white",
+                    borderColor: "#C0DEFF",
+                    pointBackgroundColor: "#C0DEFF",
+                    pointBorderWidth: 2,
+                    pointBorderColor: "#88B3E2",
+                }]
+              });
+        })
+        getMember();
+    },[]);
 
 
     const options = {
@@ -131,20 +173,20 @@ const Analysis = () => {
                         <>
                             <div>
                                 <div style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold', fontSize: '16px' }}>
-                                    공유일 님의 이번 주 “행복 그래프” 예요!
+                                    { userName } 님의 이번 주 “행복 그래프” 예요!
                                 </div>
                                 <GraphWrapper>
-                                    <Line data={ happyData } options={ options } />
+                                    <Line data={ happyDataSet } options={ options } />
                                 </GraphWrapper>
                                 
 
                             </div>
                             <div>
                                 <div style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold', fontSize: '16px' }}>
-                                    공유일 님의 이번 주 “우울 그래프” 예요!
+                                    { userName } 님의 이번 주 “우울 그래프” 예요!
                                 </div>
                                 <GraphWrapper>
-                                    <Line data={ sadData }  options={ options }/>
+                                    <Line data={ sadDataSet }  options={ options }/>
                                 </GraphWrapper>
                             </div>
 
