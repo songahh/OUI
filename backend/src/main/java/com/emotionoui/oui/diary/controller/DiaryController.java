@@ -103,13 +103,20 @@ public class DiaryController {
     @Transactional
     @PutMapping("/{diaryId}/delete")
     public ResponseEntity<?> exitShareDiary(@PathVariable("diaryId") Integer diaryId, @AuthenticationPrincipal Member member){
-        // 공유 다이어리인지 확인
-        Optional<Diary> diary = diaryRepository.findById(diaryId);
-        if(!diary.get().getType().equals("공유")){
-            throw new NotExitPrivateDiaryException();
-        }
         diaryService.exitShareDiary(diaryId, member.getMemberId());
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 개인 다이어리 -> 공유 다이어리로 동기화
+     * @param member
+     * @param diaryId 공유 다이어리 id
+     * @return
+     */
+    @Transactional
+    @PostMapping("/sync/{diaryId}")
+    public ResponseEntity<?> syncDiary(@AuthenticationPrincipal Member member, @PathVariable("diaryId") Integer diaryId){
+        diaryService.syncDiary(member.getMemberId(), diaryId);
+        return ResponseEntity.ok().build();
+    }
 }

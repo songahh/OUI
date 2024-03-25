@@ -27,4 +27,6 @@ public interface DiaryService {
     String decorateDailyDiary(DecorateDailyDiaryReq req, Integer dailyId);
 
     void exitShareDiary(Integer diaryId, int memberId);
+
+    void syncDiary(Integer memberId, Integer diaryId);
 }
