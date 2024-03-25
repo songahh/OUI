@@ -22,13 +22,11 @@ public class QFcmInfo extends EntityPathBase<FcmInfo> {
 
     public static final QFcmInfo fcmInfo = new QFcmInfo("fcmInfo");
 
-    public final StringPath deviceId = createString("deviceId");
+    public final StringPath deviceToken = createString("deviceToken");
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
     public final com.emotionoui.oui.member.entity.QMember member;
-
-    public final StringPath token = createString("token");
 
     public QFcmInfo(String variable) {
         this(FcmInfo.class, forVariable(variable), INITS);

@@ -11,7 +11,7 @@ public class MyCalendarRes {
     @JsonProperty("diaries")
     private List<CalendarDiaryDto> diaries;
 
-    @JsonProperty("schedule")
+    @JsonProperty("schedules")
     private List<CalendarScheduleDto> schedules;
 
 //    @Builder
