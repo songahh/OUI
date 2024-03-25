@@ -8,7 +8,7 @@ import se.michaelthelin.spotify.exceptions.detailed.NotFoundException;
 import java.util.List;
 
 public interface MainService {
-    void createShareDiary(Member member, CreateShareDiaryReq createShareDiaryReq);
+    Integer createShareDiary(Member member, CreateShareDiaryReq createShareDiaryReq);
 
     void changeOrder(Integer memberId, List<ChangeOrderReq> orderList);
 }

@@ -20,13 +20,17 @@ public class QAlarm extends EntityPathBase<Alarm> {
 
     public static final QAlarm alarm = new QAlarm("alarm");
 
+    public final StringPath content = createString("content");
+
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
+
+    public final StringPath link = createString("link");
 
     public final ListPath<com.emotionoui.oui.member.entity.MemberAlarm, com.emotionoui.oui.member.entity.QMemberAlarm> memberAlarmList = this.<com.emotionoui.oui.member.entity.MemberAlarm, com.emotionoui.oui.member.entity.QMemberAlarm>createList("memberAlarmList", com.emotionoui.oui.member.entity.MemberAlarm.class, com.emotionoui.oui.member.entity.QMemberAlarm.class, PathInits.DIRECT2);
 
-    public final StringPath message = createString("message");
+    public final StringPath title = createString("title");
 
-    public final StringPath type = createString("type");
+    public final EnumPath<AlarmContentType> type = createEnum("type", AlarmContentType.class);
 
     public QAlarm(String variable) {
         super(Alarm.class, forVariable(variable));

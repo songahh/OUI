@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+</head>
+<body>
+<div><i th:text="${userId}"></i></div>
+<div><i th:text="${email}"></i></div>
+<div><i th:text="${nickname}"></i></div>
+<div><i th:text="${biasId}"></i></div>
+<br>
+<input type="button" id="logOutBtn" value="로그아웃">
+</body>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    $("#logOutBtn").on('click', function() {
+        $.ajax({
+            type: "POST",
+            url: "/logout",
+            success: function(response) {
+                // 로그아웃 후 리다이렉트 URL로 이동
+                window.location.href = response.redirectUrl;
+            }
+        });
+    });
+</script>
+
+</html>
