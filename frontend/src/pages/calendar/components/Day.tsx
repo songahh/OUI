@@ -70,7 +70,6 @@ const Day = ( props: DayProps ) =>{
     const { day, calendars } = props
     const { updateDate, updateModal } = useStore()
 
-    console.log('Day', calendars)
 
     const diaries = calendars?.diaries?.filter(( diary ) => diary?.date?.substring(5, 10) === format( day, 'MM-dd'))
     const todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
@@ -89,9 +88,9 @@ const Day = ( props: DayProps ) =>{
         updateModal()
     }
 
-    const goMyDiary = () =>{
+    const goMyDiary = (diary) =>{
         // 여기 전체 데이터를 넘겨준다?
-        navigator('/diary')
+        navigator(`/diary/${diary?.daily_diary_id}`, {state : {dailyDiaryId: diary?.daily_diary_id, type: '개인'}})
     }
 
 
@@ -102,18 +101,16 @@ const Day = ( props: DayProps ) =>{
             <DayClick onClick={ (e) => listTodo( e, day ) }>
             { format( day, 'd' ) }
             </DayClick>
-            <EmotionWrapper onClick={ goMyDiary }>
+            <EmotionWrapper>
                 {
                     diaries?.map(( diary, index ) => {
-                        const emotionPath = `src/asset/images/emotion/${diary.emotion}.png`
-                        console.log(emotionPath, "Emotion")
                         return(
-                            <img src={ angry } alt='' style={{ height: '100%' }} key={ index }/>
-                            // import angry from 'src/asset/images/emotion/angry.png'
+                            <img src={ emotionImg[diary?.emotion.valueOf()] } alt=''
+                            onClick={() =>goMyDiary({ diary })}
+                            style={{ height: '100%' }} key={ index }/>
                         )
                     })
                 }
-                {/* <img src={ tmp1 } alt='' style={{ height: '100%' }}/> */}
             </EmotionWrapper>
             <TodoWrapper>
             {
