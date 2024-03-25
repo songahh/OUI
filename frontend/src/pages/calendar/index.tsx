@@ -6,7 +6,8 @@ import { LeftIcon, RightIcon } from 'src/components'
 import { useQuery } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useStore from './store';
-import angry from 'src/asset/images/emotion/angry.png'
+import loadMyDiary from 'src/asset/images/loadMyDiary.png'
+import goToWriteDiary from 'src/asset/images/goToWriteDiary.png'
 import { createPortal } from 'react-dom'
 import useDate from 'src/util/date'
 import styled from 'styled-components'
@@ -61,6 +62,16 @@ const ModalBackground = styled.div`
   bottom: 0;
   z-index: 400;
 `
+
+const WriteModalBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 400;
+  background-color: rgba(0, 0, 0, 0.5);
+`
     
 const Modal = styled.div`
   height: 50%;
@@ -72,17 +83,28 @@ const Modal = styled.div`
   border-radius: 10px 10px 0 0;
 `
 
+const WriteModal = styled.div`
+  height: 30%;
+  width: 40%;
+  background-color: #FFF;
+  box-shadow: 0px -3px 0px 0px rgba(211, 211, 211, 0.2);
+  border-radius: 10px;
+  position: fixed;
+  padding: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`
+
 const Calendar = () => {
 
   const navigator = useNavigate()
 
-  // const {state} = useLocation();
-  // const {diaryId, type} = state;
-  // console.log(diaryId, type);
+  const { state}  = useLocation();
+  const { diaryId, type } = state;
+  console.log(diaryId, type);
 
-  const diaryId = 1
-  const [ type, setType ] = useState('공유') 
-
+  const [ isDiaryWrite, setIsDiaryWrite ] = useState<boolean>(false);
   const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() 
   const { startDate, endDate } = calculateDateRange()
   const { isModalOpened, updateModal} = useStore() // Day 컴포넌트에서 업데이트 된 상태 가져오기
@@ -91,6 +113,11 @@ const Calendar = () => {
 
   const closeModal = () => { 
       updateModal()
+      html?.classList.remove( 'scroll-locked' )
+  }
+
+  const closeWrite = () => { 
+      setIsDiaryWrite(false)
       html?.classList.remove( 'scroll-locked' )
   }
 
@@ -106,21 +133,29 @@ const Calendar = () => {
     )
   }
 
+  const WriteModalPortal = ({ onClose  }) => { 
+    const handleBackgroundClick = (e) => {
+      ( e.target === e.currentTarget ) && onClose()
+    }
+    return createPortal(
+      <WriteModalBackground onClick={ handleBackgroundClick }>
+        <WriteModal>
+          <div style={{display:'flex', height:'100%', justifyContent: 'space-around'}}>
+            <img src={loadMyDiary} alt=''/>
+            <img src={goToWriteDiary} alt=''/>
+          </div>
+        </WriteModal>
+      </WriteModalBackground>,
+      document.body
+    )
+  }
+
   const goDiaryWrite = () =>{
     if(type==='개인'){
       navigator(`/diary/write/${diaryId}`, {state: {diaryId:  diaryId}})
 
     }else{ //공유일 때
-      console.log("!!")
-      const handleBackgroundClick = (e) => {
-        ( e.target === e.currentTarget ) && closeModal()
-      }
-      createPortal(
-        <ModalBackground onClick={ handleBackgroundClick }>
-          <div><img src={ angry }/></div>
-        </ModalBackground>,
-        document.body
-      )
+      setIsDiaryWrite(true)      
     }
 
 
@@ -171,6 +206,10 @@ const Calendar = () => {
             <ModalPortal onClose={ closeModal }>
               <Modal><ShareModal></ShareModal></Modal>
             </ModalPortal>
+        }
+        {
+          isDiaryWrite && 
+          <WriteModalPortal onClose={ closeWrite } />
         }
             <DateList/>
             <DayList list = { days } calendars = { calendars?.data }/>
