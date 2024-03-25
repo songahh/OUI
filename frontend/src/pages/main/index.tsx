@@ -175,7 +175,7 @@ const Main = () => {
     type=='개인' && 
     navigator('/calendar', {state : {diaryId: id, type: type}})
     type=='공유' && 
-    navigator('/calendar', {state : {diaryId: id, type: type}})
+    navigator(`/calendar/${ id }`, {state : {diaryId: id, type: type}})
   }
 
   const { data: diaryData, refetch: refetchDiary } = useQuery(['diaryData'], getDiary, {
