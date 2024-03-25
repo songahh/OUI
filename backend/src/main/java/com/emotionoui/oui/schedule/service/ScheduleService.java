@@ -6,6 +6,7 @@ import com.emotionoui.oui.schedule.entity.Schedule;
 import com.emotionoui.oui.schedule.exception.ScheduleNotFoundException;
 import com.emotionoui.oui.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,12 +22,12 @@ public class ScheduleService {
 
     // 회원 일정 추가
     @Transactional
-    public int saveSchedules(@RequestBody ScheduleReq scheduleReq) {
-//        Member member = memberRepository.findById(scheduleRequest.getMemberId()).orElseThrow(UserNotFoundException::new);
-            Member member = Member.builder().memberId(1).build();
+    public int saveSchedules(@RequestBody ScheduleReq scheduleReq,
+                             @AuthenticationPrincipal Member member) {
+
         scheduleRepository.save(scheduleReq.toEntity(
                                 member, scheduleReq.getTitle(), scheduleReq.getContent(),
-                                scheduleReq.getDate()));
+                                scheduleReq.getDate(), scheduleReq.getColor()));
         return member.getMemberId();
     }
 
@@ -52,7 +53,7 @@ public class ScheduleService {
 
     // 일정 삭제 - isDelete 수정
     @Transactional
-    public void deleteSchedules(Integer scheduleId ,@RequestBody ScheduleReq scheduleReq) {
+    public void deleteSchedules(Integer scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(ScheduleNotFoundException::new);
 
 //        scheduleRepository.deleteByScheduleId(scheduleId);

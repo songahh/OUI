@@ -5,6 +5,8 @@ import com.emotionoui.oui.calendar.dto.res.CalendarScheduleDto;
 import com.emotionoui.oui.calendar.dto.res.CalendarDiaryDto;
 import com.emotionoui.oui.calendar.entity.Emotion;
 import com.emotionoui.oui.calendar.repository.CalendarRepository;
+import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.schedule.entity.Schedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class CalendarService {
 
     private final CalendarRepository calendarRepository;
+    private final MemberDiaryRepository memberDiaryRepository;
 
     // 캘린더에서 한달간 내 일기와 일정 조회
     @Transactional(readOnly = true)
@@ -43,7 +46,13 @@ public class CalendarService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<Member> findMemberByDiaryId(Integer diaryId){
 
+        List<Member> memberList = memberDiaryRepository.findMemberByDiaryId(diaryId);
+
+        return memberList;
+    }
 
 
 }
