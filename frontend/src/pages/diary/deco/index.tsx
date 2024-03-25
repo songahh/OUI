@@ -75,19 +75,18 @@ const DiaryDeco = () => {
 
         const data = {
             dailyDiaryId: dailyDiaryId,
-            // 임시 diaryId ////////
-            diaryId: 1,
             decoration: decoration,
         }
 
         await decoDiary.mutateAsync(data);
-        navigator('/diary');
+        // navigator(`/diary/${dailyDiaryId}`, {state: {dailyDiaryId: dailyDiaryId}});
+        navigator(`/diary`);
     }
 
     return (
         <Container>
             <Header>
-                <BackIcon size={ 40 } onClick={ () => { navigator('/diary') }} />
+                <BackIcon size={ 40 } onClick={ () => { navigator(`/diary/${dailyDiaryId}`, {state: {dailyDiaryId: dailyDiaryId}}) }} />
                 <SaveIcon size={ 70 } onClick={ saveDiary }/>
             </Header>
             <Canvas canvasRef={ canvasRef } canvas={ canvas } setCanvas={ setCanvas } activeTool={ activeTool } setIsFontLoaded={ setIsFontLoaded } />

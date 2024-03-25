@@ -87,13 +87,14 @@ const DiaryEdit = () => {
         };
 
         await editDiary.mutateAsync(data);
-        navigator('/diary');
+        // navigator(`/diary/${dailyDiaryId}`, {state: {dailyDiaryId: dailyDiaryId}});
+        navigator(`/diary`);
     }
 
     return (
         <Container>
             <Header>
-                <BackIcon size={ 40 } onClick={() => { navigator('/diary') }} />
+                <BackIcon size={ 40 } onClick={() => { navigator(`/diary/${dailyDiaryId}`, {state: {dailyDiaryId: dailyDiaryId}}) }} />
                 <DateSelect selectedDate={ selectedDate } setSelectedDate={ setSelectedDate }/>
                 <SaveIcon size={ 70 } onClick={ saveDiary }/>
             </Header>
