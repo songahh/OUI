@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Doughnut } from "react-chartjs-2";
-import { getMonthly } from '../../api';
+import { getMonthly, getMember } from '../../api';
+import { useQuery } from 'react-query'
 import angry from 'src/asset/images/emotion/angry.png';
 import embarrassed from 'src/asset/images/emotion/embarrass.png';
 import happy from 'src/asset/images/emotion/joy.png';
@@ -123,14 +124,20 @@ const Monthly = () => {
   }
 
 
-  const [chartData, setChartData] = useState({
+  const [ chartData, setChartData ] = useState({
       labels: [],
       datasets: [],
   });
-  const [emotionScores, setEmotionScores] = useState({});
+  const [ emotionScores, setEmotionScores ] = useState({});
+  const [ userName, setUserName ] = useState( "" );
+  const imageArray = Object.values( images );
 
-  const imageArray = Object.values(images);
-
+  const { data: memberData, refetch: refetchMember } = useQuery(['memberData'], getMember, {
+    onSuccess: ( res ) => {
+      setUserName( res.data.nickName );
+      console.log( res.data );
+    }
+  });
 
   useEffect(() => {
 
@@ -161,14 +168,12 @@ const Monthly = () => {
       .catch(error =>{
         alert("감정을 가져오지 못했습니다")
       })
-
+      refetchMember();
   }, []); 
 
   return(
       <>
-          <TitleWrapper>
-              공유일 님이 3월에 느낀 “감정 통계” 예요!
-          </TitleWrapper>
+           { userName && <TitleWrapper> { userName }님이 3월에 느낀 “감정 통계” 예요! </TitleWrapper>}
           <ChartBoxWrapper>
 
               <DoughnutWrapper>
