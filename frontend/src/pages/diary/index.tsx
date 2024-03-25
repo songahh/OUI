@@ -2,7 +2,7 @@ import { fabric } from 'fabric';
 import { Drawer, EditIcon, DecoIcon, DeleteIcon } from 'src/components';
 import { useState, useEffect, useRef } from 'react';
 import { useQuery } from 'react-query';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getDiary } from './api';
 import WebFont from 'webfontloader';
 import styled from 'styled-components';
@@ -24,6 +24,10 @@ const Container = styled.div`
 
 const Diary = () => {
     const navigator = useNavigate();
+
+    const { state}  = useLocation();
+    const { dailyDiaryId, type } = state;
+     console.log( dailyDiaryId, type );
     
     const canvasRef = useRef(null);
     // 폰트 로딩 상태 관리
@@ -42,8 +46,8 @@ const Diary = () => {
     }, []);
 
     // 임시 dailyDiaryId ////////
-    const dailyDiaryId = 9;
-    const type = '개인';
+    // const dailyDiaryId = 9;
+    // const type = '개인';
     ////////////////////////////
 
     const { data: dailyDiary } = useQuery('dailyDiary', () => getDiary(dailyDiaryId), {
