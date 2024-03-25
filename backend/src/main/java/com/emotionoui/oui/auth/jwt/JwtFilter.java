@@ -60,7 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
             Member member;
             try{
                 member = memberRepository.findByEmail(email).orElseThrow(Exception::new);
-                System.out.println("JwtFilter.doFilter - nickname : "+member.getNickname());
+//                System.out.println("JwtFilter.doFilter - nickname : "+member.getNickname());
 
                 //스프링 시큐리티 인증 토큰 생성
                 Authentication authToken = new UsernamePasswordAuthenticationToken(member, null, member.getAuthorities());
