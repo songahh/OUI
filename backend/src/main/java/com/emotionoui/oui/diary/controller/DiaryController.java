@@ -92,4 +92,12 @@ public class DiaryController {
     public ResponseEntity<?> decorateDailyDiary(@RequestBody DecorateDailyDiaryReq req, @PathVariable("dailyId") Integer dailyId) throws IOException, ExecutionException, InterruptedException {
         return new ResponseEntity<String>(diaryService.decorateDailyDiary(req, dailyId), HttpStatus.OK);
     }
+
+    // 다이어리 나가기
+    @PutMapping("/{diaryId}/delete")
+    public ResponseEntity<?> exitShareDiary(@PathVariable("diaryId") Integer diaryId, @AuthenticationPrincipal Member member){
+        diaryService.exitShareDiary(diaryId, member.getMemberId());
+        return ResponseEntity.ok().build();
+    }
+
 }
