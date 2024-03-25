@@ -12,6 +12,7 @@ import com.emotionoui.oui.diary.entity.Diary;
 import com.emotionoui.oui.diary.repository.DiaryRepository;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.MemberAlarm;
+import com.emotionoui.oui.member.entity.MemberDiary;
 import com.emotionoui.oui.member.repository.MemberAlarmRepository;
 import com.emotionoui.oui.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -48,7 +49,7 @@ public class AlarmServiceImpl implements AlarmService{
     @Value("http://localhost:8080")
     String domain;
 
-    @Value("http://localhost:3000")
+    @Value("https://fcm.googleapis.com/v1/projects/project-oui/messages:send")
     String API_URL;
 
 //    @PersistenceContext
@@ -116,76 +117,9 @@ public class AlarmServiceImpl implements AlarmService{
 //        return false;
 //    }
 //
-//    // 채팅알림 보내기 포스트 맨 테스트 용
-//    @Override
-//    public Boolean sendChatMessage(NotificationDto notificationDto) {
-//        Optional<UserEntity> senderUserOptional, receiverUserOptional;
-//        if(notificationDto.getUserId().equals(notificationDto.getOwnerId())){
-//            senderUserOptional = userRepository.findByUserId(notificationDto.getOwnerId());
-//            receiverUserOptional = userRepository.findByUserId(notificationDto.getVisitedId());
-//        }
-//        else{
-//            senderUserOptional = userRepository.findByUserId(notificationDto.getVisitedId());
-//            receiverUserOptional = userRepository.findByUserId(notificationDto.getOwnerId());
-//        }
-//
-//        // 채팅방으로 회원 정보 가져오기
-////        Optional<UserEntity> userEntityOptional = userRepository.findByUserId(notificationDto.getReceiverId());
-//        if (senderUserOptional.isPresent() && receiverUserOptional.isPresent()) {
-//            UserEntity senderUserEntity = senderUserOptional.get();
-//            UserEntity receiverUserEntity = receiverUserOptional.get();
-//            log.info("senderUser_id : {}, receiverUser_id : {}", senderUserEntity.getUserId(), receiverUserEntity.getUserId());
-//
-//            notificationDto.setSenderId(senderUserEntity.getNickname());
-//            notificationDto.setReceiverId(receiverUserEntity.getNickname());
-//
-//            notificationDto.setTitle(receiverUserEntity.getNickname() + "님 채팅 도착하였습니다!");
-//            notificationDto.setContent(senderUserEntity.getNickname() + "으로부터 새로운 채팅이 왔어요!! 확인 해보세요!!");
-//            notificationDto.setLink(domain + "/chat"); // 채팅함으로 이동
-//
-//            NotificationEntity notificationEntity = NotificationEntity.builder()
-//                    .userEntity(receiverUserEntity)
-//                    .title(notificationDto.getTitle())
-//                    .content(notificationDto.getContent()) // 알림 내용
-//                    .readStatus(false) // 읽지 않은 상태로 초기화
-//                    .notificationType(NotificationType.Chatting)
-//                    .deleteStatus(false)
-//                    .build();
-//
-//            // 데이터베이스에 저장
-//            fcmNotificationRepository.save(notificationEntity);
-//        } else {
-//            log.info("User with id not found");
-//            return false;
-//        }
-//
-//        // 유저의 디바이스 정보 가져오기
-//        Optional<UserDeviceEntity> userDeviceEntityOptional = userDeviceRepository.findByUserId(receiverUserOptional.get().getUserId());
-//        if (userDeviceEntityOptional.isPresent()) {
-//            UserDeviceEntity userDeviceEntity = userDeviceEntityOptional.get();
-//
-//            try{
-//                // 메세지 보내기
-//                String message = makeMessage(
-//                        userDeviceEntity.getDeviceToken(), notificationDto.getTitle(),
-//                        notificationDto.getContent(), notificationDto.getLink()
-//                );
-//                sendMessage(message);
-//                return true;
-//            } catch (Exception e){
-//                log.info("request error");
-//                return false;
-//            }
-//        }
-//        else {
-//            log.info("UserDevice with id {} not found", notificationDto.getReceiverId());
-//            return false;
-//        }
-//    }
-//
-//
 
-    // 초대한 사람들에게 알림 보내기
+
+    // Invite: 공유다이어리 초대 알림 보내기
     public void inviteDiary(List<String> emails, Integer diaryId, String createrNickname){
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -282,75 +216,153 @@ public class AlarmServiceImpl implements AlarmService{
         }
     }
 
-    // 채팅 메세지 등록 후 알림 등록
-//    @Override
-//    public Boolean sendChatMessage(ChatRoom chatRoom, String userId) {
-//        String senderNickname, receiverNickname;
-//        String title, content, link; // 채팅함으로 이동
-//
-//        //전달받은 userId를 chatRoom에 있는 ownerId, visiterId를 비교하여 같은게 작성자, 다른게 수신자
-//        Optional<UserEntity> senderUserOptional, receiverUserOptional;
-//        if(userId.equals(chatRoom.getOwnerId())){
-//            senderUserOptional = userRepository.findByUserId(chatRoom.getOwnerId());
-//            receiverUserOptional = userRepository.findByUserId(chatRoom.getVisiterId());
-//        }
-//        else{
-//            senderUserOptional = userRepository.findByUserId(chatRoom.getVisiterId());
-//            receiverUserOptional = userRepository.findByUserId(chatRoom.getOwnerId());
-//        }
-//
-//        // 채팅방으로 회원 정보 가져오기
-//        if (senderUserOptional.isPresent() && receiverUserOptional.isPresent()) {
-//            UserEntity senderUserEntity = senderUserOptional.get();
-//            UserEntity receiverUserEntity = receiverUserOptional.get();
-//            log.info("senderUser_id : {}, receiverUser_id : {}", senderUserEntity.getUserId(), receiverUserEntity.getUserId());
-//
-//            senderNickname = senderUserEntity.getNickname();
-//            receiverNickname = receiverUserEntity.getNickname();
-//
-//            title = receiverNickname + "님 채팅이 도착했어요!";
-//            content = senderNickname + "님으로부터 새로운 채팅이 왔어요!";
-//            link = domain + "/chat"; // 채팅함으로 이동
-//
-//            NotificationEntity notificationEntity = NotificationEntity.builder()
-//                    .userEntity(receiverUserEntity)
-//                    .title(title)
-//                    .content(content) // 알림 내용
-//                    .readStatus(false) // 읽지 않은 상태로 초기화
-//                    .notificationType(NotificationType.Chatting)
-//                    .deleteStatus(false)
-//                    .build();
-//
-//            // 데이터베이스에 저장
-//            fcmNotificationRepository.save(notificationEntity);
-//        } else {
-//            log.info("User with id not found");
-//            return false;
-//        }
-//
-//        // 유저의 디바이스 정보 가져오기
-//        Optional<UserDeviceEntity> userDeviceEntityOptional = userDeviceRepository.findByUserId(receiverUserOptional.get().getUserId());
-//        if (userDeviceEntityOptional.isPresent()) {
-//            UserDeviceEntity userDeviceEntity = userDeviceEntityOptional.get();
-//
-//            try{
-//                // 메세지 보내기
-//                String message = makeMessage(
-//                        userDeviceEntity.getDeviceToken(), title, content, link
-//                );
-//                sendMessage(message);
-//                return true;
-//            } catch (Exception e){
-//                log.info("request error");
-//                return false;
-//            }
-//        }
-//        else {
-//            log.info("UserDevice with id {} not found", receiverUserOptional.get().getUserId());
-//            return false;
-//        }
-//    }
-//
+    // FriendForcing: 친구가 일기 작성 요청하기(재촉하기)
+    public void sendFriendForcing(Integer diaryId, String pusherNickname, Integer memberId, Date date){
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(IllegalArgumentException::new);
+        String diaryName = diary.getName();
+        String day = date.toString();
+
+        String title, content, link;
+        title = "너 오늘 일기 안 써?!";
+//        content = "'" + diaryName + "' 다이어리에서 '" + pusherNickname + "'님이 " + day + " 일기 쓰기를 재촉했어요!";
+        content = "'" + diaryName + "' 다이어리에서 '" + pusherNickname + "'님이 일기 쓰기를 재촉했어요!";
+        // 캘린더로 이동해야 함
+        link = "http://localhost:8080/alarm/mainPage";
+
+        Alarm alarm = Alarm.builder()
+                .type(AlarmContentType.FriendForcing)
+                .title(title)
+                .content(content)
+                .build();
+
+        Alarm newAlarm = alarmRepository.save(alarm);
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        MemberAlarm memberAlarm = MemberAlarm.builder()
+                .alarm(newAlarm)
+                .member(member)
+                .diary(diary)
+                .isDeleted(0)
+                .build();
+        memberAlarmRepository.save(memberAlarm);
+
+        FcmInfo info = fcmInfoRepository.findByMember(member);
+
+        if(info.getDeviceToken()!=null){
+            try{
+                // 메세지 보내기
+                String message = makeMessage(
+                        info.getDeviceToken(), title, content, link
+                );
+                System.out.println("message: " + message);
+                sendMessage(message);
+            } catch (Exception e){
+                log.info("request error");
+            }
+        } else {
+            log.info(member.getNickname() + "의 UserDeviceToken이 존재하지 않습니다.");
+        }
+    }
+
+    // FriendDiary: 친구가 일기 작성하면 알려주기
+    public void sendFriendDiary(Diary diary, Integer dailyId, Member member){
+        String diaryName = diary.getName();
+
+        String title, content, link;
+        title = diaryName + " 다이어리";
+        content = "'" + member.getNickname() + "' 친구가 일기를 작성했어요~";
+        // 일기쓴 곳으로 이동해야 함
+        link = "http://localhost:8080/alarm/mainPage";
+
+        List<String> deviceTokens = new ArrayList<>();
+        List<String> sendFail = new ArrayList<>();
+
+        Alarm alarm = Alarm.builder()
+                .type(AlarmContentType.FriendDiary)
+                .title(title)
+                .content(content)
+                .build();
+
+        alarmRepository.save(alarm);
+
+        List<MemberDiary> memberDiaries = diary.getMemberDiaryList();
+
+        for(MemberDiary memberDiary : memberDiaries){
+            Member friend = memberDiary.getMember();
+
+            MemberAlarm memberAlarm = MemberAlarm.builder()
+                    .alarm(alarm)
+                    .member(friend)
+                    .diary(diary)
+                    .isDeleted(0)
+                    .build();
+
+            memberAlarmRepository.save(memberAlarm);
+
+            // test용
+//            deviceTokens.add("eCKbs2zkGtXCXhHZh_KGnb:APA91bF5LuFA_AumHn330BdsSMHafPz8uTWe-Ku3Jgma-VX4HWF7D0rLqIn1TlEUItbphs4wopekhFT2WtRjBfopss74rhvH2CqJbr72G3nxZerwhAc8Hu0JJUVYHdZwH6JwVknQVaTz");
+            deviceTokens.add(friend.getFcmInfo().getDeviceToken());
+        }
+
+        if(!deviceTokens.isEmpty()) {
+            try {
+                // 메세지 보내기
+                MulticastMessage message = MulticastMessage.builder()
+                        .addAllTokens(deviceTokens)
+                        .putData("title", title)
+                        .putData("body", content)
+                        .putData("link", link)
+                        .build();
+                BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+
+                // 실패한 토큰 수
+                if (response.getFailureCount() > 0) {
+                    List<SendResponse> responses = response.getResponses();
+                    for (SendResponse respons : responses) {
+                        if (!respons.isSuccessful()) {
+                            // The order of responses corresponds to the order of the registration tokens.
+                            sendFail.add(deviceTokens.get(responses.indexOf(respons)));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.info("request error");
+            }
+
+            // 실패한 요청에 대한 재요청
+            if (!sendFail.isEmpty()) {
+                try {
+                    // 메세지 보내기
+                    MulticastMessage message = MulticastMessage.builder()
+                            .addAllTokens(sendFail)
+                            .putData("title", title)
+                            .putData("body", content)
+                            .putData("link", link)
+                            .build();
+                    BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+
+                    // 실패한 토큰 수
+                    List<SendResponse> responses = response.getResponses();
+                    for (SendResponse respons : responses) {
+                        if (!respons.isSuccessful()) {
+                            sendFail.add(sendFail.get(responses.indexOf(respons)));
+                        }
+                    }
+
+                    for(int i=0; i<responses.size(); ++i){
+                        sendFail.remove(0);
+                    }
+
+                } catch (Exception e) {
+                    log.info("request error");
+                }
+            }
+        }
+    }
+
 //    // 갈망포카 메세지 전송
 //    @Override
 //    public Boolean sendBiasMessage(List<String> ids, Long articleId) {
@@ -507,8 +519,7 @@ public class AlarmServiceImpl implements AlarmService{
         RequestBody requestBody = RequestBody.create(message,
                 MediaType.get("application/json; charset=utf-8"));
         Request request = new Request.Builder()
-                // .url(API_URL)
-                .url("https://fcm.googleapis.com/v1/projects/project-oui/messages:send")
+                .url(API_URL)
                 .post(requestBody)
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
