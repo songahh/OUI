@@ -12,7 +12,7 @@ const AppWrapper = styled.div`
   margin: auto; 
   max-width: 1024px; 
   width: 100%; 
-  min-height: 100vh;
+  height: 100%;
   background-color: #F9F3EE;
 `;
 
