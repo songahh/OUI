@@ -19,4 +19,6 @@ public interface QuerydslRepositoryCustom {
     void deleteDiaryByMemberId(int memberId);
 
     void exitSharDiaryByMemberIdAndDiaryId(int diaryId, int memberId);
+
+    void chaneOrderByMemberIdAndDiaryId(int memberId, int diaryId, int newOrder);
 }

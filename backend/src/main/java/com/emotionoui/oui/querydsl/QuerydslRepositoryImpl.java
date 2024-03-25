@@ -133,4 +133,19 @@ public class QuerydslRepositoryImpl implements QuerydslRepositoryCustom {
                 .execute();
     }
 
+    // 다이어리 순서 바꾸기
+    @Override
+    public void chaneOrderByMemberIdAndDiaryId(int memberId, int diaryId, int newOrder) {
+        QMemberDiary memberDiary = QMemberDiary.memberDiary;
+
+        queryFactory
+                .update(memberDiary)
+                .set(memberDiary.orders, newOrder)
+                .where(memberDiary.member.memberId.eq(memberId)
+                        .and(memberDiary.diary.id.eq(diaryId))
+                        .and(memberDiary.isDeleted.eq(0)))
+                .execute();
+
+    }
+
 }
