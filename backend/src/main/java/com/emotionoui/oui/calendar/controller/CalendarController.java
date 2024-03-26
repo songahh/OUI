@@ -1,6 +1,7 @@
 package com.emotionoui.oui.calendar.controller;
 
 
+import com.emotionoui.oui.alarm.service.AlarmService;
 import com.emotionoui.oui.calendar.dto.res.*;
 import com.emotionoui.oui.calendar.service.CalendarService;
 import com.emotionoui.oui.member.entity.Member;
@@ -26,6 +27,7 @@ import java.util.List;
 public class CalendarController {
 
     private final CalendarService calendarService;
+    private final AlarmService alarmService;
 
     // 캘린더에서 한달간 내 일기와 일정 조회
     @GetMapping("/my")
@@ -85,6 +87,14 @@ public class CalendarController {
                 .build();
 
         return new ResponseEntity<>(shareCalendarRes, HttpStatus.OK);
+    }
+
+    // 친구에게 재촉하기 알림 보내기
+    @PostMapping("/push/{diaryId}")
+    public ResponseEntity<?> pushFriend(@PathVariable("diaryId") Integer diaryId, @AuthenticationPrincipal Member member, @RequestBody PushFriendRes res){
+//        alarmService.sendFriendForcing(diaryId, member.getNickname(), res.getMemberId(), res.getDailyDate());
+        alarmService.sendFriendForcing(diaryId, "선영이", res.getMemberId(), res.getDailyDate());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 //    @GetMapping("{diaryId}/day")

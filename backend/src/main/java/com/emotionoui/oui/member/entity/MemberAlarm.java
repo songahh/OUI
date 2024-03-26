@@ -38,7 +38,7 @@ public class MemberAlarm {
     @CreatedDate
     @LastModifiedDate
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "is_deleted")
     private Integer isDeleted;

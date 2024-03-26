@@ -24,7 +24,7 @@ public class QMemberAlarm extends EntityPathBase<MemberAlarm> {
 
     public final com.emotionoui.oui.alarm.entity.QAlarm alarm;
 
-    public final DateTimePath<java.time.LocalDateTime> created_at = createDateTime("created_at", java.time.LocalDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final com.emotionoui.oui.diary.entity.QDiary diary;
 
