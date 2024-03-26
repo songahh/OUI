@@ -28,7 +28,7 @@ const DiaryWrite = () => {
 
     const { state } = useLocation();
     const { diaryId } = state;
-    
+        
     // const diaryId = 39;
     // const type = '공유';
 
@@ -78,7 +78,7 @@ const DiaryWrite = () => {
         };
 
         await writeDiary.mutateAsync(data);
-        goCalendar();
+        navigator('/main');
     }
 
     return (

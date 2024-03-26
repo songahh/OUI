@@ -48,18 +48,18 @@ const TodoItemWrapperContainer = styled.div`
     display: flex;
     margin: 2px;
 `
-const TodoItemWrapper = styled.div`
+const TodoItemWrapper = styled.div<{color: string}>`
     flex: 1;
     height: 16px;
     display: flex;
     justify-content: center;
     margin-top:2px;
-    background-color: #DEDCEE;
+    background-color: ${ ( props ) => props.color };
     text-align: center;
 `
-const TodoHeaderWrapper = styled.div`
+const TodoHeaderWrapper = styled.div<{color: string}>`
     width: 10px;
-    background-color: #BDB5FF;
+    background-color: ${ ( props ) => props.color };
 `
 
 
@@ -119,8 +119,8 @@ const Day = ( props: DayProps ) =>{
                     if(index<3)
                     return(
                         <TodoItemWrapperContainer key={ index }>
-                            <TodoHeaderWrapper/>
-                            <TodoItemWrapper/>
+                            <TodoHeaderWrapper color={ todo?.color }/>
+                            <TodoItemWrapper color={ todo?.color }/>
                         </TodoItemWrapperContainer>
                     )
                 })

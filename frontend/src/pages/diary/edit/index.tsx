@@ -87,8 +87,7 @@ const DiaryEdit = () => {
         };
 
         await editDiary.mutateAsync(data);
-        // navigator(`/diary/${dailyDiaryId}`, {state: {dailyDiaryId: dailyDiaryId}});
-        navigator(`/diary`);
+        navigator('/main');
     }
 
     return (

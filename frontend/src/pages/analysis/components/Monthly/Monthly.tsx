@@ -141,7 +141,7 @@ const Monthly = () => {
 
   useEffect(() => {
 
-      getMonthly({ diaryId: 19, date: '2024-03-21' }).then(
+      getMonthly({ diaryId: 1, date: '2024-03-21' }).then(
       res => {
         const emotionLabels = Object.keys(res.data);
         const emotionData = Object.values(res.data).map(score => (score as number) * 100);
