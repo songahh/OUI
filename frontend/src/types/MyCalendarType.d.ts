@@ -1,16 +1,17 @@
 export interface DiaryType {
     memberId: int,
-    dailyDiaryId: int,
+    daily_diary_id: int,
     date: String,
     emotion: String,
 }
 
 export interface ScheduleType {
-    scheduleId: int,
+    schedule_id: int,
     memberId: int,
     title: String,
     content: String,
     date: String,
+    color?: string,
 }
 
 export interface MyCalendarType {

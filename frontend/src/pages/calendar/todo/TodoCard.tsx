@@ -1,14 +1,16 @@
-import { format } from 'date-fns'
 import edit from 'src/asset/images/edit.png'
 import trash from 'src/asset/images/trash.png'
 import useStore from '../store'
+import { putTodo } from '../api'
 import styled from 'styled-components'
+import { ScheduleType } from 'src/types'
+import { useMutation, useQuery } from 'react-query'
 
 const TodoWrapper = styled.div<{ color: string }>`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 20%;
+  height: 100%;
   font-size: 20px;
   border-radius: 10px;
   border: 0.4px solid #000;
@@ -37,29 +39,38 @@ const TodoCard = ( props: TodoCardProps ) =>{
 
     const { modalContent, setModalContent } = useStore();
 
-    const { color } = props
+    const { schedule } = props
+
+    console.log( 'schedule', schedule?.schedule_id)
+
+    const deleteMutation = useMutation( putTodo, {
+        onSuccess: () => {
+        }
+      })
 
     const editTodo = () =>{
         setModalContent()
     }
     
-    const deletTodo = () =>{
+    const deleteTodo = () =>{
         // axios로 delete하기
+        deleteMutation.mutateAsync( schedule?.schedule_id )
+        window.location.reload();
     }
     
     return(
-        <TodoWrapper color={ color }>
+        <TodoWrapper color={ schedule?.color }>
             <TodoCardHeader>
                 <TodoTitle>
-                    SCHEDULE
+                    { schedule?.title }
                 </TodoTitle>
                 <div style={{ display:'flex', marginTop:'1%', gap: '2%'}}>
-                <img onClick={ editTodo } src={ edit } alt ='' style={{ width: '30px', height: '30px'}}/>
-                <img onClick={ deletTodo } src={ trash } alt ='' style={{ width: '30px', height: '30px'}}/>
+                    <img onClick={ editTodo } src={ edit } alt ='' style={{ width: '30px', height: '30px'}}/>
+                    <img onClick={ deleteTodo } src={ trash } alt ='' style={{ width: '30px', height: '30px'}}/>
                 </div>
             </TodoCardHeader>
             <TodoBody>
-                    SCHEDULE DETAIL RECODE
+                    { schedule?.content}
             </TodoBody>
         </TodoWrapper>
     )
@@ -70,5 +81,5 @@ export default TodoCard;
 
 type TodoCardProps = {
     children?: React.ReactNode
-    color?: string
+    schedule?: ScheduleType
 }

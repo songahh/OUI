@@ -48,18 +48,18 @@ const TodoItemWrapperContainer = styled.div`
     display: flex;
     margin: 2px;
 `
-const TodoItemWrapper = styled.div`
+const TodoItemWrapper = styled.div<{color: string}>`
     flex: 1;
     height: 16px;
     display: flex;
     justify-content: center;
     margin-top:2px;
-    background-color: #DEDCEE;
+    background-color: ${ ( props ) => props.color };
     text-align: center;
 `
-const TodoHeaderWrapper = styled.div`
+const TodoHeaderWrapper = styled.div<{color: string}>`
     width: 10px;
-    background-color: #BDB5FF;
+    background-color: ${ ( props ) => props.color };
 `
 
 
@@ -70,7 +70,6 @@ const Day = ( props: DayProps ) =>{
     const { day, calendars } = props
     const { updateDate, updateModal } = useStore()
 
-    console.log('Day', calendars)
 
     const diaries = calendars?.diaries?.filter(( diary ) => diary?.date?.substring(5, 10) === format( day, 'MM-dd'))
     const todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
@@ -89,9 +88,10 @@ const Day = ( props: DayProps ) =>{
         updateModal()
     }
 
-    const goMyDiary = () =>{
+    const goMyDiary = (diary) =>{
+        console.log("diaryId",diary.diary.daily_diary_id)
         // 여기 전체 데이터를 넘겨준다?
-        navigator('/diary')
+        navigator(`/diary/${diary.diary.daily_diary_id}`, {state : {dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type}})
     }
 
 
@@ -102,18 +102,16 @@ const Day = ( props: DayProps ) =>{
             <DayClick onClick={ (e) => listTodo( e, day ) }>
             { format( day, 'd' ) }
             </DayClick>
-            <EmotionWrapper onClick={ goMyDiary }>
+            <EmotionWrapper>
                 {
                     diaries?.map(( diary, index ) => {
-                        const emotionPath = `src/asset/images/emotion/${diary.emotion}.png`
-                        console.log(emotionPath, "Emotion")
                         return(
-                            <img src={ angry } alt='' style={{ height: '100%' }} key={ index }/>
-                            // import angry from 'src/asset/images/emotion/angry.png'
+                            <img src={ emotionImg[diary?.emotion.valueOf()] } alt=''
+                            onClick={() =>goMyDiary({ diary })}
+                            style={{ height: '100%' }} key={ index }/>
                         )
                     })
                 }
-                {/* <img src={ tmp1 } alt='' style={{ height: '100%' }}/> */}
             </EmotionWrapper>
             <TodoWrapper>
             {
@@ -121,8 +119,8 @@ const Day = ( props: DayProps ) =>{
                     if(index<3)
                     return(
                         <TodoItemWrapperContainer key={ index }>
-                            <TodoHeaderWrapper/>
-                            <TodoItemWrapper/>
+                            <TodoHeaderWrapper color={ todo?.color }/>
+                            <TodoItemWrapper color={ todo?.color }/>
                         </TodoItemWrapperContainer>
                     )
                 })
