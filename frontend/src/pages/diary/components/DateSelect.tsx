@@ -19,6 +19,7 @@ const DateSelect = (props: DateSelectProps) => {
 
   const [year, setYear] = useState(selectedYear);
   const [month, setMonth] = useState(selectedMonth);
+  const [monthsInYear, setMonthsInYear] = useState([]);
   const [day, setDay] = useState(selectedDay);
   const [daysInMonth, setDaysInMonth] = useState([]);
 
@@ -30,6 +31,22 @@ const DateSelect = (props: DateSelectProps) => {
   }, [ selectedDate ]);
 
   useEffect(() => {
+
+    const updateMonths = () => {
+      // 선택된 년도가 현재 년도와 같을 경우
+      if (year === new Date().getFullYear()) {
+        const currentMonth = new Date().getMonth() + 1;
+        // 현재 월까지만 포함하는 배열 생성
+        const monthsArray = Array.from({ length: currentMonth }, (_, i) => i + 1);
+        // 선택된 월이 현재 월보다 클 경우, 현재 월로 설정
+        if (month > currentMonth) {
+          setMonth(currentMonth);
+        }
+      }
+    };
+
+    updateMonths();
+
     const updateDaysInMonth = () => {
       const days = new Date(year, month, 0).getDate();
       let daysArray = Array.from({ length: days }, (_, i) => i + 1);
@@ -38,7 +55,7 @@ const DateSelect = (props: DateSelectProps) => {
       if (year === new Date().getFullYear() && month === new Date().getMonth() + 1) {
         daysArray = daysArray.filter(day => day <= new Date().getDate());
       }
-      
+
       setDaysInMonth(daysArray);
 
       // 현재 선택된 일자가 새로운 월에 존재하지 않는 경우, 마지막 날짜로 설정
@@ -101,7 +118,7 @@ const DateSelect = (props: DateSelectProps) => {
           },
         }}
       >
-        {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+        {Array.from({ length: year === new Date().getFullYear() ? new Date().getMonth() + 1 : 12 }, (_, i) => i + 1).map((month) => (
           <MenuItem key={ month } value={ month }>
             { month }
           </MenuItem>
