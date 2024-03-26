@@ -1,7 +1,7 @@
 import edit from 'src/asset/images/edit.png'
 import trash from 'src/asset/images/trash.png'
 import useStore from '../store'
-import { putTodo } from '../api'
+import { putTodo, updateTodo } from '../api'
 import styled from 'styled-components'
 import { ScheduleType } from 'src/types'
 import { useMutation, useQuery } from 'react-query'
@@ -48,6 +48,7 @@ const TodoCard = ( props: TodoCardProps ) =>{
         }
       })
 
+
     const editTodo = () =>{
         setModalContent()
     }
@@ -65,7 +66,7 @@ const TodoCard = ( props: TodoCardProps ) =>{
                     { schedule?.title }
                 </TodoTitle>
                 <div style={{ display:'flex', marginTop:'1%', gap: '2%'}}>
-                    <img onClick={ editTodo } src={ edit } alt ='' style={{ width: '30px', height: '30px'}}/>
+                    {/* <img onClick={ editTodo } src={ edit } alt ='' style={{ width: '30px', height: '30px'}}/> */}
                     <img onClick={ deleteTodo } src={ trash } alt ='' style={{ width: '30px', height: '30px'}}/>
                 </div>
             </TodoCardHeader>
