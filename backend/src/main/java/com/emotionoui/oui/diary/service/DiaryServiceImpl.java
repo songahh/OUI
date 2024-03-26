@@ -15,7 +15,6 @@ import com.emotionoui.oui.diary.entity.DailyDiaryCollection;
 import com.emotionoui.oui.diary.entity.Diary;
 import com.emotionoui.oui.diary.entity.DiaryType;
 import com.emotionoui.oui.diary.exception.NotExitPrivateDiaryException;
-import com.emotionoui.oui.diary.exception.NotFoundPrivateDiaryException;
 import com.emotionoui.oui.music.entity.MusicCollection;
 import com.emotionoui.oui.diary.repository.DailyDiaryMongoRepository;
 import com.emotionoui.oui.diary.repository.DailyDiaryRepository;
@@ -388,15 +387,9 @@ public class DiaryServiceImpl implements DiaryService{
 //         memberDiary에서 order가 1이고, memberId가 같은 다이어리 id 찾기(이게 개인일기)
 //         dailyDiary에서 해당 다이어리 id이고, 오늘 날짜인 dailyDiary id 찾기
         Integer dailyDiaryId = querydslRepositoryCustom.searchDailyDiaryId(memberId, diaryId);
-
-        if (dailyDiaryId == null) {
-            // dailyDiaryId가 null이면 아직 개인일기를 안 쓴 상태이므로 예외 발생
-            throw new NotFoundPrivateDiaryException();
-        }
-
-//      오늘 일기 찾기
+//         오늘 일기 찾기
         DailyDiary todayDailyDiary= dailyDiaryRepository.findById(dailyDiaryId).get();
-//      dailyDiary DB 에 새로운 행 추가(동기화 할 공유 diaryId)
+//         dailyDiary DB 에 새로운 행 추가(동기화 할 공유 diaryId)
         DailyDiary newDailyDiary = DailyDiary.builder()
                 .dailyDate(todayDailyDiary.getDailyDate())
                 .mongoId(todayDailyDiary.getMongoId())
