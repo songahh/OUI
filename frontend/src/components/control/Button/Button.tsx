@@ -27,14 +27,14 @@ const iconPaths = {
 
 const Button = ( props: ButtonProps ) => {
 
-    const { btOn, path, btType, name, onButtonClick } = props
+    const { path, btType, onButtonClick } = props
 
     const iconSrc = btType ? iconPaths[btType] : undefined;
 
     const navigator = useNavigate();
     
     const eventHandle = () => {
-        if ( btType === 'hamburger' ) {  //햄버거 메뉴
+        if ( btType === 'hamburger' || btType === 'bell' ) {  //햄버거 메뉴
             if( typeof onButtonClick === 'function' ) {
               onButtonClick();
             }
