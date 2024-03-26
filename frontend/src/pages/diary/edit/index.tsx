@@ -243,7 +243,7 @@ const DiaryEdit = () => {
         };
 
         await editDiary.mutateAsync(data);
-        navigator('/diary');
+        navigator('/main');
     }
 
     return (
