@@ -23,17 +23,12 @@ const WeekWrapper = styled.div`
 
 const DayList = ( props ) => {
   
-  const { list, calendars } = props
+  const { list, calendars, type } = props
 
   const cal = []
   for(let i = 0; i < list.length; i++) {
       i % 7 === 0  && cal.push([])
       cal[ cal.length - 1 ].push( list[i] )
-  }
-
-  const param = {
-    startDate: `${ format( list[0], 'yyyy-MM-dd' )}`,
-    endDate: `${ format( list[ list.length-1 ], 'yyyy-MM-dd' )}`,
   }
 
   return(
@@ -42,7 +37,7 @@ const DayList = ( props ) => {
           <WeekWrapper key={ index }>
             { day?.map(( day, index ) => (
                   <Day day= { day } index={ index } key={ index } 
-                  calendars = { calendars }/>
+                  calendars = { calendars } type = { type }/>
             ))}
           </WeekWrapper>
       ))}
