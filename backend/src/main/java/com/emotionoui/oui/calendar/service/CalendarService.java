@@ -22,12 +22,24 @@ public class CalendarService {
     private final CalendarRepository calendarRepository;
     private final MemberDiaryRepository memberDiaryRepository;
 
-    // 캘린더에서 한달간 내 일기와 일정 조회
+    // 캘린더에서 한달간 내 일기와 일정 조회 - 개인
     @Transactional(readOnly = true)
     public List<CalendarDiaryDto> findCalendarbyDate(Integer memberId, Integer year, Integer month){
 
 
         List<Emotion> emotionList = calendarRepository.findMyDiarybyDate(memberId, year, month+1);
+
+        return emotionList.stream()
+                .map(CalendarDiaryDto::of)
+                .collect(Collectors.toList());
+    }
+
+    // 캘린더에서 한달간 내 일기와 일정 조회 - 공유
+    @Transactional(readOnly = true)
+    public List<CalendarDiaryDto> findShareDiarybyDate(Integer memberId, Integer year, Integer month, Integer diaryId){
+
+
+        List<Emotion> emotionList = calendarRepository.findShareDiarybyDate(memberId, year, month+1, diaryId);
 
         return emotionList.stream()
                 .map(CalendarDiaryDto::of)

@@ -89,27 +89,38 @@ public class DiaryServiceImpl implements DiaryService{
         dailyDiaryRepository.save(dailyDiary);
         Date dailyDate = req.getDailyDate();
 
+        // 추후 삭제
+        // MariaDB에 대표감정(Emotion) 정보 저장
+        Emotion emotion = Emotion.builder()
+                .dailyDiary(dailyDiary)
+                .emotion("joy")
+                .date(dailyDate)
+                .member(member)
+                .build();
+
+        emotionRepository.save(emotion);
+
         String text = null;
 
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(req.getDailyContent());
-
-            // objects[0].text 안에 있는 텍스트 파일내용 추출
-            text = jsonNode.get("objects").get(0).get("text").asText();
-            // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
-            if(!Objects.equals(text, "")){
-                // MongoDB에 Spotify URI 리스트 넣기
-                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary, member);
-                List<String> spotifyUriList = findSpotifyUri(musicString);
-                document.setMusic(spotifyUriList);
-                dailyDiaryMongoRepository.save(document);
-            }
-
-        } catch (Exception e){
-            e.printStackTrace();
-            log.info("텍스트 파일 위치를 찾을 수 없습니다.");
-        }
+//        try {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            JsonNode jsonNode = objectMapper.readTree(req.getDailyContent());
+//
+//            // objects[0].text 안에 있는 텍스트 파일내용 추출
+//            text = jsonNode.get("objects").get(0).get("text").asText();
+//            // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
+//            if(!Objects.equals(text, "")){
+//                // MongoDB에 Spotify URI 리스트 넣기
+//                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary, member);
+//                List<String> spotifyUriList = findSpotifyUri(musicString);
+//                document.setMusic(spotifyUriList);
+//                dailyDiaryMongoRepository.save(document);
+//            }
+//
+//        } catch (Exception e){
+//            e.printStackTrace();
+//            log.info("텍스트 파일 위치를 찾을 수 없습니다.");
+//        }
 
         return document.getId().toString();
     }
