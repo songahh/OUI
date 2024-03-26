@@ -184,23 +184,26 @@ const Calendar = () =>{
   
   const today = format(currentMonth, 'yyyy-MM-01')
 
-  // const getMyDiary = useMutation(getCalendar)
-  // const getShareDiary = useMutation(getShareCalendar)
+  let queryKey = null;
+  let queryParams = null;
 
-  // let calendars = null
+  if (type === '개인') {
+    queryKey = ['calendars', currentMonth];
+    queryParams = () => getCalendar(today);
+  } else {
+    queryKey = ['calendars', currentMonth];
+    queryParams = () => getShareCalendar({ date: today, diaryId: diaryId });
+  }
 
-  // if( type==='개인'){
-  //   // const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getCalendar( today ))
-  //   calendars = await getMyDiary.mutateAsync(today)
-  // }else{
-  //   // const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getShareCalendar( {date: today, diaryId: diaryId} ))
-  //   calendars = await getShareDiary.mutateAsync({date: today, diaryId: diaryId})
-  // }
+  const { data: calendars, refetch } = useQuery<any>(queryKey, queryParams);
 
-  const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getCalendar( today ))
-  console.log("Calendar", calendars)
+  console.log(calendars?.data)
+
+  // const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getCalendar( today ))
+  // console.log("Calendar", calendars)
     
   useEffect(() => { refetch() }, [ currentMonth, refetch ])
+  console.log("Calendar", calendars)
   
   return(
           <CalendarWrapper>
