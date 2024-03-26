@@ -3,6 +3,7 @@ import { Card } from "src/pages/main/components/Card";
 import { Header } from "src/components/control/Header";
 import { Button } from "src/components";
 import { CustomModal } from "./components/Modal";
+import { AlarmModal } from "src/components/modal";
 import { getDiary, getMember, postCreateDiary } from './api';
 import ya from 'src/asset/images/ya.jpg';
 import { useQuery } from 'react-query'
@@ -126,10 +127,16 @@ const Main = () => {
   const [ userName, setUserName ] = useState( "" );
   const [ userImage, setUserImage ] = useState( null );
   const [ modalSubmitted, setModalSubmitted ] = useState( false );
-
+  const [ alarmModalOpen, setAlarmModalOpen ] = useState(false);
 
   const openModal = () => setIsModalOpen( true );
   const closeModal = () => {
+    console.log( '모달 닫기!!!!!!' );
+    setIsModalOpen( false );
+  }
+
+  const openAlarm = () => setAlarmModalOpen( true );
+  const closeAlarm = () => {
     console.log( '모달 닫기!!!!!!' );
     setIsModalOpen( false );
   }
@@ -210,7 +217,7 @@ const Main = () => {
     <>
     <Header>
       <ProfileImage src={ userImage || ya } alt="유저 프로필 이미지" />
-      <Button path='/diary/write' btType='bell' name="temp"></Button>
+      <Button btType='bell' onButtonClick={() => setAlarmModalOpen(true)} />
     </Header>
     <YellowBox>
         {userName && <UserRecord style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold' }}>{ userName }님의 감정기록 :)</UserRecord>}
@@ -229,6 +236,7 @@ const Main = () => {
         </SliderWrapper>
       </div>
     </div>
+    <AlarmModal isOpen={ alarmModalOpen } closeModal={() => setAlarmModalOpen(false)} />
     <CustomModal isOpen={ isModalOpen } closeModal={ closeModal } isFinish={ addCard } />
     </>
   );

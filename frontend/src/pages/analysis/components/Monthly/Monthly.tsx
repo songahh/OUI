@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Doughnut } from "react-chartjs-2";
 import { getMonthly, getMember } from '../../api';
+import { LeftIcon, RightIcon } from 'src/components'
+import { addDays, addMonths, format, subMonths } from 'date-fns'
+import useDate from 'src/util/date'
 import { useQuery } from 'react-query'
 import angry from 'src/asset/images/emotion/angry.png';
 import embarrassed from 'src/asset/images/emotion/embarrass.png';
@@ -93,6 +96,22 @@ const DoughnutWrapper = styled.div`
   }
 `;
 
+const CalendarHeaderMiddleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px; 
+  margin-top: 10px;
+  flex: 1;
+`
+
+const Title = styled.div`
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+`
+
+
 const Monthly = () => {
 
   const tags = {
@@ -130,7 +149,12 @@ const Monthly = () => {
   });
   const [ emotionScores, setEmotionScores ] = useState({});
   const [ userName, setUserName ] = useState( "" );
+  const { currentMonth, setCurrentMonth } = useDate() 
+  const today = format(currentMonth, 'yyyy-MM-01')
   const imageArray = Object.values( images );
+
+  const movePrevMonth = () =>{ setCurrentMonth( subMonths( currentMonth, 1) ) }
+  const moveNextMonth = () => { setCurrentMonth( addMonths( currentMonth, 1) ) }
 
   const { data: memberData, refetch: refetchMember } = useQuery(['memberData'], getMember, {
     onSuccess: ( res ) => {
@@ -141,7 +165,7 @@ const Monthly = () => {
 
   useEffect(() => {
 
-      getMonthly({ diaryId: 1, date: '2024-03-21' }).then(
+      getMonthly({ diaryId: 19, date: today }).then(
       res => {
         const emotionLabels = Object.keys(res.data);
         const emotionData = Object.values(res.data).map(score => (score as number) * 100);
@@ -169,13 +193,17 @@ const Monthly = () => {
         alert("감정을 가져오지 못했습니다")
       })
       refetchMember();
-  }, []); 
+  }, [ currentMonth ]); 
 
   return(
       <>
            { userName && <TitleWrapper> { userName }님이 3월에 느낀 “감정 통계” 예요! </TitleWrapper>}
           <ChartBoxWrapper>
-
+              <CalendarHeaderMiddleWrapper>
+                  <LeftIcon size= { 20 } onClick={ movePrevMonth }/>
+                  <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
+                  <RightIcon size= { 20 } onClick={ moveNextMonth }/>
+              </CalendarHeaderMiddleWrapper>
               <DoughnutWrapper>
                 <Doughnut data={chartData}></Doughnut>
               </DoughnutWrapper>

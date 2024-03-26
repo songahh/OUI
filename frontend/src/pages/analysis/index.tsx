@@ -1,9 +1,9 @@
 import { Drawer } from "src/components/control/Drawer";
 import { Button } from "src/components/control/Button";
 import { Header } from "src/components/control/Header";
-import { gettWeekly, getMember } from "./api/";
+import { format } from 'date-fns'
+import { getWeekly, getMember } from "./api/";
 import { useQuery } from 'react-query'
-
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Switch } from "./components/Switch";
 import { BottomNavi } from "src/components/control/BottomNavi";
+import useDate from 'src/util/date'
 import Monthly from "./components/Monthly/Monthly";
 import styled from 'styled-components';
 
@@ -72,6 +73,8 @@ const GraphWrapper = styled.div`
 
 
 
+
+
 const Analysis = () => {
 
     const [ keyType, setKeyType ] = useState( 1 ); 
@@ -84,8 +87,12 @@ const Analysis = () => {
         datasets: [],
     } ); 
     const [ userName, setUserName ] = useState('')
+    const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() 
+    const today = format(currentMonth, 'yyyy-MM-dd')
     const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
 
+
+    //api
     const { data: memberData, refetch: refetchMember } = useQuery(['memberData'], getMember, {
         onSuccess: ( res ) => {
           setUserName( res.data.nickName );
@@ -94,8 +101,9 @@ const Analysis = () => {
       });
 
 
+
     useEffect(()=>{
-        gettWeekly({ diaryId:1, date: '2024-03-26' }).then(( res )=>{
+        getWeekly({ diaryId:19, date: today }).then(( res )=>{
             const tempDayLabel = [];
             const tempHappyData = [];
             const tempSadData = [];
@@ -136,6 +144,7 @@ const Analysis = () => {
               });
         })
         getMember();
+
     },[]);
 
 
@@ -166,7 +175,6 @@ const Analysis = () => {
                     <Button></Button>
                     <Button></Button>
                 </Header>
-
                 <SwitchWrapper setKeyType={ setKeyType } keyType={ keyType } ></SwitchWrapper>
                     <BoxWrapper>
                     {keyType === 2 && (
