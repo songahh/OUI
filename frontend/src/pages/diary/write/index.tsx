@@ -214,7 +214,7 @@ const DiaryWrite = () => {
         };
 
         await writeDiary.mutateAsync(data);
-        navigator('/diary');
+        navigator('/main');
     }
 
     return (

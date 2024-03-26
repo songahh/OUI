@@ -3,7 +3,7 @@ import { addDays, addMonths, format, subMonths } from 'date-fns'
 import { DateList, DayList, MyModal, ShareModal }  from './components'
 import writeDiary from 'src/asset/images/writeDiary.png'
 import { LeftIcon, RightIcon } from 'src/components'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useStore from './store';
 import loadMyDiary from 'src/asset/images/loadMyDiary.png'
@@ -11,7 +11,7 @@ import goToWriteDiary from 'src/asset/images/goToWriteDiary.png'
 import { createPortal } from 'react-dom'
 import useDate from 'src/util/date'
 import styled from 'styled-components'
-import { getCalendar } from './api';
+import { getCalendar, getShareCalendar } from './api';
 
 const Title = styled.div`
     font-size: 20px;
@@ -96,7 +96,7 @@ const WriteModal = styled.div`
   transform: translate(-50%, -50%);
 `
 
-const Calendar = () => {
+const Calendar = () =>{
 
   const navigator = useNavigate()
 
@@ -184,10 +184,22 @@ const Calendar = () => {
   
   const today = format(currentMonth, 'yyyy-MM-01')
 
+  // const getMyDiary = useMutation(getCalendar)
+  // const getShareDiary = useMutation(getShareCalendar)
+
+  // let calendars = null
+
+  // if( type==='개인'){
+  //   // const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getCalendar( today ))
+  //   calendars = await getMyDiary.mutateAsync(today)
+  // }else{
+  //   // const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getShareCalendar( {date: today, diaryId: diaryId} ))
+  //   calendars = await getShareDiary.mutateAsync({date: today, diaryId: diaryId})
+  // }
+
   const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getCalendar( today ))
-
   console.log("Calendar", calendars)
-
+    
   useEffect(() => { refetch() }, [ currentMonth, refetch ])
   
   return(
