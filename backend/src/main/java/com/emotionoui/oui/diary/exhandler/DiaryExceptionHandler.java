@@ -1,6 +1,7 @@
 package com.emotionoui.oui.diary.exhandler;
 
 import com.emotionoui.oui.diary.exception.NotExitPrivateDiaryException;
+import com.emotionoui.oui.diary.exception.NotFoundPrivateDiaryException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +30,17 @@ public class DiaryExceptionHandler {
         makeErrorMessage(errorMessage, e);
 
         errorMessage.append("개인 다이어리는 나갈 수 없습니다.");
+        return ResponseEntity.badRequest().body(errorMessage.toString());
+    }
+
+    @ExceptionHandler(NotFoundPrivateDiaryException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ResponseEntity<String> NotFoundPrivateDiaryExceptionHandler(NotFoundPrivateDiaryException e) {
+        StringBuilder errorMessage = new StringBuilder();
+
+        makeErrorMessage(errorMessage, e);
+
+        errorMessage.append("오늘 개인일기가 작성되지 않았습니다.");
         return ResponseEntity.badRequest().body(errorMessage.toString());
     }
 

@@ -1,6 +1,7 @@
 package com.emotionoui.oui.querydsl;
 
 import com.emotionoui.oui.diary.entity.DiaryType;
+import com.emotionoui.oui.diary.entity.QDailyDiary;
 import com.emotionoui.oui.diary.entity.QDiary;
 import com.emotionoui.oui.main.dto.res.SearchDiaryListRes;
 import com.emotionoui.oui.member.entity.QMemberAlarm;
@@ -13,6 +14,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -146,6 +151,29 @@ public class QuerydslRepositoryImpl implements QuerydslRepositoryCustom {
                         .and(memberDiary.isDeleted.eq(0)))
                 .execute();
 
+    }
+
+    @Override
+    public Integer searchDailyDiaryId(Integer memberId, Integer diaryId) {
+        // dailyDiary에서 해당 다이어리 id이고, 오늘 날짜인 dailyDiary id 찾기
+        QMemberDiary memberDiary = QMemberDiary.memberDiary;
+        QDailyDiary dailyDiary = QDailyDiary.dailyDiary;
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay(); // 오늘 시작 시간
+        LocalDateTime endOfDay = today.atTime(23, 59, 59, 999999999); // 오늘 종료 시간
+
+        // LocalDateTime을 Date로 변환
+        Date startDate = Date.from(startOfDay.atZone(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(endOfDay.atZone(ZoneId.systemDefault()).toInstant());
+
+        return queryFactory
+                .select(dailyDiary.id)
+                .from(dailyDiary)
+                .leftJoin(memberDiary).on(dailyDiary.diary.id.eq(memberDiary.diary.id))
+                .where(memberDiary.member.memberId.eq(memberId)
+                        .and(memberDiary.orders.eq(1))
+                        .and(dailyDiary.dailyDate.between(startDate, endDate)))
+                .fetchOne();
     }
 
 }
