@@ -57,7 +57,9 @@ const PlusButton = styled.button`
   cursor: pointer;
 `
 
-const ShareModal = () => {
+const ShareModal = (props) => {
+
+  const { diaries, diaryId } = props
 
   const [ modalContent, setModalContent ] = useState(true);
   const [ isSchedule, setIsSchedule ] = useState(true);
@@ -109,7 +111,7 @@ const ShareModal = () => {
             <HeaderBoxWrapper color= 'white' onClick={ ClickDiary }>일기</HeaderBoxWrapper>
         </ModalHeaderWrapper>
         <DateWrapper> { format(clickDate, 'yyyy-MM-dd' ) }</DateWrapper>
-        <DiaryList/>
+        <DiaryList diaries = { diaries } diaryId = { diaryId }/>
         </>
       }
     </ShareModalWrapper>
