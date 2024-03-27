@@ -21,7 +21,7 @@ const TodoList = ( props ) => {
 
     const { clickDate } = useStore()
 
-    const selectedDiaries: number[] = [];
+    const selectedDiaries= [];
 
 
     diaries.forEach(item => {
