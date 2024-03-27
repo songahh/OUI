@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
@@ -39,18 +41,19 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String findMember(String creatorEmail, FindMemberReq findMemberReq) throws NotFoundMemberException{
+    public String findMember(Member member, FindMemberReq findMemberReq) throws NotFoundMemberException{
 
         String findMemberEmail= findMemberReq.getMemberEmail();
-
         // 본인이 본인을 검색할 수는 없음
-        if(findMemberEmail.equals(creatorEmail)){
+        if(findMemberEmail.equals(member.getEmail())){
             throw new NotAddException();
         }
 
         System.out.println("searchMemberEmail: "+findMemberEmail);
         // 해당 멤버가 존재하는지 확인, 존재하지 않다면 예외처리
-        memberRepository.findByEmail(findMemberEmail).orElseThrow(NotFoundMemberException::new);
+
+        Member findMember = memberRepository.findByEmail(findMemberEmail).orElseThrow(NotFoundMemberException::new);
+        checkMember(findMember);
 
         return findMemberEmail;
     }

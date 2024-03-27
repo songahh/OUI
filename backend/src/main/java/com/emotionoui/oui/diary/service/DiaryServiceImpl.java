@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -277,14 +278,14 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     // 일기 조회하기
-    public SearchDailyDiaryRes searchDailyDiary(Integer dailyId){
+    public SearchDailyDiaryRes searchDailyDiary(Integer dailyId, Integer memberId){
         DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
                 .orElseThrow(IllegalArgumentException::new);
 
         DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        return SearchDailyDiaryRes.of(dailyDiaryCollection, dailyDiary);
+        return SearchDailyDiaryRes.of(dailyDiaryCollection, dailyDiary, memberId);
     }
 
 
