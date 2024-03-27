@@ -37,10 +37,8 @@ public class MemberController {
      */
     @GetMapping("/search")
     public ResponseEntity<String> findMember(@AuthenticationPrincipal Member member, FindMemberReq findMemberReq){
-        String creatorEmail = member.getEmail();
-        System.out.println("creatorEmail = " + creatorEmail);
-        String searchedMember= memberService.findMember(creatorEmail, findMemberReq);
-        return new ResponseEntity<>(searchedMember,HttpStatus.OK);
+        String searchedMember= memberService.findMember(member, findMemberReq);
+        return ResponseEntity.ok(searchedMember);
     }
 
     /**

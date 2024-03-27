@@ -6,6 +6,7 @@ import com.emotionoui.oui.alarm.dto.res.SearchAlarmsRes;
 import com.emotionoui.oui.alarm.entity.Alarm;
 import com.emotionoui.oui.alarm.entity.AlarmContentType;
 import com.emotionoui.oui.alarm.entity.FcmInfo;
+import com.emotionoui.oui.alarm.exception.AlreadyCandidateException;
 import com.emotionoui.oui.alarm.repository.AlarmRepository;
 import com.emotionoui.oui.alarm.repository.FcmInfoRepository;
 import com.emotionoui.oui.diary.entity.Diary;
@@ -14,7 +15,9 @@ import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.MemberAlarm;
 import com.emotionoui.oui.member.entity.MemberDiary;
 import com.emotionoui.oui.member.repository.MemberAlarmRepository;
+import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.member.repository.MemberRepository;
+import com.emotionoui.oui.querydsl.QuerydslRepositoryCustom;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -45,6 +48,8 @@ public class AlarmServiceImpl implements AlarmService{
     private final FcmInfoRepository fcmInfoRepository;
     private final MemberRepository memberRepository;
     private final DiaryRepository diaryRepository;
+    private final QuerydslRepositoryCustom querydslRepositoryCustom;
+    private final MemberDiaryRepository memberDiaryRepository;
 
     @Value("http://localhost:8080")
     String domain;
@@ -74,6 +79,38 @@ public class AlarmServiceImpl implements AlarmService{
         }
 
         return searchAlarmsResList;
+    }
+
+    @Override
+    public void acceptInvite(Member member, Integer diaryId) {
+        // memberDiary DB 에 추가해주기(orders, memberId, diaryId)
+        // memberDiary DB에서 memberId이고, isDeleted=0인 것을 찾아서 orders를 구하자
+        Long order = querydslRepositoryCustom.findDiaryOrder(member)+1;
+        // memberDiary DB에 추가하자
+        Diary newDiary = diaryRepository.findById(diaryId).get();
+
+        // memberDiary DB에 member, diary, isDeleted=0 인 것이 이미 있다면(이미 해당 공유다이어리에 참여중이라면) 예외처리
+        Integer checkDiary = querydslRepositoryCustom.checkDiary(member, diaryId);
+        if (checkDiary != null) {
+            throw new AlreadyCandidateException();
+        }
+
+        MemberDiary newMemberDiary = MemberDiary.builder()
+                .member(member)
+                .diary(newDiary)
+                .orders(order.intValue())
+                .build();
+
+        memberDiaryRepository.save(newMemberDiary);
+
+        // memberAlarm DB 에서 삭제
+        querydslRepositoryCustom.deleteAlarmByMemberIdAndDiaryId(member, diaryId);
+    }
+
+    @Override
+    public void refuseInvite(Member member, Integer diaryId) {
+        // memberAlarm DB 에서 삭제
+        querydslRepositoryCustom.deleteAlarmByMemberIdAndDiaryId(member, diaryId);
     }
 
 //    // 알림 읽음 표시
@@ -125,6 +162,11 @@ public class AlarmServiceImpl implements AlarmService{
                 .orElseThrow(IllegalArgumentException::new);
         String diaryName = diary.getName();
 
+        // emails = null일 경우 처리
+        if(emails.isEmpty()){
+            throw new IllegalArgumentException("Emails is empty");
+        }
+
         String title, content, link;
         title = "공유 다이어리 초대";
         content = "'" + createrNickname + "'님이 '" + diaryName + "' 다이어리에 초대했어요.";
@@ -132,7 +174,6 @@ public class AlarmServiceImpl implements AlarmService{
         link = "http://localhost:8080/alarm/mainPage";
 
         List<String> deviceTokens = new ArrayList<>();
-        List<String> sendFail = new ArrayList<>();
 
         Alarm alarm = Alarm.builder()
                 .type(AlarmContentType.Invite)
@@ -160,60 +201,7 @@ public class AlarmServiceImpl implements AlarmService{
             deviceTokens.add(member.getFcmInfo().getDeviceToken());
         }
 
-        if(!deviceTokens.isEmpty()) {
-            try {
-                // 메세지 보내기
-                MulticastMessage message = MulticastMessage.builder()
-                        .addAllTokens(deviceTokens)
-                        .putData("title", title)
-                        .putData("body", content)
-                        .putData("link", link)
-                        .build();
-                BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
-
-                // 실패한 토큰 수
-                if (response.getFailureCount() > 0) {
-                    List<SendResponse> responses = response.getResponses();
-                    for (SendResponse respons : responses) {
-                        if (!respons.isSuccessful()) {
-                            // The order of responses corresponds to the order of the registration tokens.
-                            sendFail.add(deviceTokens.get(responses.indexOf(respons)));
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                log.info("request error");
-            }
-
-            // 실패한 요청에 대한 재요청
-            if (!sendFail.isEmpty()) {
-                try {
-                    // 메세지 보내기
-                    MulticastMessage message = MulticastMessage.builder()
-                            .addAllTokens(sendFail)
-                            .putData("title", title)
-                            .putData("body", content)
-                            .putData("link", link)
-                            .build();
-                    BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
-
-                    // 실패한 토큰 수
-                    List<SendResponse> responses = response.getResponses();
-                    for (SendResponse respons : responses) {
-                        if (!respons.isSuccessful()) {
-                            sendFail.add(sendFail.get(responses.indexOf(respons)));
-                        }
-                    }
-
-                    for(int i=0; i<responses.size(); ++i){
-                        sendFail.remove(0);
-                    }
-
-                } catch (Exception e) {
-                    log.info("request error");
-                }
-            }
-        }
+        sendMultiMessage(title, content, link, deviceTokens);
     }
 
     // FriendForcing: 친구가 일기 작성 요청하기(재촉하기)
@@ -278,7 +266,6 @@ public class AlarmServiceImpl implements AlarmService{
         link = "http://localhost:8080/alarm/mainPage";
 
         List<String> deviceTokens = new ArrayList<>();
-        List<String> sendFail = new ArrayList<>();
 
         Alarm alarm = Alarm.builder()
                 .type(AlarmContentType.FriendDiary)
@@ -293,6 +280,9 @@ public class AlarmServiceImpl implements AlarmService{
         for(MemberDiary memberDiary : memberDiaries){
             Member friend = memberDiary.getMember();
 
+            if(Objects.equals(friend.getMemberId(), member.getMemberId()))
+                continue;
+
             MemberAlarm memberAlarm = MemberAlarm.builder()
                     .alarm(alarm)
                     .member(friend)
@@ -302,13 +292,18 @@ public class AlarmServiceImpl implements AlarmService{
 
             memberAlarmRepository.save(memberAlarm);
 
-            // test용
-//            deviceTokens.add("eCKbs2zkGtXCXhHZh_KGnb:APA91bF5LuFA_AumHn330BdsSMHafPz8uTWe-Ku3Jgma-VX4HWF7D0rLqIn1TlEUItbphs4wopekhFT2WtRjBfopss74rhvH2CqJbr72G3nxZerwhAc8Hu0JJUVYHdZwH6JwVknQVaTz");
-//            deviceTokens.add(friend.getFcmInfo().getDeviceToken());
+            deviceTokens.add(friend.getFcmInfo().getDeviceToken());
         }
 
+        sendMultiMessage(title, content, link, deviceTokens);
+    }
+
+    // 단체 메시지 보내기
+    private void sendMultiMessage(String title, String content, String link, List<String> deviceTokens) {
         if(!deviceTokens.isEmpty()) {
+            List<String> sendFail = new ArrayList<>();
             try {
+                log.info(deviceTokens.get(0));
                 // 메세지 보내기
                 MulticastMessage message = MulticastMessage.builder()
                         .addAllTokens(deviceTokens)
@@ -363,7 +358,7 @@ public class AlarmServiceImpl implements AlarmService{
         }
     }
 
-//    // 갈망포카 메세지 전송
+    //    // 갈망포카 메세지 전송
 //    @Override
 //    public Boolean sendBiasMessage(List<String> ids, Long articleId) {
 //
