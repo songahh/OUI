@@ -96,7 +96,7 @@ public class DiaryServiceImpl implements DiaryService{
         Emotion emotion = Emotion.builder()
                 .dailyDiary(dailyDiary)
                 .emotion("joy")
-                .date(dailyDate)
+                .date(req.getDailyDate())
                 .member(member)
                 .build();
 

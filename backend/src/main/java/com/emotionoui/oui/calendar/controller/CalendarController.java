@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -104,14 +101,10 @@ public class CalendarController {
 //        ArrayList<MyCalendarRes> dailyDiaries = new ArrayList<>();
 //
 //        // findmemberbyId 로 멤버 다 찾고 for문 돌리면서 shareCalendarRes의 calendarResList에 넣기
-//        List<Integer> tmpMember = new ArrayList<>();
-//        tmpMember.add(1);
-//        tmpMember.add(2);
+//        List<Member> memberList = calendarService.findMemberByDiaryId(diaryId);
 //
-//        for(Integer i : tmpMember){
-//            List<CalendarDailyDiaryRes> dailyDiaries = calendarService.find(i, date);
-//
-//
+//        for (Member member : memberList){
+//            List<CalendarDailyDiaryRes> dailyDiary = calendarService.findDailyDiaryListByDateAndMember(member, date, diaryId);
 //        }
 //
 //

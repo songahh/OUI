@@ -1,6 +1,7 @@
 package com.emotionoui.oui.calendar.service;
 
 
+import com.emotionoui.oui.calendar.dto.res.CalendarDailyDiaryRes;
 import com.emotionoui.oui.calendar.dto.res.CalendarScheduleDto;
 import com.emotionoui.oui.calendar.dto.res.CalendarDiaryDto;
 import com.emotionoui.oui.calendar.entity.Emotion;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,14 @@ public class CalendarService {
 
         return memberList;
     }
+
+//    @Transactional(readOnly = true)
+//    public List<CalendarDailyDiaryRes> findDailyDiaryListByDateAndMember(Member member, Date date, Integer diaryId){
+//            List<CalendarDailyDiaryRes> dailyDiaryList = calendarRepository.findDailyDiaryListByDateAndMember(member, date, diaryId);
+//
+//
+//        return dailyDiaryList;
+//    }
 
 
 }
