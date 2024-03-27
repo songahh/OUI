@@ -31,7 +31,7 @@ public class MemberDiary {
     @Column(name = "orders")
     private Integer orders;
 
-    @CreationTimestamp(source = SourceType.DB
+    @CreationTimestamp(source = SourceType.DB)
     @LastModifiedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
