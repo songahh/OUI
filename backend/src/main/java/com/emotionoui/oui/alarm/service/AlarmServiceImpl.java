@@ -156,8 +156,8 @@ public class AlarmServiceImpl implements AlarmService{
             memberAlarmRepository.save(memberAlarm);
 
             // test용
-            deviceTokens.add("eCKbs2zkGtXCXhHZh_KGnb:APA91bF5LuFA_AumHn330BdsSMHafPz8uTWe-Ku3Jgma-VX4HWF7D0rLqIn1TlEUItbphs4wopekhFT2WtRjBfopss74rhvH2CqJbr72G3nxZerwhAc8Hu0JJUVYHdZwH6JwVknQVaTz");
-//            deviceTokens.add(member.getFcmInfo().getDeviceToken());
+//            deviceTokens.add("eCKbs2zkGtXCXhHZh_KGnb:APA91bF5LuFA_AumHn330BdsSMHafPz8uTWe-Ku3Jgma-VX4HWF7D0rLqIn1TlEUItbphs4wopekhFT2WtRjBfopss74rhvH2CqJbr72G3nxZerwhAc8Hu0JJUVYHdZwH6JwVknQVaTz");
+            deviceTokens.add(member.getFcmInfo().getDeviceToken());
         }
 
         if(!deviceTokens.isEmpty()) {
@@ -304,7 +304,7 @@ public class AlarmServiceImpl implements AlarmService{
 
             // test용
 //            deviceTokens.add("eCKbs2zkGtXCXhHZh_KGnb:APA91bF5LuFA_AumHn330BdsSMHafPz8uTWe-Ku3Jgma-VX4HWF7D0rLqIn1TlEUItbphs4wopekhFT2WtRjBfopss74rhvH2CqJbr72G3nxZerwhAc8Hu0JJUVYHdZwH6JwVknQVaTz");
-            deviceTokens.add(friend.getFcmInfo().getDeviceToken());
+//            deviceTokens.add(friend.getFcmInfo().getDeviceToken());
         }
 
         if(!deviceTokens.isEmpty()) {
