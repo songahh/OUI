@@ -1,9 +1,7 @@
 package com.emotionoui.oui.calendar.repository;
 
 
-import com.emotionoui.oui.calendar.dto.res.CalendarDailyDiaryRes;
 import com.emotionoui.oui.calendar.entity.Emotion;
-import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.schedule.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,5 +27,5 @@ public interface CalendarRepository extends JpaRepository<Emotion, Integer> {
     @Query("SELECT s FROM Schedule s WHERE s.member.memberId = :memberId AND YEAR(s.date) = :year AND MONTH(s.date) =:month AND s.isDeleted = 0 ORDER BY s.date")
     List<Schedule> findMySchedulebyDate(Integer memberId, Integer year, Integer month);
 
-//    List<CalendarDailyDiaryRes> findDailyDiaryListByDateAndMember(Member member, Date date, Integer diaryId);
+
 }

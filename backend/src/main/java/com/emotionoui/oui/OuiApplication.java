@@ -15,7 +15,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @PropertySource("/env/env.yml")
 @EnableJpaAuditing
 @Slf4j
-@EnableJpaAuditing
 public class OuiApplication {
 
     public static void main(String[] args) {
