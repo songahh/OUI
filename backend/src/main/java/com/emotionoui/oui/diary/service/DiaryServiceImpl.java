@@ -13,6 +13,9 @@ import com.emotionoui.oui.diary.dto.res.SearchDiarySettingRes;
 import com.emotionoui.oui.diary.entity.DailyDiary;
 import com.emotionoui.oui.diary.entity.DailyDiaryCollection;
 import com.emotionoui.oui.diary.entity.Diary;
+import com.emotionoui.oui.diary.entity.DiaryType;
+import com.emotionoui.oui.diary.exception.NotExitPrivateDiaryException;
+import com.emotionoui.oui.diary.exception.NotFoundPrivateDiaryException;
 import com.emotionoui.oui.music.entity.MusicCollection;
 import com.emotionoui.oui.diary.repository.DailyDiaryMongoRepository;
 import com.emotionoui.oui.diary.repository.DailyDiaryRepository;
@@ -37,10 +40,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -91,27 +91,38 @@ public class DiaryServiceImpl implements DiaryService{
         DailyDiary newDailyDiary = dailyDiaryRepository.save(dailyDiary);
         Date dailyDate = req.getDailyDate();
 
+        // 추후 삭제
+        // MariaDB에 대표감정(Emotion) 정보 저장
+        Emotion emotion = Emotion.builder()
+                .dailyDiary(dailyDiary)
+                .emotion("joy")
+                .date(dailyDate)
+                .member(member)
+                .build();
+
+        emotionRepository.save(emotion);
+
         String text = null;
 
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(req.getDailyContent());
-
-            // objects[0].text 안에 있는 텍스트 파일내용 추출
-            text = jsonNode.get("objects").get(0).get("text").asText();
-            // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
-            if(!Objects.equals(text, "")){
-                // MongoDB에 Spotify URI 리스트 넣기
-                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary, member);
-                List<String> spotifyUriList = findSpotifyUri(musicString);
-                document.setMusic(spotifyUriList);
-                dailyDiaryMongoRepository.save(document);
-            }
-
-        } catch (Exception e){
-            e.printStackTrace();
-            log.info("텍스트 파일 위치를 찾을 수 없습니다.");
-        }
+//        try {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            JsonNode jsonNode = objectMapper.readTree(req.getDailyContent());
+//
+//            // objects[0].text 안에 있는 텍스트 파일내용 추출
+//            text = jsonNode.get("objects").get(0).get("text").asText();
+//            // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
+//            if(!Objects.equals(text, "")){
+//                // MongoDB에 Spotify URI 리스트 넣기
+//                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary, member);
+//                List<String> spotifyUriList = findSpotifyUri(musicString);
+//                document.setMusic(spotifyUriList);
+//                dailyDiaryMongoRepository.save(document);
+//            }
+//
+//        } catch (Exception e){
+//            e.printStackTrace();
+//            log.info("텍스트 파일 위치를 찾을 수 없습니다.");
+//        }
 
         // 공유 다이어리일 시 친구들에게 본인 일기 알람 전송
         alarmService.sendFriendDiary(diary, newDailyDiary.getId(), member);
@@ -373,7 +384,35 @@ public class DiaryServiceImpl implements DiaryService{
     // 다이어리 나가기
     @Override
     public void exitShareDiary(Integer diaryId, int memberId) {
+        // 공유 다이어리인지 확인
+        Optional<Diary> diary = diaryRepository.findById(diaryId);
+        if(!diary.get().getType().equals(DiaryType.공유)){
+            throw new NotExitPrivateDiaryException();
+        }
         // 멤버 다이어리 DB에서 삭제처리하기
         querydslRepositoryCustom.exitSharDiaryByMemberIdAndDiaryId(diaryId, memberId);
+    }
+
+    // 개인 다이어리 -> 공유 다이어리로 가져오기
+    @Override
+    public void syncDiary(Integer memberId, Integer diaryId) {
+//         memberDiary에서 order가 1이고, memberId가 같은 다이어리 id 찾기(이게 개인일기)
+//         dailyDiary에서 해당 다이어리 id이고, 오늘 날짜인 dailyDiary id 찾기
+        Integer dailyDiaryId = querydslRepositoryCustom.searchDailyDiaryId(memberId, diaryId);
+
+        if (dailyDiaryId == null) {
+            // dailyDiaryId가 null이면 아직 개인일기를 안 쓴 상태이므로 예외 발생
+            throw new NotFoundPrivateDiaryException();
+        }
+
+//      오늘 일기 찾기
+        DailyDiary todayDailyDiary= dailyDiaryRepository.findById(dailyDiaryId).get();
+//      dailyDiary DB 에 새로운 행 추가(동기화 할 공유 diaryId)
+        DailyDiary newDailyDiary = DailyDiary.builder()
+                .dailyDate(todayDailyDiary.getDailyDate())
+                .mongoId(todayDailyDiary.getMongoId())
+                .diary(diaryRepository.findById(diaryId).get())
+                .build();
+        dailyDiaryRepository.save(newDailyDiary);
     }
 }
