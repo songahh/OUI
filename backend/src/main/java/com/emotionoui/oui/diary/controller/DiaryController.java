@@ -56,8 +56,8 @@ public class DiaryController {
 
     // 일기 게시글 조회하기
     @GetMapping("/{dailyId}")
-    public ResponseEntity<?> searchDailyDiary(@PathVariable("dailyId") Integer dailyId){
-        return new ResponseEntity<SearchDailyDiaryRes>(diaryService.searchDailyDiary(dailyId), HttpStatus.OK);
+    public ResponseEntity<?> searchDailyDiary(@PathVariable("dailyId") Integer dailyId, @AuthenticationPrincipal Member member){
+        return new ResponseEntity<SearchDailyDiaryRes>(diaryService.searchDailyDiary(dailyId, member.getMemberId()), HttpStatus.OK);
     }
 
     // 감정분석 결과 보여주기

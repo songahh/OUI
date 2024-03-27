@@ -238,6 +238,9 @@ public class AlarmServiceImpl implements AlarmService{
         for(MemberDiary memberDiary : memberDiaries){
             Member friend = memberDiary.getMember();
 
+            if(Objects.equals(friend.getMemberId(), member.getMemberId()))
+                continue;
+
             MemberAlarm memberAlarm = MemberAlarm.builder()
                     .alarm(alarm)
                     .member(friend)
@@ -247,8 +250,6 @@ public class AlarmServiceImpl implements AlarmService{
 
             memberAlarmRepository.save(memberAlarm);
 
-            // test용
-//            deviceTokens.add("eCKbs2zkGtXCXhHZh_KGnb:APA91bF5LuFA_AumHn330BdsSMHafPz8uTWe-Ku3Jgma-VX4HWF7D0rLqIn1TlEUItbphs4wopekhFT2WtRjBfopss74rhvH2CqJbr72G3nxZerwhAc8Hu0JJUVYHdZwH6JwVknQVaTz");
             deviceTokens.add(friend.getFcmInfo().getDeviceToken());
         }
 
@@ -260,6 +261,7 @@ public class AlarmServiceImpl implements AlarmService{
         if(!deviceTokens.isEmpty()) {
             List<String> sendFail = new ArrayList<>();
             try {
+                log.info(deviceTokens.get(0));
                 // 메세지 보내기
                 MulticastMessage message = MulticastMessage.builder()
                         .addAllTokens(deviceTokens)
