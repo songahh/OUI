@@ -3,9 +3,13 @@ package com.emotionoui.oui.calendar.service;
 
 import com.emotionoui.oui.calendar.dto.res.CalendarScheduleDto;
 import com.emotionoui.oui.calendar.dto.res.CalendarDiaryDto;
+import com.emotionoui.oui.calendar.dto.res.ShareDailyDiaryRes;
 import com.emotionoui.oui.calendar.entity.Emotion;
 import com.emotionoui.oui.calendar.repository.CalendarRepository;
-import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
+import com.emotionoui.oui.diary.entity.DailyDiary;
+import com.emotionoui.oui.diary.entity.DailyDiaryCollection;
+import com.emotionoui.oui.diary.repository.DailyDiaryMongoRepository;
+import com.emotionoui.oui.diary.repository.DailyDiaryRepository;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.schedule.entity.Schedule;
@@ -13,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +26,8 @@ public class CalendarService {
 
     private final CalendarRepository calendarRepository;
     private final MemberDiaryRepository memberDiaryRepository;
+    private final DailyDiaryRepository dailyDiaryRepository;
+    private final DailyDiaryMongoRepository dailyDiaryMongoRepository;
 
     // 캘린더에서 한달간 내 일기와 일정 조회 - 개인
     @Transactional(readOnly = true)
@@ -67,7 +72,16 @@ public class CalendarService {
 
         return memberList;
     }
+    @Transactional(readOnly = true)
+    public ShareDailyDiaryRes searchDailyDiary(Integer dailyId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
 
+        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+                .orElseThrow(IllegalArgumentException::new);
+        return ShareDailyDiaryRes.of(dailyDiaryCollection, dailyDiary);
+
+    }
 
 
 }

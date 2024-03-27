@@ -100,10 +100,10 @@ public class CalendarController {
     @GetMapping("/{diaryId}/day")
     public ResponseEntity<?> searchDailyDiary(@RequestParam(name="dailyId") List<Integer> dailyIdList){
 
-        ArrayList<SearchDailyDiaryRes> dailyDiaryList = new ArrayList<>();
+        ArrayList<ShareDailyDiaryRes> dailyDiaryList = new ArrayList<>();
 
         for(Integer dailyId: dailyIdList){
-            SearchDailyDiaryRes dailyDiary = diaryService.searchDailyDiary(dailyId);
+            ShareDailyDiaryRes dailyDiary = calendarService.searchDailyDiary(dailyId);
             dailyDiaryList.add(dailyDiary);
         }
 
