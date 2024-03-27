@@ -49,7 +49,7 @@ public class Member implements UserDetails {
     private LocalDateTime regdate;
     
     @Column(name="is_deleted", nullable = false)
-    private int isDeleted;
+    private int isDeleted = 0;
 
 
     @Override

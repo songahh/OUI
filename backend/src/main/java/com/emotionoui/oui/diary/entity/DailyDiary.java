@@ -36,9 +36,9 @@ public class DailyDiary {
 //    @LastModifiedDate
 //    @Column(name = "created_at")
 //    private LocalDateTime created_at;
-//
-//    @Column(name = "is_deleted")
-//    private Integer isDeleted;
+
+    @Column(name = "is_deleted")
+    private Integer isDeleted;
 
     @Builder
     public DailyDiary(Diary diary, String mongoId, Date dailyDate){
@@ -50,5 +50,9 @@ public class DailyDiary {
 
     public void updateDailyDate(Date dailyDate){
         this.dailyDate = dailyDate;
+    }
+
+    public void updateIsDeleted(){
+        this.isDeleted = 1;
     }
 }
