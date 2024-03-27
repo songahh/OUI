@@ -51,4 +51,8 @@ public class DailyDiary {
     public void updateDailyDate(Date dailyDate){
         this.dailyDate = dailyDate;
     }
+
+    public void updateIsDeleted(){
+        this.isDeleted = 1;
+    }
 }
