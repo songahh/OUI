@@ -233,7 +233,7 @@ const Calendar = () =>{
           isModalOpened && type==='공유'
           && 
             <ModalPortal onClose={ closeModal }>
-              <Modal><ShareModal/></Modal>
+              <Modal><ShareModal diaries= { calendars?.data?.members } diaryId = { diaryId }/></Modal>
             </ModalPortal>
         }
         {

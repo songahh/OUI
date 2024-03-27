@@ -92,8 +92,6 @@ const Day = ( props: DayProps ) =>{
         diaries = calendars?.diaries?.filter(( diary ) => diary?.date?.substring(5, 10) === format( day, 'MM-dd'))
         todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
     } else {
-        // diaries = calendars?.members?.diaries?.filter(( diary ) => diary?.date?.substring(5, 10) === format( day, 'MM-dd'))
-        // todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
         diaries = calendars?.members?.flatMap( member => member?.diaries )?.filter( diary => {
             if ( diary && diary.date ) {
                 const currentDate = format( day, 'MM-dd' );
