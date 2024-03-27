@@ -46,7 +46,7 @@ public class Diary {
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    private DiaryType type;
+    private DiaryType type = DiaryType.공유;
 
     @Column(name = "name")
     private String name;
@@ -57,7 +57,7 @@ public class Diary {
     private LocalDateTime createdAt;
 
     @Column(name = "is_deleted")
-    private Integer isDeleted;
+    private Integer isDeleted = 0;
 
     @Builder
     public Diary(DiaryType type, String name, Integer templateId,  Integer isDeleted){
