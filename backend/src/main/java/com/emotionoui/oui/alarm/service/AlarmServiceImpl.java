@@ -132,7 +132,6 @@ public class AlarmServiceImpl implements AlarmService{
         link = "http://localhost:8080/alarm/mainPage";
 
         List<String> deviceTokens = new ArrayList<>();
-        List<String> sendFail = new ArrayList<>();
 
         Alarm alarm = Alarm.builder()
                 .type(AlarmContentType.Invite)
@@ -156,64 +155,11 @@ public class AlarmServiceImpl implements AlarmService{
             memberAlarmRepository.save(memberAlarm);
 
             // test용
-            deviceTokens.add("eCKbs2zkGtXCXhHZh_KGnb:APA91bF5LuFA_AumHn330BdsSMHafPz8uTWe-Ku3Jgma-VX4HWF7D0rLqIn1TlEUItbphs4wopekhFT2WtRjBfopss74rhvH2CqJbr72G3nxZerwhAc8Hu0JJUVYHdZwH6JwVknQVaTz");
-//            deviceTokens.add(member.getFcmInfo().getDeviceToken());
+//            deviceTokens.add("eCKbs2zkGtXCXhHZh_KGnb:APA91bF5LuFA_AumHn330BdsSMHafPz8uTWe-Ku3Jgma-VX4HWF7D0rLqIn1TlEUItbphs4wopekhFT2WtRjBfopss74rhvH2CqJbr72G3nxZerwhAc8Hu0JJUVYHdZwH6JwVknQVaTz");
+            deviceTokens.add(member.getFcmInfo().getDeviceToken());
         }
 
-        if(!deviceTokens.isEmpty()) {
-            try {
-                // 메세지 보내기
-                MulticastMessage message = MulticastMessage.builder()
-                        .addAllTokens(deviceTokens)
-                        .putData("title", title)
-                        .putData("body", content)
-                        .putData("link", link)
-                        .build();
-                BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
-
-                // 실패한 토큰 수
-                if (response.getFailureCount() > 0) {
-                    List<SendResponse> responses = response.getResponses();
-                    for (SendResponse respons : responses) {
-                        if (!respons.isSuccessful()) {
-                            // The order of responses corresponds to the order of the registration tokens.
-                            sendFail.add(deviceTokens.get(responses.indexOf(respons)));
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                log.info("request error");
-            }
-
-            // 실패한 요청에 대한 재요청
-            if (!sendFail.isEmpty()) {
-                try {
-                    // 메세지 보내기
-                    MulticastMessage message = MulticastMessage.builder()
-                            .addAllTokens(sendFail)
-                            .putData("title", title)
-                            .putData("body", content)
-                            .putData("link", link)
-                            .build();
-                    BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
-
-                    // 실패한 토큰 수
-                    List<SendResponse> responses = response.getResponses();
-                    for (SendResponse respons : responses) {
-                        if (!respons.isSuccessful()) {
-                            sendFail.add(sendFail.get(responses.indexOf(respons)));
-                        }
-                    }
-
-                    for(int i=0; i<responses.size(); ++i){
-                        sendFail.remove(0);
-                    }
-
-                } catch (Exception e) {
-                    log.info("request error");
-                }
-            }
-        }
+        sendMultiMessage(title, content, link, deviceTokens);
     }
 
     // FriendForcing: 친구가 일기 작성 요청하기(재촉하기)
@@ -278,7 +224,6 @@ public class AlarmServiceImpl implements AlarmService{
         link = "http://localhost:8080/alarm/mainPage";
 
         List<String> deviceTokens = new ArrayList<>();
-        List<String> sendFail = new ArrayList<>();
 
         Alarm alarm = Alarm.builder()
                 .type(AlarmContentType.FriendDiary)
@@ -307,7 +252,13 @@ public class AlarmServiceImpl implements AlarmService{
             deviceTokens.add(friend.getFcmInfo().getDeviceToken());
         }
 
+        sendMultiMessage(title, content, link, deviceTokens);
+    }
+
+    // 단체 메시지 보내기
+    private void sendMultiMessage(String title, String content, String link, List<String> deviceTokens) {
         if(!deviceTokens.isEmpty()) {
+            List<String> sendFail = new ArrayList<>();
             try {
                 // 메세지 보내기
                 MulticastMessage message = MulticastMessage.builder()
@@ -363,7 +314,7 @@ public class AlarmServiceImpl implements AlarmService{
         }
     }
 
-//    // 갈망포카 메세지 전송
+    //    // 갈망포카 메세지 전송
 //    @Override
 //    public Boolean sendBiasMessage(List<String> ids, Long articleId) {
 //

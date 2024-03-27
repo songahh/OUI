@@ -49,7 +49,7 @@
 //    }
 //
 //    public void registerStompEndPoints(StompEndpointRegistry registry){
-//        registry.addEndpoint("/ws-stomp").setAllowedOriginPatterns("*").withSockJS();
+//        registry.addEndpoint("/decoration").setAllowedOriginPatterns("*").withSockJS();
 //        // registry.addEndpoint("/ws-stomp").setAllowedOriginPatterns("*");
 //        // Endpoint 지정, setAllowedOriginPatterns("*")를 통해 요청 url 전부 허용
 //        // + withSockJs() 함수를 통해 ws, wss로 socket을 연결하는 것이 아닌 http, https로 socket을 연결하도록 바꾸어줌
@@ -99,4 +99,3 @@
 //        //registration.interceptors(chatInterceptor);
 //    }
 //}
-//

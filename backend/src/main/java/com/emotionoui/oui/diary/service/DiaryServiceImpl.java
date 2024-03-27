@@ -268,11 +268,12 @@ public class DiaryServiceImpl implements DiaryService{
     public void deleteDailyDiary(Integer dailyId){
         DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
                 .orElseThrow(IllegalArgumentException::new);
+        dailyDiary.updateIsDeleted();
 
-        DailyDiaryCollection document = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
-                .orElseThrow(IllegalArgumentException::new);
-        document.setIsDeleted(1);
-        dailyDiaryMongoRepository.save(document);
+//        DailyDiaryCollection document = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+//                .orElseThrow(IllegalArgumentException::new);
+//        document.setIsDeleted(1);
+//        dailyDiaryMongoRepository.save(document);
     }
 
     // 일기 조회하기
