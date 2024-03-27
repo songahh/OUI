@@ -63,13 +63,13 @@ public class CalendarController {
 
         ArrayList<MyCalendarRes> calendars = new ArrayList<>();
 
-        // findmemberbyId 로 멤버 다 찾고 for문 돌리면서 shareCalendarRes의 calendarResList에 넣기
+        // findMemberByDiaryId 로 멤버 다 찾고 for문 돌리면서 shareCalendarRes의 calendarResList에 넣기
         List<Member> memberList = new ArrayList<>();
         List<Member> tmpMember = calendarService.findMemberByDiaryId(diaryId);
         for(Member m: tmpMember) memberList.add(m);
 
         for(Member m : memberList){
-            List<CalendarDiaryDto> myDiaries = calendarService.findCalendarbyDate(m.getMemberId(), year, month);
+            List<CalendarDiaryDto> myDiaries = calendarService.findShareDiarybyDate(m.getMemberId(), year, month, diaryId);
             List<CalendarScheduleDto> myScehdule = calendarService.findMySchedulebyDate(m.getMemberId(), year, month);
 
             MyCalendarRes myCalendarRes = MyCalendarRes.builder()
