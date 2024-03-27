@@ -238,6 +238,9 @@ public class AlarmServiceImpl implements AlarmService{
         for(MemberDiary memberDiary : memberDiaries){
             Member friend = memberDiary.getMember();
 
+            if(Objects.equals(friend.getMemberId(), member.getMemberId()))
+                continue;
+
             MemberAlarm memberAlarm = MemberAlarm.builder()
                     .alarm(alarm)
                     .member(friend)
@@ -248,8 +251,10 @@ public class AlarmServiceImpl implements AlarmService{
             memberAlarmRepository.save(memberAlarm);
 
             // test용
-//            deviceTokens.add("eCKbs2zkGtXCXhHZh_KGnb:APA91bF5LuFA_AumHn330BdsSMHafPz8uTWe-Ku3Jgma-VX4HWF7D0rLqIn1TlEUItbphs4wopekhFT2WtRjBfopss74rhvH2CqJbr72G3nxZerwhAc8Hu0JJUVYHdZwH6JwVknQVaTz");
-            deviceTokens.add(friend.getFcmInfo().getDeviceToken());
+//            deviceTokens.add("fiZaR4m8HfHRmaLSPrUvi8:APA91bHsL_0S-TjiDkkX24oSDwF5DJsOuZpWujb6A_a3dQuNfTWKtFwEuEcTmeC2NLFWPcGNNJ58MVAjzpvWGzrCD9TxMoV0PNKzInc65_BX4Hc05cfkPruPdDnvj1HTOzWmsSpAAI8F");
+//            deviceTokens.add(friend.getFcmInfo().getDeviceToken());
+            log.info(friend.getNickname());
+            log.info(friend.getFcmInfo().getDeviceToken());
         }
 
         sendMultiMessage(title, content, link, deviceTokens);

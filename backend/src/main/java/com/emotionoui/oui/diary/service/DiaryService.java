@@ -18,7 +18,7 @@ public interface DiaryService {
     String createDailyDiary(CreateDailyDiaryReq req, Member member) throws IOException, ExecutionException, InterruptedException;
     Integer updateDailyDiary(UpdateDailyDiaryReq req, Integer dailyId);
     void deleteDailyDiary(Integer dailyId);
-    SearchDailyDiaryRes searchDailyDiary(Integer dailyId);
+    SearchDailyDiaryRes searchDailyDiary(Integer dailyId, Integer memberId);
     EmotionClass searchEmotion(Integer dailyId);
     List<String> searchMusic(Integer dailyId);
     String searchComment(Integer dailyId);

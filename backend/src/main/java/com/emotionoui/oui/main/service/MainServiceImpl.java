@@ -1,6 +1,7 @@
 package com.emotionoui.oui.main.service;
 
 import com.emotionoui.oui.diary.entity.Diary;
+import com.emotionoui.oui.diary.entity.DiaryType;
 import com.emotionoui.oui.diary.repository.DiaryRepository;
 import com.emotionoui.oui.main.dto.req.ChangeOrderReq;
 import com.emotionoui.oui.main.dto.req.CreateShareDiaryReq;
@@ -28,6 +29,8 @@ public class MainServiceImpl implements MainService {
         // 다이어리 생성
         Diary diary = Diary.builder()
                 .name(createShareDiaryReq.getDiaryName())
+                .type(DiaryType.공유)
+                .isDeleted(0)
                 .templateId(createShareDiaryReq.getTemplateId())
                 .build();
         Diary newDiary = diaryRepository.save(diary);
