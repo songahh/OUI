@@ -28,6 +28,8 @@ public class QDailyDiary extends EntityPathBase<DailyDiary> {
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
+    public final NumberPath<Integer> isDeleted = createNumber("isDeleted", Integer.class);
+
     public final StringPath mongoId = createString("mongoId");
 
     public QDailyDiary(String variable) {
