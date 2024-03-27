@@ -96,6 +96,13 @@ const WriteModal = styled.div`
   transform: translate(-50%, -50%);
 `
 
+const ModalImg = styled.img`
+  height: 80%;
+  width: 40%;
+  cursor: pointer;
+  margin: auto;
+`
+
 const Calendar = () =>{
 
   const navigator = useNavigate()
@@ -134,11 +141,11 @@ const Calendar = () =>{
   }
 
   const loadDiary = () => {
-    
+    alert('얘기중..')
   }
 
   const goWrite = () => {
-
+    navigator(`/diary/write/${diaryId}`, { state: { diaryId:  diaryId }})
   }
 
   const WriteModalPortal = ({ onClose  }) => { 
@@ -149,8 +156,8 @@ const Calendar = () =>{
       <WriteModalBackground onClick={ handleBackgroundClick }>
         <WriteModal>
           <div style={{display:'flex', height:'100%', justifyContent: 'space-around'}}>
-            <img src={ loadMyDiary } alt='' onClick={ loadDiary } style={{cursor:'pointer'}}/>
-            <img src={ goToWriteDiary } alt='' onClick={ goWrite } style={{cursor:'pointer'}}/>
+            <ModalImg src={ loadMyDiary } alt='' onClick={ loadDiary } />
+            <ModalImg src={ goToWriteDiary } alt='' onClick={ goWrite } />
           </div>
         </WriteModal>
       </WriteModalBackground>,
@@ -198,9 +205,6 @@ const Calendar = () =>{
   const { data: calendars, refetch } = useQuery<any>(queryKey, queryParams);
 
   console.log(calendars?.data)
-
-  // const { data: calendars, refetch } = useQuery([ 'calendars', currentMonth ], () => getCalendar( today ))
-  // console.log("Calendar", calendars)
     
   useEffect(() => { refetch() }, [ currentMonth, refetch ])
   console.log("Calendar", calendars)
@@ -226,10 +230,10 @@ const Calendar = () =>{
             </ModalPortal>
         }
         { 
-          isModalOpened && type=='공유'
+          isModalOpened && type==='공유'
           && 
             <ModalPortal onClose={ closeModal }>
-              <Modal><ShareModal></ShareModal></Modal>
+              <Modal><ShareModal/></Modal>
             </ModalPortal>
         }
         {
@@ -237,7 +241,7 @@ const Calendar = () =>{
           <WriteModalPortal onClose={ closeWrite } />
         }
             <DateList/>
-            <DayList list = { days } calendars = { calendars?.data }/>
+            <DayList list = { days } calendars = { calendars?.data } type = { type }/>
           </CalendarWrapper>
   )
 }
