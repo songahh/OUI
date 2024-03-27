@@ -8,7 +8,6 @@ import nervous from 'src/asset/images/emotion/nervous.png'
 import relax from 'src/asset/images/emotion/relax.png'
 import sad from 'src/asset/images/emotion/sad.png'
 import { useNavigate } from 'react-router-dom'
-import { MyCalendarType, ScheduleType } from 'src/types'
 
 const DayWrapper = styled.div`
   display: flex;
@@ -33,14 +32,22 @@ const EmotionWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 50%;    
+    height: 100%;
+    position: relative;
 `
+
+const EmotionIcon = styled.img`
+    height: 100%;
+    position: absolute;
+`
+
 
 const TodoWrapper = styled.div`
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow: hidden;
+    justify-content: end;
 `
 const TodoItemWrapperContainer = styled.div`
     width: 100%;
@@ -63,17 +70,41 @@ const TodoHeaderWrapper = styled.div<{color: string}>`
 `
 
 
+
 const Day = ( props: DayProps ) =>{
 
     const navigator = useNavigate()
 
-    const { day, calendars } = props
+    const { day, calendars, type } = props
     const { updateDate, updateModal } = useStore()
 
+    const emotionPositions = [
+        { top: '0', left: '20%' }, // 첫 번째 이모티콘 위치
+        { top: '10%', left: '30%' }, // 두 번째 이모티콘 위치
+    ]
+    
 
-    const diaries = calendars?.diaries?.filter(( diary ) => diary?.date?.substring(5, 10) === format( day, 'MM-dd'))
-    const todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
 
+    let diaries = null;
+    let todos = null;
+
+    if (type === '개인') {
+        diaries = calendars?.diaries?.filter(( diary ) => diary?.date?.substring(5, 10) === format( day, 'MM-dd'))
+        todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
+    } else {
+        // diaries = calendars?.members?.diaries?.filter(( diary ) => diary?.date?.substring(5, 10) === format( day, 'MM-dd'))
+        // todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring(5, 10) === format( day, 'MM-dd'))
+        diaries = calendars?.members?.flatMap( member => member?.diaries )?.filter( diary => {
+            if ( diary && diary.date ) {
+                const currentDate = format( day, 'MM-dd' );
+                const diaryDate = diary.date.substring( 5, 10 );
+
+                return diaryDate === currentDate;
+            }
+            return false;
+        });
+    
+    }
     const emotionImg = {
         angry: angry,
         embarrass: embarrass,
@@ -88,11 +119,15 @@ const Day = ( props: DayProps ) =>{
         updateModal()
     }
 
-    const goMyDiary = (diary) =>{
-        console.log("diaryId",diary.diary.daily_diary_id)
-        // 여기 전체 데이터를 넘겨준다?
-        navigator(`/diary/${diary.diary.daily_diary_id}`, {state : {dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type}})
-    }
+    const goMyDiary = ( diary ) =>{
+        if ( type === '개인' ) {
+            console.log("diaryId",diary.diary.daily_diary_id)
+            navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
+            } else {
+                // 아무것도 없음
+                // navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
+            }
+        }
 
 
     
@@ -103,6 +138,17 @@ const Day = ( props: DayProps ) =>{
             { format( day, 'd' ) }
             </DayClick>
             <EmotionWrapper>
+                {diaries?.map((diary, index) => (
+                    <EmotionIcon 
+                        src={emotionImg[diary?.emotion.valueOf()]} 
+                        alt='' 
+                        onClick={() => goMyDiary({ diary })} 
+                        style={{ ...emotionPositions[index] }} // 이모티콘 위치를 조정합니다.
+                        key={index}
+                    />
+                ))}
+            </EmotionWrapper>
+            {/* <EmotionWrapper>
                 {
                     diaries?.map(( diary, index ) => {
                         return(
@@ -112,7 +158,7 @@ const Day = ( props: DayProps ) =>{
                         )
                     })
                 }
-            </EmotionWrapper>
+            </EmotionWrapper> */}
             <TodoWrapper>
             {
                 todos?.map(( todo, index ) =>{
@@ -137,5 +183,6 @@ type DayProps = {
     children?: React.ReactNode
     index?: number,
     day?: string,
-    calendars: MyCalendarType
+    type?: string,
+    calendars: any
 }
