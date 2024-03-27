@@ -3,8 +3,7 @@ import axios from 'axios'
 
 
 const useAxios = axios.create({
-  // baseURL: process.env.REACT_APP_BASE_URL,
-  baseURL: 'http://localhost:8080',
+  baseURL: process.env.REACT_APP_BASE_URL,
   timeout: 10000,
   withCredentials: true,
 })

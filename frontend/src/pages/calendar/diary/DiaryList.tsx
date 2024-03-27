@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import DiaryCard from "./DiaryCard"
+import useStore from "../store"
 
 const TodoListWrapper = styled.div`
   display: flex;
@@ -12,6 +13,8 @@ const TodoListWrapper = styled.div`
 `
 
 const TodoList = () => {
+
+    const { clickDate } = useStore()
 
 
     const diaries = ['1','2','3','4','5']
