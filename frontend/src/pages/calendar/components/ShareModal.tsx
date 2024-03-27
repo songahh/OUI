@@ -100,9 +100,10 @@ const ShareModal = (props) => {
         <HeaderBoxWrapper color= 'white' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
         <HeaderBoxWrapper color= 'trans' onClick={ ClickDiary }>일기</HeaderBoxWrapper>
       </ModalHeaderWrapper>
-        <Todo/>
+        <Todo type='공유'/>
         </>
       }
+
       {
         !modalContent && !isSchedule &&  //일기 리스트 나열
         <>
