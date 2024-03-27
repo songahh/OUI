@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface MemberService {
     SearchMemberRes searchMember(Member member);
 
-    String findMember(String creatorEmail, FindMemberReq findMemberReq);
+    String findMember(Member member, FindMemberReq findMemberReq);
 
     void updateMember(Member member, UpdateMemberReq updateMemberReq);
 }

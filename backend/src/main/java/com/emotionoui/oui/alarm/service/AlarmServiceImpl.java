@@ -125,6 +125,11 @@ public class AlarmServiceImpl implements AlarmService{
                 .orElseThrow(IllegalArgumentException::new);
         String diaryName = diary.getName();
 
+        // emails = null일 경우 처리
+        if(emails.isEmpty()){
+            throw new IllegalArgumentException("Emails is empty");
+        }
+
         String title, content, link;
         title = "공유 다이어리 초대";
         content = "'" + createrNickname + "'님이 '" + diaryName + "' 다이어리에 초대했어요.";
