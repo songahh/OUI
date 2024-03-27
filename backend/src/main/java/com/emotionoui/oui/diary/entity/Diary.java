@@ -8,7 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SourceType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -49,7 +51,7 @@ public class Diary {
     @Column(name = "name")
     private String name;
 
-    @CreatedDate
+    @CreationTimestamp(source = SourceType.DB)
     @LastModifiedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
