@@ -6,6 +6,7 @@ import com.emotionoui.oui.alarm.dto.res.SearchAlarmsRes;
 import com.emotionoui.oui.alarm.entity.Alarm;
 import com.emotionoui.oui.alarm.entity.AlarmContentType;
 import com.emotionoui.oui.alarm.entity.FcmInfo;
+import com.emotionoui.oui.alarm.exception.AlreadyCandidateException;
 import com.emotionoui.oui.alarm.repository.AlarmRepository;
 import com.emotionoui.oui.alarm.repository.FcmInfoRepository;
 import com.emotionoui.oui.diary.entity.Diary;
@@ -14,7 +15,9 @@ import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.MemberAlarm;
 import com.emotionoui.oui.member.entity.MemberDiary;
 import com.emotionoui.oui.member.repository.MemberAlarmRepository;
+import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.member.repository.MemberRepository;
+import com.emotionoui.oui.querydsl.QuerydslRepositoryCustom;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -45,6 +48,8 @@ public class AlarmServiceImpl implements AlarmService{
     private final FcmInfoRepository fcmInfoRepository;
     private final MemberRepository memberRepository;
     private final DiaryRepository diaryRepository;
+    private final QuerydslRepositoryCustom querydslRepositoryCustom;
+    private final MemberDiaryRepository memberDiaryRepository;
 
     @Value("http://localhost:8080")
     String domain;
@@ -74,6 +79,38 @@ public class AlarmServiceImpl implements AlarmService{
         }
 
         return searchAlarmsResList;
+    }
+
+    @Override
+    public void acceptInvite(Member member, Integer diaryId) {
+        // memberDiary DB 에 추가해주기(orders, memberId, diaryId)
+        // memberDiary DB에서 memberId이고, isDeleted=0인 것을 찾아서 orders를 구하자
+        Long order = querydslRepositoryCustom.findDiaryOrder(member)+1;
+        // memberDiary DB에 추가하자
+        Diary newDiary = diaryRepository.findById(diaryId).get();
+
+        // memberDiary DB에 member, diary, isDeleted=0 인 것이 이미 있다면(이미 해당 공유다이어리에 참여중이라면) 예외처리
+        Integer checkDiary = querydslRepositoryCustom.checkDiary(member, diaryId);
+        if (checkDiary != null) {
+            throw new AlreadyCandidateException();
+        }
+
+        MemberDiary newMemberDiary = MemberDiary.builder()
+                .member(member)
+                .diary(newDiary)
+                .orders(order.intValue())
+                .build();
+
+        memberDiaryRepository.save(newMemberDiary);
+
+        // memberAlarm DB 에서 삭제
+        querydslRepositoryCustom.deleteAlarmByMemberIdAndDiaryId(member, diaryId);
+    }
+
+    @Override
+    public void refuseInvite(Member member, Integer diaryId) {
+        // memberAlarm DB 에서 삭제
+        querydslRepositoryCustom.deleteAlarmByMemberIdAndDiaryId(member, diaryId);
     }
 
 //    // 알림 읽음 표시
@@ -124,6 +161,11 @@ public class AlarmServiceImpl implements AlarmService{
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(IllegalArgumentException::new);
         String diaryName = diary.getName();
+
+        // emails = null일 경우 처리
+        if(emails.isEmpty()){
+            throw new IllegalArgumentException("Emails is empty");
+        }
 
         String title, content, link;
         title = "공유 다이어리 초대";
@@ -250,11 +292,7 @@ public class AlarmServiceImpl implements AlarmService{
 
             memberAlarmRepository.save(memberAlarm);
 
-            // test용
-//            deviceTokens.add("fiZaR4m8HfHRmaLSPrUvi8:APA91bHsL_0S-TjiDkkX24oSDwF5DJsOuZpWujb6A_a3dQuNfTWKtFwEuEcTmeC2NLFWPcGNNJ58MVAjzpvWGzrCD9TxMoV0PNKzInc65_BX4Hc05cfkPruPdDnvj1HTOzWmsSpAAI8F");
-//            deviceTokens.add(friend.getFcmInfo().getDeviceToken());
-            log.info(friend.getNickname());
-            log.info(friend.getFcmInfo().getDeviceToken());
+            deviceTokens.add(friend.getFcmInfo().getDeviceToken());
         }
 
         sendMultiMessage(title, content, link, deviceTokens);
@@ -265,6 +303,7 @@ public class AlarmServiceImpl implements AlarmService{
         if(!deviceTokens.isEmpty()) {
             List<String> sendFail = new ArrayList<>();
             try {
+                log.info(deviceTokens.get(0));
                 // 메세지 보내기
                 MulticastMessage message = MulticastMessage.builder()
                         .addAllTokens(deviceTokens)

@@ -7,6 +7,7 @@ import com.emotionoui.oui.main.dto.req.ChangeOrderReq;
 import com.emotionoui.oui.main.dto.req.CreateShareDiaryReq;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.MemberDiary;
+import com.emotionoui.oui.member.exception.NotFoundMemberException;
 import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.member.repository.MemberRepository;
 import com.emotionoui.oui.querydsl.QuerydslRepositoryCustom;
@@ -23,9 +24,14 @@ public class MainServiceImpl implements MainService {
     private final DiaryRepository diaryRepository;
     private final MemberDiaryRepository memberDiaryRepository;
     private final QuerydslRepositoryCustom querydslRepositoryCustom;
+    private final MemberRepository memberRepository;
 
     @Override
     public Integer createShareDiary(Member member, CreateShareDiaryReq createShareDiaryReq) {
+
+        // 없거나 탈퇴한 회원이라면 예외처리
+        memberRepository.findByMemberIdAndIsDeleted(member.getMemberId(),member.getIsDeleted()).orElseThrow(NotFoundMemberException::new);
+
         // 다이어리 생성
         Diary diary = Diary.builder()
                 .name(createShareDiaryReq.getDiaryName())

@@ -4,6 +4,7 @@ import com.emotionoui.oui.diary.entity.DiaryType;
 import com.emotionoui.oui.diary.entity.QDailyDiary;
 import com.emotionoui.oui.diary.entity.QDiary;
 import com.emotionoui.oui.main.dto.res.SearchDiaryListRes;
+import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.QMemberAlarm;
 import com.emotionoui.oui.member.entity.QMemberDiary;
 import com.emotionoui.oui.schedule.entity.QSchedule;
@@ -112,14 +113,14 @@ public class QuerydslRepositoryImpl implements QuerydslRepositoryCustom {
                 .update(diary)
                 .set(diary.isDeleted,1)
                 .where(diary.id.in(
-                        JPAExpressions.select(memberDiary.diary.id)
-                                .from(memberDiary)
-                                .join(memberDiary.diary, diary)
-                                .where(memberDiary.member.memberId.eq(memberId)
-                                        .and(diary.isDeleted.eq(0))
-                                        .and(diary.type.eq(DiaryType.valueOf("개인"))) // 개인다이어리만 탈퇴 처리
-                                )
-                )
+                                JPAExpressions.select(memberDiary.diary.id)
+                                        .from(memberDiary)
+                                        .join(memberDiary.diary, diary)
+                                        .where(memberDiary.member.memberId.eq(memberId)
+                                                .and(diary.isDeleted.eq(0))
+                                                .and(diary.type.eq(DiaryType.valueOf("개인"))) // 개인다이어리만 탈퇴 처리
+                                        )
+                        )
                 )
                 .execute();
 
@@ -176,4 +177,41 @@ public class QuerydslRepositoryImpl implements QuerydslRepositoryCustom {
                 .fetchOne();
     }
 
+    @Override
+    public Long findDiaryOrder(Member member) {
+        QMemberDiary memberDiary = QMemberDiary.memberDiary;
+
+        return queryFactory
+                .select(memberDiary.orders.count())
+                .from(memberDiary)
+                .where(memberDiary.member.memberId.eq(member.getMemberId())
+                        .and(memberDiary.isDeleted.eq(0)))
+                .fetchOne();
+    }
+
+    @Override
+    public Integer checkDiary(Member member, Integer diaryId) {
+        QMemberDiary memberDiary = QMemberDiary.memberDiary;
+
+        return queryFactory
+                .select(memberDiary.diary.id)
+                .from(memberDiary)
+                .where(memberDiary.member.memberId.eq(member.getMemberId())
+                        .and(memberDiary.diary.id.eq(diaryId))
+                        .and(memberDiary.isDeleted.eq(0)))
+                .fetchOne();
+    }
+
+    @Override
+    public void deleteAlarmByMemberIdAndDiaryId(Member member, Integer diaryId) {
+        QMemberAlarm memberAlarm = QMemberAlarm.memberAlarm;
+
+        queryFactory
+                .update(memberAlarm)
+                .set(memberAlarm.isDeleted,1)
+                .where(memberAlarm.member.memberId.eq(member.getMemberId())
+                        .and(memberAlarm.diary.id.eq(diaryId))
+                        .and(memberAlarm.isDeleted.eq(0)))
+                .execute();
+    }
 }
