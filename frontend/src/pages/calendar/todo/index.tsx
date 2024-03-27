@@ -51,8 +51,6 @@ const ColorBox = styled.button<{ color: string; selected: boolean }>`
 
 const Todo = () => {
 
-  const navigator = useNavigate()
-
   const { clickDate, setModalContent } = useStore()
   const [ title, setTitle ] = useState('')
   const [ memo, setMemo ] = useState('')
