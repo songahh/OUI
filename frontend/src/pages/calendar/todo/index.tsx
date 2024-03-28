@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'
-import { LeftIcon, RightIcon } from 'src/components'
-import { useMutation, useQuery } from 'react-query'
-import saveTodo from 'src/asset/images/saveTodo.png'
+import { useState } from 'react'
+import { LeftIcon } from 'src/components'
+import { useMutation } from 'react-query'
+import saveTodo from 'src/asset/images/calendar/saveTodo.png'
 import { postTodo } from '../api'
-import useStore from '../store';
-import { format } from 'date-fns';
+import useStore from '../store'
+import { format } from 'date-fns'
 import styled from 'styled-components'
 
 const TodoHeaderWrapper = styled.div`
