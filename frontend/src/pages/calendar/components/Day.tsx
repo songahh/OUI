@@ -77,7 +77,7 @@ const Day = ( props: DayProps ) =>{
 
     const navigator = useNavigate()
 
-    const { day, calendars, type } = props
+    const { day, calendars, type, diaryId } = props
     const { updateDate, updateModal } = useStore()
 
     const emotionPositions = [
@@ -134,8 +134,7 @@ const Day = ( props: DayProps ) =>{
 
     const goMyDiary = ( diary, date ) =>{
         if ( type === '개인' ) {
-
-            navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
+            navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type, diaryId: diaryId }})
             } else {
                 updateDate( date )
                 updateModal()
@@ -185,5 +184,6 @@ type DayProps = {
     index?: number,
     day?: string,
     type?: string,
-    calendars: any
+    calendars: any,
+    diaryId?: number
 }

@@ -245,7 +245,7 @@ const Calendar = () =>{
         }
 
             <DateList/>
-            <DayList list = { days } calendars = { calendars?.data } type = { type }/>
+            <DayList list = { days } calendars = { calendars?.data } type = { type } diaryId = { diaryId }/>
           </CalendarWrapper>
   )
 }

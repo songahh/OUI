@@ -77,7 +77,7 @@ const Diary = () => {
     const navigator = useNavigate();
 
     const { state } = useLocation();
-    const { dailyDiaryId, type } = state;
+    const { dailyDiaryId, type, diaryId } = state;
     
     const canvasRef = useRef(null);
     const [ canvas, setCanvas ] = useState<fabric.Canvas>(null);
@@ -90,7 +90,6 @@ const Diary = () => {
 
     useEffect(() => {
         if(!canvas) return;
-
         console.log(dailyDiary)
 
         canvas.loadFromJSON(dailyDiary?.data?.dailyContent, () => {
@@ -124,8 +123,9 @@ const Diary = () => {
     return (
         <Container>
             <Header>
-                <Drawer />
+                {/* <BackIcon size={ 40 } onClick={() => { navigator(`/diary/${dailyDiaryId}`, {state: {dailyDiaryId: dailyDiaryId, type: type}}) }} /> */}
                 {/* <Button btType='back'/> */}
+                <Drawer/>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     {(type === '공유' && isDeco) && (
                         <DecoIcon size={ 55 } onClick={() => navigator(`/diary/deco/${ dailyDiaryId }`, {state: {dailyDiaryId: dailyDiaryId, type: type}})} />
