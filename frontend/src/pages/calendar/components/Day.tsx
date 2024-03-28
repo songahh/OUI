@@ -7,6 +7,7 @@ import joy from 'src/asset/images/emotion/joy.png'
 import nervous from 'src/asset/images/emotion/nervous.png'
 import relax from 'src/asset/images/emotion/relax.png'
 import sad from 'src/asset/images/emotion/sad.png'
+import staticStore from 'src/store'
 import { useNavigate } from 'react-router-dom'
 
 const DayWrapper = styled.div`
@@ -77,8 +78,10 @@ const Day = ( props: DayProps ) =>{
 
     const navigator = useNavigate()
 
-    const { day, calendars, type, diaryId } = props
+    // const { day, calendars, type, diaryId } = props
+    const { day, calendars } = props
     const { updateDate, updateModal } = useStore()
+    const { setDailyDiaryId, diaryId, type } = staticStore()
 
     const emotionPositions = [
         { top: '0', left: '20%' }, // 첫 번째 이모티콘 위치
@@ -133,13 +136,15 @@ const Day = ( props: DayProps ) =>{
     }
 
     const goMyDiary = ( diary, date ) =>{
+        setDailyDiaryId( diary.diary.daily_diary_id )
         if ( type === '개인' ) {
-
-            navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
+            // navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
+            navigator(`/diary/${diary.diary.daily_diary_id}`)
         } else {
-                navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
-                // updateDate( date )
-                // updateModal()
+            // navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
+            navigator(`/diary/${diary.diary.daily_diary_id}`)
+            updateDate( date )
+            updateModal()
             }
         }
 
