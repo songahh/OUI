@@ -12,6 +12,7 @@ import diary1 from 'src/asset/images/diary1.png'
 import diary2 from 'src/asset/images/diary2.png'
 import diary3 from 'src/asset/images/diary3.png'
 import diary4 from 'src/asset/images/diary4.png'
+import diary5 from 'src/asset/images/diary5.png'
 import styled from "styled-components";
 
 
@@ -30,15 +31,15 @@ const PaperWrapper = styled( Paper )`
   align-items: center;
   justify-content: start;
   padding: 20px;
+  border-radius: 15px;
 `;
 
 const BoxWrapper = styled( Box )`
   width: 100%;
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-around;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 `;
 
 const ModalContentWrapper = styled.div`
@@ -159,15 +160,18 @@ const CustomModal = ( props:ModalProps ) => {
             <CloseIcon />
             </IconButton>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column'}}>
-            <h3>제목</h3>
+          <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width:'90%'}}>
+            <h3 style={{marginBottom:'5px'}}>제목</h3>
             <div>
-              <TextField id="outlined-basic" variant="outlined" value={ title } onChange={ handleTitleChange }/>
+              <TextField id="outlined-basic" variant="outlined" value={ title } onChange={ handleTitleChange } 
+              InputProps={{
+                style: { height: '45px' },
+              }}style={{ width:'100%'}}/>
             </div>
           </div>
             <h3>다이어리 표지</h3>
             <BoxWrapper>
-              {[diary1, diary2, diary3, diary4].map(( diaryImage, index ) => (
+              {[diary1, diary2, diary3, diary4, diary5].map(( diaryImage, index ) => (
                 <ImageContainer key={ index } onClick={() => handleSelection( index )}>
                   <DiaryImage
                     src={ diaryImage }
@@ -186,8 +190,8 @@ const CustomModal = ( props:ModalProps ) => {
               ))}
             </BoxWrapper>
             <h3>친구 추가</h3>
-            <div>
-              <TextField id="outlined-basic" variant="outlined"
+            <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width:'90%'}}>
+              <TextField id="outlined-basic" variant="outlined" placeholder=""
                 value={ searchName }
                 onChange={ handleInputChange }
                 InputProps={{
