@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -120,6 +121,8 @@ public class CalendarController {
 
         List<Member> memberList = calendarService.findMemberByDiaryId(diaryId);
 
-        return  new ResponseEntity<>(memberList, HttpStatus.OK);
+        List<DiaryMemberDto> memberIdList = memberList.stream().map(DiaryMemberDto::of).collect(Collectors.toList());
+
+        return  new ResponseEntity<>(memberIdList, HttpStatus.OK);
     }
 }

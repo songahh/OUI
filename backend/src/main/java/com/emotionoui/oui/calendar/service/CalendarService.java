@@ -87,27 +87,13 @@ public class CalendarService {
 
     // 오늘 일기 찾기 - 공유
     @Transactional(readOnly = true)
-    public List<ShareDailyDiaryRes> searchDailyDiary(Integer dailyId) {
-//        public ShareDailyDiaryRes searchDailyDiary(Integer dailyId) {
-//        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
-//                .orElseThrow(IllegalArgumentException::new);
+    public ShareDailyDiaryRes searchDailyDiary(Integer dailyId) {
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
 
-//        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
-//                .orElseThrow(IllegalArgumentException::new);
-//        return ShareDailyDiaryRes.of(dailyDiaryCollection, dailyDiary);
+        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+                .orElseThrow(IllegalArgumentException::new);
+        return ShareDailyDiaryRes.of(dailyDiaryCollection, dailyDiary);
 
-        List<DailyDiary> dailyDiaries = dailyDiaryRepository.findAllById(Collections.singleton(dailyId));
-
-        ArrayList<ShareDailyDiaryRes> dailyDiaryCollections = new ArrayList();
-
-        for (DailyDiary dailyDiary : dailyDiaries) {
-            DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
-                    .orElseThrow(IllegalArgumentException::new);
-
-            dailyDiaryCollections.add(ShareDailyDiaryRes.of(dailyDiaryCollection, dailyDiary));
-        }
-
-
-        return dailyDiaryCollections;
     }
 }
