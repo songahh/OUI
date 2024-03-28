@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,18 +81,33 @@ public class CalendarService {
 
         List<Member> memberList = memberDiaryRepository.findMemberByDiaryId(diaryId);
 
+
         return memberList;
     }
+
+    // 오늘 일기 찾기 - 공유
     @Transactional(readOnly = true)
-    public ShareDailyDiaryRes searchDailyDiary(Integer dailyId){
-        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
-                .orElseThrow(IllegalArgumentException::new);
+    public List<ShareDailyDiaryRes> searchDailyDiary(Integer dailyId) {
+//        public ShareDailyDiaryRes searchDailyDiary(Integer dailyId) {
+//        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+//                .orElseThrow(IllegalArgumentException::new);
 
-        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
-                .orElseThrow(IllegalArgumentException::new);
-        return ShareDailyDiaryRes.of(dailyDiaryCollection, dailyDiary);
+//        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+//                .orElseThrow(IllegalArgumentException::new);
+//        return ShareDailyDiaryRes.of(dailyDiaryCollection, dailyDiary);
 
+        List<DailyDiary> dailyDiaries = dailyDiaryRepository.findAllById(Collections.singleton(dailyId));
+
+        ArrayList<ShareDailyDiaryRes> dailyDiaryCollections = new ArrayList();
+
+        for (DailyDiary dailyDiary : dailyDiaries) {
+            DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+                    .orElseThrow(IllegalArgumentException::new);
+
+            dailyDiaryCollections.add(ShareDailyDiaryRes.of(dailyDiaryCollection, dailyDiary));
+        }
+
+
+        return dailyDiaryCollections;
     }
-
-
 }
