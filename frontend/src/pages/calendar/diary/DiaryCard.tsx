@@ -43,10 +43,10 @@ const TodoBody = styled.div`
 `
 
 
-const DiaryCard = ( props: TodoCardProps ) =>{
+const DiaryCard = ( props ) =>{
 
 
-    const { diary } = props
+    const { diary, member } = props
 
 
     return(
@@ -71,9 +71,3 @@ const DiaryCard = ( props: TodoCardProps ) =>{
 }
 
 export default DiaryCard;
-
-
-type TodoCardProps = {
-    children?: React.ReactNode
-    diary?: string
-}
