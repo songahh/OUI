@@ -50,13 +50,14 @@ const Title = styled.span`
 `;
 
 const Emotion = styled.div`
-    width: 160px; 
-    height: 80px;
+    width: 120px; 
+    height: 70px;
     border: 5px solid white;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 30px;
-    background-color: #FFC814;
-    font-size: 30px;
+    border-radius: 25px;
+    background-color: #BBDED6;
+    color: white;
+    font-size: 28px;
     font-weight: bold;
     display: flex;
     justify-content: center;
@@ -72,6 +73,7 @@ const Comment = styled.div`
     background-color: white;
     border-radius: 20px;
     font-size: 24px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 `
 
 const Diary = () => {
@@ -126,8 +128,8 @@ const Diary = () => {
         <Container>
             <Header>
                 <BackIcon size={ 40 } onClick={() => { navigator(`/calendar`, {state: { diaryId: diaryId , type: type}}) }} />
-                {/* <Button btType='back'/> */}
                 {/* <Drawer/> */}
+                <span style={{ fontSize: "30px" }}>{ dailyDiary?.data?.dailyDate.substring(0, 10) }</span>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     {(type === '공유' && isDeco) && (
                         <DecoIcon size={ 55 } onClick={() => navigator(`/diary/deco/${ dailyDiaryId }`, {state: {dailyDiaryId: dailyDiaryId, type: type}})} />
@@ -148,13 +150,13 @@ const Diary = () => {
                 </div>
             )}
             <Canvas canvasRef={ canvasRef } canvas={ canvas } setCanvas={ setCanvas } setIsFontLoaded={ setIsFontLoaded } />
-            <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ paddingTop: "30px", marginBottom: "20px" }} />
-            <div style={{ fontSize: "24px" }}>분석 결과 보러 가기</div>
+            <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ paddingTop: "30px", marginBottom: "10px" }} />
+            <div style={{ fontSize: "24px", fontWeight: "bold" }}>분석 결과 보러 가기</div>
             <ResultSection>
                 <Title>나의 감정은?</Title>
                 <div style={{ marginTop: "20px", marginBottom: "60px", display: "flex" }}>
-                    <Emotion># 느긋</Emotion>
-                    <Emotion># 기쁨</Emotion>
+                    <Emotion>#느긋</Emotion>
+                    <Emotion>#기쁨</Emotion>
                 </div>
                 {(type === '개인') && (
                     <>
