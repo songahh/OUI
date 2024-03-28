@@ -134,10 +134,12 @@ const Day = ( props: DayProps ) =>{
 
     const goMyDiary = ( diary, date ) =>{
         if ( type === '개인' ) {
-            navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type, diaryId: diaryId }})
-            } else {
-                updateDate( date )
-                updateModal()
+
+            navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
+        } else {
+                navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
+                // updateDate( date )
+                // updateModal()
             }
         }
 
