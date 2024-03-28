@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import { Drawer, MusicPlayer2, Button, EditIcon, DecoIcon, DeleteIcon } from 'src/components';
+import { Drawer, MusicPlayer2, Button, EditIcon, DecoIcon, DeleteIcon, BackIcon } from 'src/components';
 import { Canvas } from './components';
 import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useState, useEffect, useRef } from 'react';
@@ -119,13 +119,12 @@ const Diary = () => {
         navigator(`/main`);
         // navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId}});
     }
-
     return (
         <Container>
             <Header>
-                {/* <BackIcon size={ 40 } onClick={() => { navigator(`/diary/${dailyDiaryId}`, {state: {dailyDiaryId: dailyDiaryId, type: type}}) }} /> */}
+                <BackIcon size={ 40 } onClick={() => { navigator(`/calendar`, {state: { diaryId: diaryId , type: type}}) }} />
                 {/* <Button btType='back'/> */}
-                <Drawer/>
+                {/* <Drawer/> */}
                 <div style={{ display: "flex", alignItems: "center" }}>
                     {(type === '공유' && isDeco) && (
                         <DecoIcon size={ 55 } onClick={() => navigator(`/diary/deco/${ dailyDiaryId }`, {state: {dailyDiaryId: dailyDiaryId, type: type}})} />
