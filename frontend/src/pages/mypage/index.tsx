@@ -18,10 +18,7 @@ const MyPage = () => {
       };
     return(
         <>
-            <Header>
-                <Button path='/mypage' btType='back' name="temp"></Button>
-                <Button path='/mypage' btType='user' name="temp"></Button>
-            </Header>
+            <Drawer/>
             <MusicPlayer></MusicPlayer>
             <MusicPlayer2></MusicPlayer2>
             <NotificationModal isOpen={true} onClose={() => console.log('Modal closed')} onNotificationSelect={handleNotificationSelection}></NotificationModal>
