@@ -289,6 +289,18 @@ public class DiaryServiceImpl implements DiaryService{
         return SearchDailyDiaryRes.of(dailyDiaryCollection, dailyDiary, memberId);
     }
 
+    // 일기 날짜로 조회하기
+    public SearchDailyDiaryRes searchDailyDiaryByDate(Integer diaryId, String date, Integer memberId){
+        DailyDiary dailyDiary = dailyDiaryRepository.findByDiaryIdAndDate(diaryId, date);
+
+        System.out.println("dailyDiary Id : " + dailyDiary.getId());
+
+        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        return SearchDailyDiaryRes.of(dailyDiaryCollection, dailyDiary, memberId);
+    }
+
 
     public EmotionClass searchEmotion(Integer dailyId){
         DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
