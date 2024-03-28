@@ -70,7 +70,6 @@ const DiaryWrite = () => {
     const writeDiary = useMutation( postDiary );
     
     const goCalendar = () => {
-        console.log(type)
         if(type === '개인') {
             // navigator(`/calendar`, {state: {diaryId: diaryId, type: type}});
             navigator(`/calendar`);
@@ -91,8 +90,15 @@ const DiaryWrite = () => {
             dailyContent: diaryToString,
         };
 
-        await writeDiary.mutateAsync(data);
-        goCalendar();
+        // const existDiary = await getDiary(diaryId, dailyDate);
+        const existDiary = true;
+
+        if(!existDiary) {
+            await writeDiary.mutateAsync(data);
+            goCalendar();
+        } else {
+            alert('이미 일기가 작성된 날짜입니다.');
+        }
     }
 
     return (
