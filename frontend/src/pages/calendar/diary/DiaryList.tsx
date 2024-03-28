@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import DiaryCard from "./DiaryCard"
-import { getDayDiary } from '../api'
+import { getDayDiary, getDiaryMember } from '../api'
 import useStore from "../store"
 import { format } from "date-fns"
 import { useQuery } from "react-query"
@@ -15,7 +15,7 @@ const TodoListWrapper = styled.div`
   padding-bottom: 12px;
 `
 
-const TodoList = ( props ) => {
+const DiaryList = ( props ) => {
 
     const { diaries, diaryId } = props
 
@@ -34,11 +34,11 @@ const TodoList = ( props ) => {
       })
   })
 
-  console.log("selectedDiaries", selectedDiaries)
+  const { data: members } = useQuery( 'members', () => getDiaryMember( diaryId ))
+  console.log("members", members)
 
-  const { data: daily } = useQuery('daily', () => getDayDiary({diaryId: diaryId, dailyId: selectedDiaries}))
-
-  console.log(daily)
+  const { data: daily } = useQuery( 'daily', () => getDayDiary({ diaryId: diaryId, dailyId: selectedDiaries }))
+  console.log( daily )
 
   return(
     <TodoListWrapper>
@@ -55,4 +55,4 @@ const TodoList = ( props ) => {
   )
 }
 
-export default TodoList
+export default DiaryList

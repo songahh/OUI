@@ -62,15 +62,13 @@ const ShareModal = (props) => {
 
   const { diaries, diaryId, members } = props
 
-  console.log('members', members)
-
   const [ modalContent, setModalContent ] = useState(true);
   const [ isSchedule, setIsSchedule ] = useState(true);
 
   const { clickDate } = useStore()
 
   const createTodo = () =>{
-    setModalContent(!modalContent)
+    setModalContent( !modalContent )
   }
 
   const ClickSchedule = () =>{
@@ -104,9 +102,9 @@ console.log("TODOS", todos)
         <HeaderBoxWrapper color= 'trans' onClick={ ClickDiary }>일기</HeaderBoxWrapper>
       </ModalHeaderWrapper>
       <div style={{ width: '80%', marginLeft: '10%' }}>
-      <DateWrapper> { format( clickDate, 'yyyy-MM-dd' ) }</DateWrapper>
-        <PlusButton onClick={ createTodo }>+</PlusButton>
-        <TodoList schedules = { todos }/>
+        <DateWrapper>{ format( clickDate, 'yyyy-MM-dd' ) }</DateWrapper>
+          <PlusButton onClick={ createTodo }>+</PlusButton>
+          <TodoList schedules = { todos }/>
       </div>
       </>
       }
@@ -118,7 +116,7 @@ console.log("TODOS", todos)
         <HeaderBoxWrapper color= 'trans' onClick={ ClickDiary }>일기</HeaderBoxWrapper>
       </ModalHeaderWrapper>
         <div  style={{ width: '80%', marginLeft: '10%' }}>
-        <Todo type='공유'/>
+          <Todo type='공유'/>
         </div>
         </>
       }
@@ -130,8 +128,10 @@ console.log("TODOS", todos)
             <HeaderBoxWrapper color= 'trans' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
             <HeaderBoxWrapper color= '#FFFEFC' onClick={ ClickDiary }>일기</HeaderBoxWrapper>
         </ModalHeaderWrapper>
-        <DateWrapper> { format(clickDate, 'yyyy-MM-dd' ) }</DateWrapper>
-        <DiaryList diaries = { diaries } diaryId = { diaryId }/>
+        <div style={{ width: '80%', marginLeft: '10%' }}>
+          <DateWrapper> { format( clickDate, 'yyyy-MM-dd' ) }</DateWrapper>
+          <DiaryList diaries = { diaries } diaryId = { diaryId }/>
+        </div>
         </>
       }
     </ShareModalWrapper>
