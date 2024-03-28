@@ -91,7 +91,6 @@ const ShareModal = (props) => {
     return false
 })
 
-console.log("TODOS", todos)
 
   return(
     <ShareModalWrapper>
@@ -108,6 +107,7 @@ console.log("TODOS", todos)
       </div>
       </>
       }
+      
       {
         !modalContent && isSchedule &&  // 일정 작성
         <>

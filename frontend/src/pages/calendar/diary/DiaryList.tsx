@@ -24,7 +24,7 @@ const DiaryList = ( props ) => {
     const selectedDiaries= [];
 
 
-    diaries.forEach(item => {
+    diaries.forEach( item => {
       item?.diaries.forEach( diary => {
         const date = diary.date;
         console.log("date", date)
@@ -35,19 +35,15 @@ const DiaryList = ( props ) => {
   })
 
   const { data: members } = useQuery( 'members', () => getDiaryMember( diaryId ))
-  console.log("members", members)
 
   const { data: daily } = useQuery( 'daily', () => getDayDiary({ diaryId: diaryId, dailyId: selectedDiaries }))
-  console.log( daily )
 
   return(
     <TodoListWrapper>
       {
-        diaries?.map( ( diary, index ) => {
+        members?.data?.map( ( member: DiaryMemberType, index ) => {
           return(
-            <DiaryCard key={ index } diary = { diary }>
-              !!
-            </DiaryCard>
+            <DiaryCard key={ index } member = { member } diary = { daily?.data }/>
           )
         })
       }
@@ -56,3 +52,9 @@ const DiaryList = ( props ) => {
 }
 
 export default DiaryList
+
+
+type DiaryMemberType = {
+  memberid?: number,
+  nickname?: string
+}
