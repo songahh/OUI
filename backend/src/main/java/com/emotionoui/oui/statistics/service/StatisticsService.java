@@ -79,7 +79,9 @@ public class StatisticsService{
 
         for(int i = 0; i < size; i++) {
             Date date = mongoIdList.get(i).getDate();
-
+            if(temp.get(i)==null){
+                continue;
+            }
             double[] currentEmotions = new double[]{temp.get(i).getHappy(), temp.get(i).getSad()};
             if (weeklytotalEmotion.containsKey(date)) {
                 countMap.put(date,countMap.get(date)+1);
@@ -151,6 +153,9 @@ public class StatisticsService{
         emotionSums.put("sad", 0.0);
 
         for (EmotionClass emotion : emotions) {
+            if(emotion==null){
+                continue;
+            }
             emotionSums.put("happy", emotionSums.get("happy") + emotion.getHappy());
             emotionSums.put("comfortable", emotionSums.get("comfortable") + emotion.getComfortable());
             emotionSums.put("embarrassed", emotionSums.get("embarrassed") + emotion.getEmbarrassed());
