@@ -104,7 +104,7 @@ const Analysis = () => {
 
 
     useEffect(()=>{
-        getWeekly({ diaryId:diaryId, date: today }).then(( res )=>{
+        getWeekly({ diaryId: diaryId, date: today }).then(( res )=>{
             const tempDayLabel = [];
             const tempHappyData = [];
             const tempSadData = [];
