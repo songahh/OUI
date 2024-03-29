@@ -144,9 +144,14 @@ const requestPermission = async () => {
       });
     } else {
       console.log('알림 권한 거부됨.');
+      showAlertToChangePermission();
     }
   });
 })}}
+
+function showAlertToChangePermission() {
+  alert('알림을 받기 위해서는 브라우저 설정에서 알림 권한을 허용해주세요.');
+}
 
 
 const Main = () => {
@@ -249,9 +254,9 @@ const Main = () => {
   }, [ modalSubmitted, refetchDiary, refetchMember]);
 
 
-  // useEffect(()=>{
-  //   requestPermission();
-  // },[])
+  useEffect(()=>{
+    requestPermission();
+  },[])
 
   const [modalOpen, setModalOpen] = useState(true);
   const handleModalClose = () => setModalOpen(false);
@@ -261,8 +266,6 @@ const Main = () => {
 
   return (
     <>
-     <NotificationModal onNotificationSelect={ handleNotificationSelect }   isOpen={ modalOpen } 
-   onClose={ handleModalClose }></NotificationModal> 
     <Header>
       <ProfileImage src={ userImage || ya } alt="유저 프로필 이미지" />
       <Button btType='bell' onButtonClick={() => setAlarmModalOpen(true)} />
