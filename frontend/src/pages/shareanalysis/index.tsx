@@ -2,8 +2,8 @@ import { Drawer } from "src/components/control/Drawer";
 import { Button } from "src/components/control/Button";
 import { Header } from "src/components/control/Header";
 import { format } from 'date-fns'
-import { getWeekly, getMember } from "./api/";
 import { useQuery } from 'react-query'
+import { getMember } from "./api";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -75,7 +75,7 @@ const GraphWrapper = styled.div`
 
 
 
-const Analysis = () => {
+const ShareAnalysis = () => {
 
     const [ keyType, setKeyType ] = useState( 1 ); 
     const [ happyDataSet, setHappyDataSet ] = useState( {
@@ -104,52 +104,6 @@ const Analysis = () => {
 
 
     useEffect(()=>{
-        getWeekly({ diaryId:diaryId, date: today }).then(( res )=>{
-            const tempDayLabel = [];
-            const tempHappyData = [];
-            const tempSadData = [];
-
-            //데이터가 있을 때
-            if(res !== undefined ){
-                Object.keys(res.data).sort().forEach((key,value)=>{
-                    tempHappyData.push( res.data[key][0] )
-                    tempSadData.push( res.data[key][1] )
-                    console.log( res.data[key][1] )
-                    const temp = new Date(key)
-                    tempDayLabel.push(daysOfWeek[temp.getDay()])
-                })
-            }
-
-
-
-            setHappyDataSet({
-                labels: tempDayLabel,
-                datasets: [{
-                    data: tempHappyData,
-                    fill: true,
-                    backgroundColor: "white",
-                    borderColor: "#FFDD6B",
-                    pointBackgroundColor: "#FFDD6B",
-                    pointBorderWidth: 2,
-                    pointBorderColor: "#FFC814",
-                }]
-              });
-      
-              setSadDataSet({
-                labels: tempDayLabel,
-                datasets: [{
-                    data: tempSadData,
-                    fill: true,
-                    backgroundColor: "white",
-                    borderColor: "#C0DEFF",
-                    pointBackgroundColor: "#C0DEFF",
-                    pointBorderWidth: 2,
-                    pointBorderColor: "#88B3E2",
-                }]
-              });
-        }).catch(( err ) => {
-            console.log( err )
-        })
         getMember();
 
     },[]);
@@ -182,36 +136,11 @@ const Analysis = () => {
                     <Button></Button>
                     <Button></Button>
                 </Header>
-                <SwitchWrapper setKeyType={ setKeyType } keyType={ keyType } ></SwitchWrapper>
                     <BoxWrapper>
-                    {keyType === 2 && (
-                        <>
-                            <div>
-                                <div style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold', fontSize: '16px' }}>
-                                    { userName } 님의 이번 주 “행복 그래프” 예요!
-                                </div>
-                                <GraphWrapper>
-                                    <Line data={ happyDataSet } options={ options } />
-                                </GraphWrapper>
-                                
-
-                            </div>
-                            <div>
-                                <div style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold', fontSize: '16px' }}>
-                                    { userName } 님의 이번 주 “우울 그래프” 예요!
-                                </div>
-                                <GraphWrapper>
-                                    <Line data={ sadDataSet }  options={ options }/>
-                                </GraphWrapper>
-                            </div>
-
-                        </>
-                    )}
-                    {keyType === 1 && (
-                        <>
-                            <Monthly></Monthly>
-                        </>
-                    )}
+                        <Monthly/>
+                    </BoxWrapper>
+                    <BoxWrapper>
+                        <Monthly/>
                     </BoxWrapper>
                     <BottomNavi/>
                 
@@ -220,4 +149,4 @@ const Analysis = () => {
 
 }
 
-export default Analysis;
+export default ShareAnalysis;
