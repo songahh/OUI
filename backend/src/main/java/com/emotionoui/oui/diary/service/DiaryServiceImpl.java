@@ -8,6 +8,7 @@ import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.DecorateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDiarySettingReq;
+import com.emotionoui.oui.diary.dto.res.DecorateDailyDiaryRes;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
 import com.emotionoui.oui.diary.dto.res.SearchDiarySettingRes;
 import com.emotionoui.oui.diary.entity.DailyDiary;
@@ -41,6 +42,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -288,6 +292,26 @@ public class DiaryServiceImpl implements DiaryService{
         return SearchDailyDiaryRes.of(dailyDiaryCollection, dailyDiary, memberId);
     }
 
+    // 일기 날짜로 조회하기
+    public SearchDailyDiaryRes searchDailyDiaryByDate(Integer diaryId, String date, Integer memberId){
+        LocalDate localDate = LocalDate.parse(date);
+
+        // LocalTime 생성 (원하는 시간으로 설정)
+        LocalTime localTime = LocalTime.of(9, 0, 0);
+
+        // LocalDateTime 생성
+        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
+
+        DailyDiary dailyDiary = dailyDiaryRepository.findByDiaryIdAndDate(diaryId, localDateTime);
+
+        System.out.println("dailyDiary Id : " + dailyDiary.getId());
+
+        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        return SearchDailyDiaryRes.of(dailyDiaryCollection, dailyDiary, memberId);
+    }
+
 
     public EmotionClass searchEmotion(Integer dailyId){
         DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
@@ -367,21 +391,31 @@ public class DiaryServiceImpl implements DiaryService{
         }
     }
 
-
     // 일기 꾸미기
-    public String decorateDailyDiary(DecorateDailyDiaryReq req, Integer dailyId){
+    public DecorateDailyDiaryRes decorateDailyDiary(DecorateDailyDiaryReq req, Member member){
+        DecorateDailyDiaryRes res = DecorateDailyDiaryRes.builder()
+                .memberId(member.getMemberId())
+                .nickname(member.getNickname())
+                .decoration(req.getDecoration())
+                .build();
 
-        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        dailyDiaryCollection.setDecoration(req.getDecoration());
-        dailyDiaryMongoRepository.save(dailyDiaryCollection);
-
-        return dailyDiaryCollection.getId().toString();
+        return res;
     }
+
+
+//    public String decorateDailyDiary(DecorateDailyDiaryReq req, Integer dailyId){
+//
+//        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+//                .orElseThrow(IllegalArgumentException::new);
+//
+//        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+//                .orElseThrow(IllegalArgumentException::new);
+//
+//        dailyDiaryCollection.setDecoration(req.getDecoration());
+//        dailyDiaryMongoRepository.save(dailyDiaryCollection);
+//
+//        return dailyDiaryCollection.getId().toString();
+//    }
 
     // 다이어리 나가기
     @Override
