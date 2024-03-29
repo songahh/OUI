@@ -5,8 +5,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { getDiary, postDiaryDeco } from '../api';
-// import { Stomp } from "@stomp/stompjs";
-// import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 import styled from 'styled-components';
 
 const Header = styled.div`
@@ -37,9 +37,9 @@ const DiaryDeco = () => {
     const [ isFontLoaded, setIsFontLoaded ] = useState(false);
     const [ activeTool, setActiveTool ] = useState("image");
     
-    // const storedDataString = localStorage.getItem('userStorage');
-    // const storedData = JSON.parse(storedDataString);
-    // const accessToken = storedData?.state?.accessToken;
+    const storedDataString = localStorage.getItem('userStorage');
+    const storedData = JSON.parse(storedDataString);
+    const accessToken = storedData?.state?.accessToken;
     
     // useEffect(() => {
     //     const socket = new SockJS(process.env.REACT_APP_BASE_URL + '/ws');
