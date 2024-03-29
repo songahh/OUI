@@ -31,7 +31,7 @@
   "types": [
     "@types/node"
   ],
-  "include": ["**/*.ts","**/*.tsx","./src/@types"],
+  "include": ["**/*.ts","**/*.tsx","./src/@types", "public/service-worker.ts"],
   "exclude": [
     "node_modules/*"
   ]
