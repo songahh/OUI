@@ -117,10 +117,14 @@ public class DiaryServiceImpl implements DiaryService{
             // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
             if(!Objects.equals(text, "")){
                 // MongoDB에 Spotify URI 리스트 넣기
-                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary, member);
-                List<String> spotifyUriList = findSpotifyUri(musicString);
-                document.setMusic(spotifyUriList);
-                dailyDiaryMongoRepository.save(document);
+                
+                // 테스트용
+                String a = sendDataToAI(text, dailyDate, document, dailyDiary, member);
+                log.info("되라되라되라되라");
+//                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary, member);
+//                List<String> spotifyUriList = findSpotifyUri(musicString);
+//                document.setMusic(spotifyUriList);
+//                dailyDiaryMongoRepository.save(document);
             }
 
         } catch (Exception e){
@@ -172,7 +176,7 @@ public class DiaryServiceImpl implements DiaryService{
     // AI를 통한 감정분석 및 음악추천 결과값 받기
     public String sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary, Member member) throws ExecutionException, InterruptedException {
         // 감정분석 AI Url
-        String aiServerUrl = "http://ai-server-1/process-data";
+        String aiServerUrl = "http://j10a506.p.ssafy.io:8008/analysis/openvino";
         String aiServerUrl2 = "http://ai-server-2/process-data";
 
         // CompletableFuture를 사용하여 감정분석 요청을 보내고 데이터 받기
@@ -180,6 +184,7 @@ public class DiaryServiceImpl implements DiaryService{
         // runAsync: 비동기 + 반환값이 없는 경우
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
             // 텍스트 내용 보내고 감정분석 결과 받기
+            log.info("sendTextData 전까지 왔나요?");
             return sendTextData(text, aiServerUrl);
         }).thenApply(s -> {
             // thenApply: 반환 값을 받아서 다른 값을 반환함
@@ -188,11 +193,13 @@ public class DiaryServiceImpl implements DiaryService{
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 // 감정분석 결과를 MongoDB에 넣기
+                log.info("emotionRes 까지 왔나요?");
                 EmotionClass emotionRes = objectMapper.readValue(s, EmotionClass.class);
+
+                log.info(emotionRes.getMaxEmotion());
+
                 document.setEmotion(emotionRes);
                 dailyDiaryMongoRepository.save(document);
-
-
 
                 // MariaDB에 대표감정(Emotion) 정보 저장
                 Emotion emotion = Emotion.builder()
@@ -207,24 +214,38 @@ public class DiaryServiceImpl implements DiaryService{
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
+            // 실험실험
+            return null;
             // 감정분석 보내고 음악추천 결과 받기
-            return sendEmotionData(s, aiServerUrl2);
+            // return sendEmotionData(s, aiServerUrl2);
         });
 
-        return future.get();
+        return null;
+//        return future.get();
     }
 
     // 감정처리를 위한 요청을 보내고 감정분석 결과를 받는 메서드
     private static String sendTextData(String text, String aiServerUrl) {
+        
+        log.info("sendTextData 안에 들어왔어");
+        log.info("text : " + text);
+        log.info("url : " + aiServerUrl);
+
+        String newText = text.replace("\n","\\n");
+        // JSON 형식의 문자열 생성
+        String jsonBody = "{\"text\": \"" + newText + "\"}";
+        log.info("jsonBody: " + jsonBody);
+
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(aiServerUrl))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(text))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
 
         try {
             HttpResponse<String> emotionData = client.send(request, HttpResponse.BodyHandlers.ofString());
+            log.info("emotionData가 나오는 부분: " + emotionData.body());
             return emotionData.body();
         } catch (Exception e) {
             e.printStackTrace();
