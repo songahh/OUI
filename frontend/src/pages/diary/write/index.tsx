@@ -3,9 +3,9 @@ import { SaveIcon, BackIcon } from 'src/components';
 import { DateSelect, BottomSheet, Canvas } from '../components';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useRef } from 'react';
-import { useMutation } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import useStore from 'src/store';
-import { postDiary } from '../api';
+import { postDiary, getDiaryByDate } from '../api';
 import styled from 'styled-components';
 
 const Header = styled.div`
@@ -90,10 +90,8 @@ const DiaryWrite = () => {
             dailyContent: diaryToString,
         };
 
-        // const existDiary = await getDiary(diaryId, dailyDate);
-        const existDiary = true;
-
-        if(!existDiary) {
+        const diary = await getDiaryByDate({diaryId: diaryId, date: selectedDate});
+        if(!diary) {
             await writeDiary.mutateAsync(data);
             goCalendar();
         } else {

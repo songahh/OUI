@@ -1,9 +1,11 @@
 import { getAxios } from "src/api/util";
 
-export const getDiary = async ( params: number ) => {
+export const getDiaryByDate = async ( params: { diaryId: number, date: string } ) => {
     try {
-        return await getAxios( `/diary/${params}` )
+        return await getAxios( `/diary/${params.diaryId}/${params.date}` )
     } catch( err ) {
-        console.log( err );
+        if(err.response && err.respose.status === 403) {
+            return null;
+        }
     }
 }
