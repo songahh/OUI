@@ -16,6 +16,14 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styled from "styled-components";
 
+
+const CarouselContainer = styled.div`
+  max-width: 100%;
+  margin: auto;
+  overflow: hidden; 
+  padding: 20px 0; 
+`;
+
 const SliderWrapper = styled( Slider )`
   
   .slick-track{
@@ -270,7 +278,8 @@ const Main = () => {
         {userName && <UserRecord style={{ fontWeight: 'bold' }}>{ userName }님의 감정기록 :)</UserRecord>}
     </YellowBox>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div className="slider-container" style={{ minHeight: '100%', minWidth: '100%' }}>      
+      <CarouselContainer>
+      {/* <div className="slider-container" style={{ minHeight: '100%', minWidth: '100%' }}>       */}
         <SliderWrapper { ...settings }>
         {cards.map(( card, index ) => (
           <div key={index}>
@@ -281,7 +290,8 @@ const Main = () => {
           <Card/>
           <Card/>
         </SliderWrapper>
-      </div>
+        </CarouselContainer>
+      {/* </div> */}
     </div>
     <AlarmModal isOpen={ alarmModalOpen } closeModal={() => setAlarmModalOpen(false)} />
     <CustomModal isOpen={ isModalOpen } closeModal={ closeModal } isFinish={ addCard } />
