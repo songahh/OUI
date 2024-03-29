@@ -29,6 +29,7 @@ import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.music.service.MusicService;
 import com.emotionoui.oui.querydsl.QuerydslRepositoryCustom;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -94,41 +95,45 @@ public class DiaryServiceImpl implements DiaryService{
         DailyDiary newDailyDiary = dailyDiaryRepository.save(dailyDiary);
         Date dailyDate = req.getDailyDate();
 
-        // 추후 삭제
-        // MariaDB에 대표감정(Emotion) 정보 저장
-        Emotion emotion = Emotion.builder()
-                .dailyDiary(dailyDiary)
-                .emotion("joy")
-                .date(req.getDailyDate())
-                .member(member)
-                .build();
-
-        emotionRepository.save(emotion);
+//        // 추후 삭제
+//        // MariaDB에 대표감정(Emotion) 정보 저장
+//        Emotion emotion = Emotion.builder()
+//                .dailyDiary(dailyDiary)
+//                .emotion("joy")
+//                .date(req.getDailyDate())
+//                .member(member)
+//                .build();
+//
+//        emotionRepository.save(emotion);
 
         String text = null;
 
-//        try {
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            JsonNode jsonNode = objectMapper.readTree(req.getDailyContent());
-//
-//            // objects[0].text 안에 있는 텍스트 파일내용 추출
-//            text = jsonNode.get("objects").get(0).get("text").asText();
-//            // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
-//            if(!Objects.equals(text, "")){
-//                // MongoDB에 Spotify URI 리스트 넣기
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(req.getDailyContent());
+
+            // objects[0].text 안에 있는 텍스트 파일내용 추출
+            text = jsonNode.get("objects").get(0).get("text").asText();
+            // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
+            if(!Objects.equals(text, "")){
+                // MongoDB에 Spotify URI 리스트 넣기
+                
+                // 테스트용
+                String a = sendDataToAI(text, dailyDate, document, dailyDiary, member);
+                log.info("되라되라되라되라");
 //                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary, member);
 //                List<String> spotifyUriList = findSpotifyUri(musicString);
 //                document.setMusic(spotifyUriList);
 //                dailyDiaryMongoRepository.save(document);
-//            }
-//
-//        } catch (Exception e){
-//            e.printStackTrace();
-//            log.info("텍스트 파일 위치를 찾을 수 없습니다.");
-//        }
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+            log.info("텍스트 파일 위치를 찾을 수 없습니다.");
+        }
 
         // 공유 다이어리일 시 친구들에게 본인 일기 알람 전송
-        //alarmService.sendFriendDiary(diary, newDailyDiary.getId(), member);
+        alarmService.sendFriendDiary(diary, newDailyDiary.getId(), member);
 
         return document.getId().toString();
     }
@@ -144,26 +149,26 @@ public class DiaryServiceImpl implements DiaryService{
 
         List<String> list = new ArrayList<>();
 
-        // 할당받은 musicId를 기반으로 MongoDB에 있는 MUSIC document(musicInfo) 찾기
-        for(int i=0; i<musicIdList.size(); ++i){
-            int musicId = musicIdList.get(i);
-            MusicCollection musicCollection = musicMongoRepository.findByMusicId(musicId);
-            String artistName = musicCollection.getArtistName().get(0);
-            String songName = musicCollection.getSongName();
-            // spotify URI이 존재하지 않으면
-            if(musicCollection.getSpotifyUrl()==null){
-                // searchMusicURI 함수를 통해 spotify URI를 찾음
-                String uri = musicService.searchMusicURI(artistName, songName);
-                if(uri!=null) {
-                    list.add(uri);
-                    // MongoDB에 있는 기존 MUSIC Document에도 반영
-                    musicCollection.setSpotifyUrl(uri);
-                    musicMongoRepository.save(musicCollection);
-                }
-            }else{
-                list.add(musicCollection.getSpotifyUrl());
-            }
-        }
+//        // 할당받은 musicId를 기반으로 MongoDB에 있는 MUSIC document(musicInfo) 찾기
+//        for(int i=0; i<musicIdList.size(); ++i){
+//            int musicId = musicIdList.get(i);
+//            MusicCollection musicCollection = musicMongoRepository.findByMusicId(musicId);
+//            String artistName = musicCollection.getArtistName().get(0);
+//            String songName = musicCollection.getSongName();
+//            // spotify URI이 존재하지 않으면
+//            if(musicCollection.getSpotifyUrl()==null){
+//                // searchMusicURI 함수를 통해 spotify URI를 찾음
+//                String uri = musicService.searchMusicURI(artistName, songName);
+//                if(uri!=null) {
+//                    list.add(uri);
+//                    // MongoDB에 있는 기존 MUSIC Document에도 반영
+//                    musicCollection.setSpotifyUrl(uri);
+//                    musicMongoRepository.save(musicCollection);
+//                }
+//            }else{
+//                list.add(musicCollection.getSpotifyUrl());
+//            }
+//        }
         
         return list;
     }
@@ -171,15 +176,15 @@ public class DiaryServiceImpl implements DiaryService{
     // AI를 통한 감정분석 및 음악추천 결과값 받기
     public String sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary, Member member) throws ExecutionException, InterruptedException {
         // 감정분석 AI Url
-        String aiServerUrl = "http://ai-server-1/process-data";
+        String aiServerUrl = "http://j10a506.p.ssafy.io:8008/analysis/openvino";
         String aiServerUrl2 = "http://ai-server-2/process-data";
-
 
         // CompletableFuture를 사용하여 감정분석 요청을 보내고 데이터 받기
         // supplyAsync: 비동기 + 반환값이 있는 경우
         // runAsync: 비동기 + 반환값이 없는 경우
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
             // 텍스트 내용 보내고 감정분석 결과 받기
+            log.info("sendTextData 전까지 왔나요?");
             return sendTextData(text, aiServerUrl);
         }).thenApply(s -> {
             // thenApply: 반환 값을 받아서 다른 값을 반환함
@@ -188,14 +193,16 @@ public class DiaryServiceImpl implements DiaryService{
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 // 감정분석 결과를 MongoDB에 넣기
+                log.info("emotionRes 까지 왔나요?");
                 EmotionClass emotionRes = objectMapper.readValue(s, EmotionClass.class);
+
                 document.setEmotion(emotionRes);
                 dailyDiaryMongoRepository.save(document);
 
                 // MariaDB에 대표감정(Emotion) 정보 저장
                 Emotion emotion = Emotion.builder()
                         .dailyDiary(dailyDiary)
-                        .emotion(emotionRes.getMaxEmotion())
+                        .emotion(emotionRes.getEmotionList().get(0))
                         .date(dailyDate)
                         .member(member)
                         .build();
@@ -205,24 +212,38 @@ public class DiaryServiceImpl implements DiaryService{
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
+            // 실험실험
+            return null;
             // 감정분석 보내고 음악추천 결과 받기
-            return sendEmotionData(s, aiServerUrl2);
+            // return sendEmotionData(s, aiServerUrl2);
         });
 
-        return future.get();
+        return null;
+//        return future.get();
     }
 
     // 감정처리를 위한 요청을 보내고 감정분석 결과를 받는 메서드
     private static String sendTextData(String text, String aiServerUrl) {
+        
+        log.info("sendTextData 안에 들어왔어");
+        log.info("text : " + text);
+        log.info("url : " + aiServerUrl);
+
+        String newText = text.replace("\n","\\n");
+        // JSON 형식의 문자열 생성
+        String jsonBody = "{\"text\": \"" + newText + "\"}";
+        log.info("jsonBody: " + jsonBody);
+
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(aiServerUrl))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(text))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
 
         try {
             HttpResponse<String> emotionData = client.send(request, HttpResponse.BodyHandlers.ofString());
+            log.info("emotionData가 나오는 부분: " + emotionData.body());
             return emotionData.body();
         } catch (Exception e) {
             e.printStackTrace();
@@ -406,19 +427,19 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
 
-//    public String decorateDailyDiary(DecorateDailyDiaryReq req, Integer dailyId){
-//
-//        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
-//                .orElseThrow(IllegalArgumentException::new);
-//
-//        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
-//                .orElseThrow(IllegalArgumentException::new);
-//
-//        dailyDiaryCollection.setDecoration(req.getDecoration());
-//        dailyDiaryMongoRepository.save(dailyDiaryCollection);
-//
-//        return dailyDiaryCollection.getId().toString();
-//    }
+    public String decorateSaveDailyDiary(DecorateDailyDiaryReq req, Integer dailyId){
+
+        DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        DailyDiaryCollection dailyDiaryCollection = dailyDiaryMongoRepository.findById(dailyDiary.getMongoId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        dailyDiaryCollection.setDecoration(req.getDecoration());
+        dailyDiaryMongoRepository.save(dailyDiaryCollection);
+
+        return dailyDiaryCollection.getId().toString();
+    }
 
     // 다이어리 나가기
     @Override

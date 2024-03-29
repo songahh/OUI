@@ -108,17 +108,17 @@ public class DiaryController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//    // 일기 꾸미기
-//    @PostMapping("/decorate/{dailyId}")
-//    public ResponseEntity<?> decorateDailyDiary(@RequestBody DecorateDailyDiaryReq req, @PathVariable("dailyId") Integer dailyId) throws IOException, ExecutionException, InterruptedException {
-//        return new ResponseEntity<String>(diaryService.decorateDailyDiary(req, dailyId), HttpStatus.OK);
-//    }
+    // 일기 꾸미기 저장
+    @PostMapping("/decorate/save/{dailyId}")
+    public ResponseEntity<?> decorateDailyDiary(@RequestBody DecorateDailyDiaryReq req, @PathVariable("dailyId") Integer dailyId) throws IOException, ExecutionException, InterruptedException {
+        return new ResponseEntity<String>(diaryService.decorateSaveDailyDiary(req, dailyId), HttpStatus.OK);
+    }
 
     // 일기 꾸미기
     // '/decorate/{dailyId}' 로 메시지를 보내면 'sub/decorate/daily{dailyId}' 로 응답이 전송됨
     // MessageMapping로 메세지가 들어오면 SendTo로 저 url을 구독한 사람들에게 다 보내주겠다
     @MessageMapping("/decorate/{dailyId}") // 클라이언트에서 보낸 메시지를 받을 메서드 지정
-    @SendTo("sub/decorate/{dailyId}") // 메서드가 처리한 결과를 보낼 목적지 지정
+    @SendTo("/sub/decorate/{dailyId}") // 메서드가 처리한 결과를 보낼 목적지 지정
     public ResponseEntity<?> decorateDailyDiary(@DestinationVariable Integer dailyId, Principal principal,
                                                 @Payload DecorateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
         Member member = (Member)((Authentication) principal).getPrincipal();
