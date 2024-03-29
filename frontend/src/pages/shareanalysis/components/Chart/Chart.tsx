@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Doughnut } from "react-chartjs-2";
-import { getMonthly, getMember } from '../../api';
-import { LeftIcon, RightIcon } from 'src/components'
-import { addMonths, format, subMonths } from 'date-fns'
-import useDate from 'src/util/date'
+import { getMember } from '../../api';
 import { useQuery } from 'react-query'
 import angry from 'src/asset/images/emotion/angry.png';
 import embarrassed from 'src/asset/images/emotion/embarrass.png';
@@ -122,6 +119,9 @@ const Chart = () => {
   }
 
 
+
+
+
   const [ chartData, setChartData ] = useState({
     labels: [
         'Red',
@@ -142,13 +142,14 @@ const Chart = () => {
   const [ emotionScores, setEmotionScores ] = useState({ });
   const [ selectedChart, setSelectedChart ] = useState( null ); 
 
-    const handleClick = ( chartIndex ) => () => {
-        if ( selectedChart === chartIndex ) {
-            setSelectedChart( null );
-        } else {
-            setSelectedChart( chartIndex );
-        }
-    };
+  const handleClick = ( chartIndex ) => () => {
+      if ( selectedChart === chartIndex ) {
+          setSelectedChart( null );
+      } else {
+          setSelectedChart( chartIndex );
+      }
+  };
+
 
 
 

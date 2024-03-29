@@ -3,6 +3,7 @@ import { Doughnut } from "react-chartjs-2";
 import { getMonthly, getMember } from '../../api';
 import { LeftIcon, RightIcon } from 'src/components'
 import { addMonths, format, subMonths } from 'date-fns'
+import useStore from 'src/store';
 import useDate from 'src/util/date'
 import { useQuery } from 'react-query'
 import angry from 'src/asset/images/emotion/angry.png';
@@ -146,7 +147,7 @@ const Monthly = () => {
     happy: '#FFDD6B',
   }
 
-
+  const { diaryId } = useStore()
   const [ chartData, setChartData ] = useState({
       labels: [],
       datasets: [],
@@ -168,7 +169,7 @@ const Monthly = () => {
 
   useEffect(() => {
 
-      getMonthly({ diaryId: 19, date: today }).then(
+      getMonthly({ diaryId: diaryId, date: today }).then(
       res => {
         const emotionLabels = Object.keys(res.data);
         const emotionData = Object.values(res.data).map(score => (score as number) * 100);
