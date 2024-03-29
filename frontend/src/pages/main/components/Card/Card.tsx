@@ -2,6 +2,7 @@ import diary1 from 'src/asset/images/diary1.png';
 import diary2 from 'src/asset/images/diary2.png';
 import diary3 from 'src/asset/images/diary3.png';
 import diary4 from 'src/asset/images/diary4.png';
+import diary5 from 'src/asset/images/diary5.png';
 import styled from 'styled-components';
 
 const CardWrapper = styled.div< CardWrapperProps >`
@@ -47,6 +48,7 @@ const getImageUrl = ( templateId: number ) => {
     case 1: return diary2;
     case 2: return diary3;
     case 3: return diary4;
+    case 4: return diary5;
     default: return null;
   }
 }
