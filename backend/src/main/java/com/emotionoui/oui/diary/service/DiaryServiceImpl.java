@@ -29,6 +29,7 @@ import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.music.service.MusicService;
 import com.emotionoui.oui.querydsl.QuerydslRepositoryCustom;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -94,41 +95,41 @@ public class DiaryServiceImpl implements DiaryService{
         DailyDiary newDailyDiary = dailyDiaryRepository.save(dailyDiary);
         Date dailyDate = req.getDailyDate();
 
-        // 추후 삭제
-        // MariaDB에 대표감정(Emotion) 정보 저장
-        Emotion emotion = Emotion.builder()
-                .dailyDiary(dailyDiary)
-                .emotion("joy")
-                .date(req.getDailyDate())
-                .member(member)
-                .build();
-
-        emotionRepository.save(emotion);
+//        // 추후 삭제
+//        // MariaDB에 대표감정(Emotion) 정보 저장
+//        Emotion emotion = Emotion.builder()
+//                .dailyDiary(dailyDiary)
+//                .emotion("joy")
+//                .date(req.getDailyDate())
+//                .member(member)
+//                .build();
+//
+//        emotionRepository.save(emotion);
 
         String text = null;
 
-//        try {
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            JsonNode jsonNode = objectMapper.readTree(req.getDailyContent());
-//
-//            // objects[0].text 안에 있는 텍스트 파일내용 추출
-//            text = jsonNode.get("objects").get(0).get("text").asText();
-//            // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
-//            if(!Objects.equals(text, "")){
-//                // MongoDB에 Spotify URI 리스트 넣기
-//                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary, member);
-//                List<String> spotifyUriList = findSpotifyUri(musicString);
-//                document.setMusic(spotifyUriList);
-//                dailyDiaryMongoRepository.save(document);
-//            }
-//
-//        } catch (Exception e){
-//            e.printStackTrace();
-//            log.info("텍스트 파일 위치를 찾을 수 없습니다.");
-//        }
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(req.getDailyContent());
+
+            // objects[0].text 안에 있는 텍스트 파일내용 추출
+            text = jsonNode.get("objects").get(0).get("text").asText();
+            // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
+            if(!Objects.equals(text, "")){
+                // MongoDB에 Spotify URI 리스트 넣기
+                String musicString = sendDataToAI(text, dailyDate, document, dailyDiary, member);
+                List<String> spotifyUriList = findSpotifyUri(musicString);
+                document.setMusic(spotifyUriList);
+                dailyDiaryMongoRepository.save(document);
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+            log.info("텍스트 파일 위치를 찾을 수 없습니다.");
+        }
 
         // 공유 다이어리일 시 친구들에게 본인 일기 알람 전송
-        //alarmService.sendFriendDiary(diary, newDailyDiary.getId(), member);
+        alarmService.sendFriendDiary(diary, newDailyDiary.getId(), member);
 
         return document.getId().toString();
     }
@@ -174,7 +175,6 @@ public class DiaryServiceImpl implements DiaryService{
         String aiServerUrl = "http://ai-server-1/process-data";
         String aiServerUrl2 = "http://ai-server-2/process-data";
 
-
         // CompletableFuture를 사용하여 감정분석 요청을 보내고 데이터 받기
         // supplyAsync: 비동기 + 반환값이 있는 경우
         // runAsync: 비동기 + 반환값이 없는 경우
@@ -191,6 +191,8 @@ public class DiaryServiceImpl implements DiaryService{
                 EmotionClass emotionRes = objectMapper.readValue(s, EmotionClass.class);
                 document.setEmotion(emotionRes);
                 dailyDiaryMongoRepository.save(document);
+
+
 
                 // MariaDB에 대표감정(Emotion) 정보 저장
                 Emotion emotion = Emotion.builder()
