@@ -15,14 +15,12 @@ import { getToken } from "firebase/messaging";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styled from "styled-components";
-import { NotificationModal } from "src/components/control/NotificationModal";
 
 const SliderWrapper = styled( Slider )`
   
   .slick-track{
     display: flex;
-    margin: 0 -10px;
-
+    margin: 0 -30px;
   }
 
   .slick-slide {
@@ -163,6 +161,7 @@ const Main = () => {
     focusOnSelect: true,
     slidesToShow: 3,
     speed: 500,
+    accessibility: true,
   };
 
   const navigator = useNavigate()
@@ -208,12 +207,14 @@ const Main = () => {
     buttonText: diary.createdAt,
     isDiary: "diary",
     template: diary.templateId,
+    title: diary.diaryName,
     type: diary.type,
   })).concat({
     id: diaryList.length,
-    buttonText: "카드 추가",
+    buttonText: "",
     isDiary: "addButton",
     template: -1,
+    title: "",
     type: "",
   });
 
@@ -258,11 +259,6 @@ const Main = () => {
     requestPermission();
   },[])
 
-  const [modalOpen, setModalOpen] = useState(true);
-  const handleModalClose = () => setModalOpen(false);
-  const handleNotificationSelect = ( value ) => {
-    handleModalClose(); 
-  };
 
   return (
     <>
@@ -278,7 +274,7 @@ const Main = () => {
         <SliderWrapper { ...settings }>
         {cards.map(( card, index ) => (
           <div key={index}>
-            <Card buttonText={ card.buttonText } templateId={ card.template } 
+            <Card buttonText={ card.buttonText } templateId={ card.template } title={ card.title }
               onClick={ card.isDiary === "addButton" ? openModal : () => moveDiary( card?.type, card.id ) } />
           </div> 
         ))}
