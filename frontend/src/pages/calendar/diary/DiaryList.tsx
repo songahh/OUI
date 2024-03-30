@@ -41,7 +41,7 @@ const DiaryList = ( props ) => {
   return(
     <TodoListWrapper>
       {
-        members?.data?.map( ( member: DiaryMemberType, index ) => {
+        members?.data?.map(( member: DiaryMemberType, index ) => {
           return(
             <DiaryCard key={ index } member = { member } diary = { daily?.data } diaryId = { diaryId } />
           )
