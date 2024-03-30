@@ -9,6 +9,7 @@ import com.emotionoui.oui.statistics.dto.WeeklyMongoDto;
 import com.emotionoui.oui.statistics.dto.res.DiaryEmotionRes;
 import com.emotionoui.oui.statistics.repository.StatisticsRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StatisticsService{
 
     private final StatisticsRepository statisticsRepository;
@@ -101,8 +103,9 @@ public class StatisticsService{
         //일별 평균 계산
         weeklytotalEmotion.forEach((date, emotions) -> {
             if(countMap.get(date) > 0){
-                emotions[0] *= (double) 100 /countMap.get(date);
-                emotions[1] *= (double) 100 /countMap.get(date);
+                double toAverage = (double) 10 / countMap.get(date);
+                emotions[0] = Math.round(emotions[0] * toAverage * 1.0);
+                emotions[1] = Math.round(emotions[1] * toAverage * 1.0);
             }
         });
 
@@ -162,6 +165,43 @@ public class StatisticsService{
             emotionSums.put("angry", emotionSums.get("angry") + emotion.getAngry());
             emotionSums.put("doubtful", emotionSums.get("doubtful") + emotion.getDoubtful());
             emotionSums.put("sad", emotionSums.get("sad") + emotion.getSad());
+        }
+        log.info(String.valueOf(emotionSums.get("comfortable")));
+        // 모두 양수로 만들기
+        double min = Double.MAX_VALUE;
+        for(Double value: emotionSums.values()){
+            if(value<min)
+                min = value;
+        }
+        for(String key: emotionSums.keySet()){
+            emotionSums.put(key, emotionSums.get(key)-min+1);
+        }
+
+        boolean flag = true;
+
+        for (double value : emotionSums.values()) {
+            if (value != 1) {
+                flag = false;
+                break;
+            }
+        }
+
+        // 총합 구해서
+        double totalSum = 0;
+        for (Double value: emotionSums.values()) {
+            totalSum += value;
+        }
+        //백분율로
+        for (String key : emotionSums.keySet()) {
+            double percentage = (emotionSums.get(key) / totalSum) * 100;
+            double roundedPercentage = Math.round(percentage);
+            emotionSums.put(key, roundedPercentage);
+        }
+        if (flag) {
+            // 모든 값이 0인 경우, 모든 키에 대해 값을 0으로 설정합니다.
+            for (String key : emotionSums.keySet()) {
+                emotionSums.put(key, 0.0);
+            }
         }
 
         return emotionSums;
