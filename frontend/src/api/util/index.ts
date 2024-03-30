@@ -71,7 +71,7 @@ export const getAxios =  async ( url: string, params?: any )  => {
     const response = await useAxios.get(url, { params })
     return response
   } catch( error ){
-    return Promise.reject(error)
+    // return Promise.reject(error)
   }
 } 
 
