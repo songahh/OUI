@@ -172,7 +172,7 @@ const Monthly = () => {
       getMonthly({ diaryId: diaryId, date: today }).then(
       res => {
         const emotionLabels = Object.keys(res.data);
-        const emotionData = Object.values(res.data).map(score => (score as number) * 100);
+        const emotionData = Object.values(res.data).map(score => (score as number));
         const backgroundColors = emotionLabels.map(emotion => colors[emotion] || '#CCCCCC'); 
         const emotiontags = emotionLabels.map(label => tags[label] || label);
 
@@ -181,7 +181,7 @@ const Monthly = () => {
           return acc;
         }, {});
         setEmotionScores(scores);
-
+        console.log(scores)
 
         setChartData({
             labels: emotiontags,

@@ -80,7 +80,8 @@ const ShareAnalysis = () => {
 
     const [ userName, setUserName ] = useState( "" );
     const { currentMonth, setCurrentMonth } = useDate()
-    
+    const [chartData, setChartData] = useState({}); 
+
     const { data: memberData, refetch: refetchMember } = useQuery(['memberData'], getMember, {
         onSuccess: ( res ) => {
           setUserName( res.data.nickName );
@@ -96,6 +97,15 @@ const ShareAnalysis = () => {
         getDiaryEmotion({ diaryId:17, date:today }).then(( res )=>{
             console.log("111111")
             console.log( res.data )
+            setChartData({
+                labels: Object.keys(res.data),
+                datasets: [{
+                    label: '감정 통계',
+                    data: Object.values(res.data),
+                    backgroundColor: [],
+                    hoverOffset: 4
+                }]
+            });
         })
     }
 
@@ -116,15 +126,17 @@ const ShareAnalysis = () => {
                     <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
                     <RightIcon size= { 20 } onClick={ moveNextMonth }/>
                 </CalendarHeaderMiddleWrapper>
-                    <div style={{ width: '100%', marginBottom: '0px' }}>
+                    <div style={{ width: '100%', marginBottom: '0px', fontWeight: 'bold' }}>
                         { userName && <TitleWrapper> { userName }님이 { format( currentMonth, 'M' )}월에 느낀 “감정 통계” 를 비교해보아요! </TitleWrapper>}
                     </div>
                     <BoxWrapper>
-                        <Chart/>
+                        <Chart leftText={ '공유한 나의 감정' } rightText={['나만 보는 감정']}/>
                     </BoxWrapper>
-                    { userName && <TitleWrapper> { userName }님과 친구의 { format( currentMonth, 'M' )}월에 느낀 “감정 통계” 를 비교해보아요! </TitleWrapper>}
+                    <div style={{ width: '100%', marginBottom: '0px', fontWeight: 'bold' }}>
+                        { userName && <TitleWrapper> { userName }님과 친구의 { format( currentMonth, 'M' )}월에 느낀 “감정 통계” 를 비교해보아요! </TitleWrapper>}
+                    </div>
                     <BoxWrapper>
-                        <Chart/>
+                        <Chart leftText={ `${userName}님의 감정`} rightText={['Alice', 'Bob', 'Charlie']} />
                     </BoxWrapper>
                     <BottomNavi/>
                 

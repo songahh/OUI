@@ -114,7 +114,7 @@ const Analysis = () => {
                 Object.keys(res.data).sort().forEach((key,value)=>{
                     tempHappyData.push( res.data[key][0] )
                     tempSadData.push( res.data[key][1] )
-                    console.log( res.data[key][1] )
+                    // console.log( res.data[key][1] )
                     const temp = new Date(key)
                     tempDayLabel.push(daysOfWeek[temp.getDay()])
                 })
