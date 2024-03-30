@@ -25,12 +25,12 @@ const DiaryList = ( props ) => {
 
 
     diaries.forEach( item => {
+
       item?.diaries.forEach( diary => {
-        const date = diary.date;
-        console.log("date", date)
-        if (date.substring(0, 10) === format( clickDate, 'yyyy-MM-dd')) {
-            selectedDiaries.push(diary?.daily_diary_id);
-        }
+        const date = diary.date
+
+       date.substring(0, 10) === format( clickDate, 'yyyy-MM-dd') &&
+          selectedDiaries.push(diary?.daily_diary_id);
       })
   })
 
@@ -43,7 +43,7 @@ const DiaryList = ( props ) => {
       {
         members?.data?.map( ( member: DiaryMemberType, index ) => {
           return(
-            <DiaryCard key={ index } member = { member } diary = { daily?.data }/>
+            <DiaryCard key={ index } member = { member } diary = { daily?.data } diaryId = { diaryId } />
           )
         })
       }
