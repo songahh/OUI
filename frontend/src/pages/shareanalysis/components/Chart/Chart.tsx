@@ -85,10 +85,61 @@ const ChartContainer = styled.div`
   flex: 1;
   padding: 20px;
   transition: transform 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+`;
+
+const NameBox = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly; // 컨테이너를 균등하게 배치
+`;
+
+const TextContainer = styled.div`
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  width: 50%;
+`;
+
+const Text = styled.div<{ isSelected?: boolean }>`
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  width: 50%;
+  background-color: #F9F3EE;
+  font-size: 16px;
+  border-radius: 6px;
+  height: 40px;
+  font-weight: bold;
+  color: ${(props) => (props.isSelected ? "#CCCCCC" : "black")};
+`
+const SelectWrapper = styled.select<SelectWrapperProps>`
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-align-last: center;
+  background-color: #F9F3EE;
+  color: black;
+  border: 0px;
+  width: 50%; 
+  height: 40px;
+  &:disabled {
+    opacity: 1;
+  }
+  color: ${(props) => (props.isSelected ? "#CCCCCC" : "black")};
+  ${(props) => props.nameLength === 1 && `
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none; // 화살표 이미지 제거
+`}
 `;
 
 
-const Chart = () => {
+const Chart = ({ leftText, rightText }) => {
 
   const tags = {
     sad: '슬픔',
@@ -109,45 +160,48 @@ const Chart = () => {
     happy: happy,
   };
 
-  const colors = {
-    sad: '#C0DEFF',
-    doubtful: '#BDB5FF',
-    angry: '#F09690',
-    embarrassed: '#BBDED6',
-    comfortable: '#FFC814',
-    happy: '#FFDD6B',
-  }
 
-
-
-
-
-  const [ chartData, setChartData ] = useState({
-    labels: [
-        'Red',
-        'Blue',
-        'Yellow'
+  const initialChartData = [
+    {
+      labels: ['sad', 'doubtful', 'angry', 'embarrassed', 'comfortable', 'happy'],
+      datasets: [
+        {
+          data: [65, 59, 80, 81, 56, 55],
+          backgroundColor: ['#C0DEFF', '#BDB5FF', '#F09690', '#BBDED6', '#FFC814', '#FFDD6B'],
+        },
+        {
+          data: [28, 48, 40, 19, 86, 27], 
+          backgroundColor: ['#C0DEFF', '#BDB5FF', '#F09690', '#BBDED6', '#FFC814', '#FFDD6B'],
+        },
       ],
-      datasets: [{
-        label: '임시',
-        data: [300, 50, 100],
-        backgroundColor: [
-          'rgb(255, 99, 132)',
-          'rgb(54, 162, 235)',
-          'rgb(255, 205, 86)'
-        ],
-        hoverOffset: 4
-      }]
-  });
+    },
+  ];
+
+
+  const [ chartData, setChartData ] = useState(initialChartData)
+
   const [ emotionScores, setEmotionScores ] = useState({ });
   const [ selectedChart, setSelectedChart ] = useState( null ); 
+  const [selectedName, setSelectedName] = useState(rightText[0] || ''); 
 
   const handleClick = ( chartIndex ) => () => {
-      if ( selectedChart === chartIndex ) {
-          setSelectedChart( null );
-      } else {
-          setSelectedChart( chartIndex );
-      }
+    if (selectedChart === chartIndex) {
+      setSelectedChart(null);
+      setEmotionScores({}); 
+    } else {
+      setSelectedChart(chartIndex);
+      const selectedData = chartData[0].datasets[chartIndex].data;
+      const newEmotionScores = chartData[0].labels.reduce((acc, label, index) => {
+        acc[label] = selectedData[index];
+        return acc;
+      }, {});
+      setEmotionScores(newEmotionScores);
+    }
+  };
+
+
+  const handleNameChange = (e) => {
+    setSelectedName(e.target.value);
   };
 
 
@@ -156,13 +210,23 @@ const Chart = () => {
   return(
       <>
           <ChartBoxWrapper>
+            <NameBox>
+              <TextContainer><Text isSelected={selectedChart !== null && selectedChart !== 0}>{ leftText }</Text></TextContainer>
+              <TextContainer>
+              <SelectWrapper onChange={handleNameChange} value={selectedName} nameLength={rightText.length} disabled={rightText.length === 1}
+               isSelected={selectedChart !== null && selectedChart === 0} >
+                {rightText.map((name, index) => (
+                  <option key={index} value={name}> {`${name}${rightText.length > 1 ? "님의 감정" : ""}`} </option>))}
+              </SelectWrapper>
+              </TextContainer>
+            </NameBox>
             <DoughnutWrapper>
             {[0, 1].map(( index ) => (
             <ChartContainer
               key={ index }
               style={{ transform: selectedChart === index ? 'scale(1.1)' : selectedChart !== null ? 'scale(0.9)' : 'scale(1)' }}>
               <Doughnut
-                data={ chartData }
+                data={ chartData[0] }
                 options={{ onClick: handleClick( index )}}/>
             </ChartContainer>
           ))}  
@@ -182,4 +246,10 @@ const Chart = () => {
       
   );
 }
+
+type SelectWrapperProps = {
+  nameLength: number;
+  isSelected?: boolean;
+}
+
 export default Chart;

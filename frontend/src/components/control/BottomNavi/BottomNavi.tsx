@@ -14,6 +14,7 @@ const BottomNaviWrapper = styled( BottomNavigation )`
     position: fixed;
     bottom: 0;
     left: 50%;
+    height: 50px;
     transform: translateX(-50%);
     max-width: 1024px;
     width: 100%;
