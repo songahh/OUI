@@ -5,6 +5,7 @@ import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { AlarmMessage } from "./components";
 import { getAlarm } from "./api";
+import { postAccept, postRefuse } from './api/'
 import styled from "styled-components";
 
 
@@ -61,16 +62,39 @@ const DeleteWrapper = styled.div`
 function AlarmModal({ isOpen, closeModal }) {
 
   const [ alarmList, setAlarmList ] = useState([ ]);
+  const [alarmUpdateFlag, setAlarmUpdateFlag] = useState(false);
 
+  const updateAlarmList = () => {  
+    setAlarmUpdateFlag(prevFlag => !prevFlag); 
+  };
+
+  const fetchAlarms = () => {
+    getAlarm().then((res) => {
+      setAlarmList([...res.data]);
+    }).catch((err) => {
+      console.log(err);
+    });
+  };
+
+  const Accept = (diaryId) => {
+    postAccept({ diaryId }).then(() => {
+      console.log("수락");
+      fetchAlarms(); 
+    });
+  };
+
+  const Refuse = (diaryId) => {
+    postRefuse({ diaryId }).then(() => {
+      console.log("거절");
+      fetchAlarms(); 
+    });
+  };
 
   useEffect(()=>{
-    getAlarm().then((res)=>{
-      setAlarmList([ ...res.data ])
-      console.log(alarmList);
-    }).catch((err)=>{
-      console.log( err )
-    })
-  }, [isOpen])
+    if (isOpen) {
+      fetchAlarms();
+    }
+  }, [isOpen, alarmUpdateFlag])
 
   return (
     <Modal open={ isOpen } onClose={closeModal}>
@@ -87,7 +111,9 @@ function AlarmModal({ isOpen, closeModal }) {
           <hr />
           {
             alarmList.map((alarm, index) => (
-              <AlarmMessage key={index} Type={ alarm.alarmContentType } Title={ alarm.title } Content={ alarm.content }  />
+              <AlarmMessage key={index} Type={ alarm.alarmContentType } Title={ alarm.title } Content={ alarm.content } diaryId={alarm.diaryId}
+              Accept={Accept} Refuse={Refuse}
+              />
             ))
           }
         </StyledPaper>
