@@ -261,7 +261,12 @@ const Main = () => {
       setModalSubmitted( false );
     }
   }, [ modalSubmitted, refetchDiary, refetchMember]);
-
+  
+  useEffect(() => {
+    if (!alarmModalOpen) {
+      refetchDiary();
+    }
+  }, [alarmModalOpen, refetchDiary]);
 
   useEffect(()=>{
     requestPermission();
