@@ -1,9 +1,17 @@
 import { format } from 'date-fns'
+import angry from 'src/asset/images/emotion/angry.png'
+import embarrass from 'src/asset/images/emotion/embarrass.png'
 import joy from 'src/asset/images/emotion/joy.png'
+import nervous from 'src/asset/images/emotion/nervous.png'
+import relax from 'src/asset/images/emotion/relax.png'
+import sad from 'src/asset/images/emotion/sad.png'
+import ya from 'src/asset/images/ya.jpg'
 import urge from 'src/asset/images/calendar/urge.png'
 import useStore from '../store'
-import styled from 'styled-components'
+import { postUrge } from '../api'
+import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
 const CardWrapper = styled.img`
   display: flex;
@@ -57,14 +65,36 @@ const DiaryCard = ( props ) =>{
 
     const { clickDate } = useStore()
 
-    const { diary, member } = props
+    const { diary, member, diaryId } = props
 
     const isExist = diary?.filter(( diary ) => diary?.dailyDate?.substring( 5, 10 ) === format( clickDate, 'MM-dd'))
 
     console.log("IS EXIST", isExist)
+    console.log("MEMBER", member)
+
+    const goAlarm = useMutation( postUrge )
+
+    const emotionImg = {
+        'angry': angry,
+        'embarrass': embarrass,
+        'joy': joy,
+        'nervous': nervous,
+        'comfortable': relax,
+        'sad': sad,
+        'happy': ya
+    }
 
     const moveDailyDiary = () =>{
         navigator(`/diary/${isExist.dailyDiaryId}`)
+    }
+
+    const postAlarm = async (id) =>{
+
+        await goAlarm.mutateAsync({ 
+            diaryId: diaryId,
+            memberId: id,
+            date: format( clickDate, 'yyyy-MM-dd' )
+             })
     }
 
     return(
@@ -75,7 +105,7 @@ const DiaryCard = ( props ) =>{
                     <TodoWrapper onClick={ moveDailyDiary } color='black'>
                     <TodoInside>
                     <CardWrapper src={ joy } />
-                    <div style={{width:'100%', height: '100%'}}>
+                    <div style={{ width:'100%', height: '100%' }}>
                         <TodoCardHeader>
                             <TodoTitle color='black'>
                                 '{ member?.nickname }'의 일기
@@ -104,7 +134,7 @@ const DiaryCard = ( props ) =>{
                             </TodoTitle>
                             <div style={{ display:'flex', marginTop:'1%', gap: '2%'}}/>
                         </TodoCardHeader>
-                        <TodoBody>
+                        <TodoBody onClick={(e) => postAlarm(member?.memberId) } style={{cursor: 'pointer'}}>
                                <img src={ urge } alt = '' style={{ height: '20px'}}/> 재촉하기!
                         </TodoBody>
                     </div>
