@@ -53,22 +53,15 @@ const BoxWrapper = styled.div`
 
 
 const GraphWrapper = styled.div`
-    width: 100%;
-    max-width: 800px; 
-    height: 30vh; 
+    width: 60%;
+    height: 30vh;
     margin: auto; 
 
     display: flex; 
     justify-content: center; 
     align-items: center; 
-
-    @media (max-width: 768px) {
-        height: 25vh; 
-    }
-
-    @media (max-width: 480px) {
-        height: 20vh;
-    }
+    margin-bottom: 50px;
+    margin-top: 20px;
 `;
 
 
@@ -156,6 +149,7 @@ const Analysis = () => {
 
 
     const options = {
+        maintainAspectRatio: false,
         scales: {
             x: {
                 grid: {
@@ -186,8 +180,8 @@ const Analysis = () => {
                     <BoxWrapper>
                     {keyType === 2 && (
                         <>
-                            <div>
-                                <div style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold', fontSize: '16px' }}>
+                            <div style={{ width: '100%' }}>
+                                <div style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold', fontSize: '20px', width:'70%', display:"flex", justifyContent: 'center'}}>
                                     { userName } 님의 이번 주 “행복 그래프” 예요!
                                 </div>
                                 <GraphWrapper>
@@ -196,8 +190,8 @@ const Analysis = () => {
                                 
 
                             </div>
-                            <div>
-                                <div style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold', fontSize: '16px' }}>
+                            <div style={{ width: '100%' }}>
+                                <div style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold', fontSize: '20px', width:'70%', display:"flex", justifyContent: 'center'}}>
                                     { userName } 님의 이번 주 “우울 그래프” 예요!
                                 </div>
                                 <GraphWrapper>

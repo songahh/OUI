@@ -37,7 +37,8 @@ const IconWrapper = styled.div`
 const ChartBoxWrapper = styled.div`
   background-color: white; 
   border-radius: 10px; 
-  padding: 20px; 
+  padding: 20px;
+  width: 80%; 
   margin: 20px 0; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   justify-content: center; 
