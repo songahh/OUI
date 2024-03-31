@@ -18,13 +18,18 @@ public class DiaryEmotionRes {
     private String memberName;
     //내 월 감정
     private HashMap<String,Double> myMonthEmotion;
+
+    // 내 개인 월
+    private HashMap<String,Double> myPersonalEmotion;
+
     //친구 월 감정
     private List<DiaryMemberRes> members;
 
-    public static DiaryEmotionRes of(Member member, Map<String, List<EmotionClass>> others){
+    public static DiaryEmotionRes of(Member member, Map<String, List<EmotionClass>> others, List<EmotionClass> personal){
 
         String my = member.getNickname();
         HashMap<String, Double> myEmotionSum = new HashMap<>();
+        HashMap<String, Double> myPersonalEmotion = calculate(personal);
         List<DiaryMemberRes> memberResList = new ArrayList<>();
 
         others.forEach((nickname, emotionList) -> {
@@ -47,6 +52,7 @@ public class DiaryEmotionRes {
         return DiaryEmotionRes.builder()
                 .memberName(my)
                 .myMonthEmotion(myEmotionSum)
+                .myPersonalEmotion(myPersonalEmotion)
                 .members(memberResList)
                 .build();
 

@@ -2,9 +2,13 @@ package com.emotionoui.oui.statistics.service;
 
 import com.emotionoui.oui.diary.dto.EmotionClass;
 import com.emotionoui.oui.diary.entity.DailyDiaryCollection;
+import com.emotionoui.oui.diary.entity.DiaryType;
 import com.emotionoui.oui.diary.repository.DailyDiaryMongoRepository;
 import com.emotionoui.oui.diary.repository.DailyDiaryRepository;
+import com.emotionoui.oui.diary.repository.DiaryRepository;
 import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.entity.MemberDiary;
+import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.statistics.dto.WeeklyMongoDto;
 import com.emotionoui.oui.statistics.dto.res.DiaryEmotionRes;
 import com.emotionoui.oui.statistics.repository.StatisticsRepository;
@@ -24,9 +28,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class StatisticsService{
 
-    private final StatisticsRepository statisticsRepository;
     private final DailyDiaryMongoRepository dailyDiaryMongoRepository;
     private final DailyDiaryRepository dailyDiaryRepository;
+    private final MemberDiaryRepository memberDiaryRepository;
 
     //개인 월 감정
     public HashMap<String, Double> getMyMonth(Integer diaryId, LocalDate date) {
@@ -121,7 +125,7 @@ public class StatisticsService{
         //LocalDate -> Date
         Date start = Date.from(startOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date end = Date.from(endOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
+        //공유 다이어리
         List<WeeklyMongoDto> mongoIdList = dailyDiaryRepository.getMongoIdByDiaryId(diaryId,start,end);
 
         // 작성자id와 해당 월 감정list
@@ -140,16 +144,21 @@ public class StatisticsService{
                             existingList.addAll(newList);
                             return existingList;
                         }));
-//        Map<String, List<EmotionClass>> temp = new HashMap<>();
-//        List<String> dtemp = mongoIdList.stream().map(
-//                e-> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId()).getNickname()
-//        ).collect(Collectors.toList());
-//
-//        for(String d: dtemp){
-//            log.info(d);
-//        }
 
-        return DiaryEmotionRes.of(member,temp);
+        // 개인 다이어리
+        Optional<MemberDiary> personalDiary = memberDiaryRepository.findPersonalMemberDiary(member.getMemberId(), DiaryType.개인);
+        Integer personalDiaryId = -1;
+        if(personalDiary.isPresent()){
+            personalDiaryId = personalDiary.get().getDiary().getId();
+        }
+        List<WeeklyMongoDto> mongoIdByPersonal = dailyDiaryRepository.getMongoIdByDiaryId(personalDiaryId,start,end);
+
+
+        List<EmotionClass> personalEmotionList = mongoIdByPersonal.stream()
+                .map(e -> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId()).getEmotion())
+                .toList();
+
+        return DiaryEmotionRes.of(member,temp,personalEmotionList);
 
     }
 
