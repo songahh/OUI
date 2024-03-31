@@ -27,11 +27,7 @@ const DiaryWrite = () => {
 
     const navigator = useNavigate();
 
-    // const { state } = useLocation();
-    // const { diaryId, type } = state;
-    const { diaryId, type } = useStore()
-    // const diaryId = 39;
-    // const type = '공유';
+    const { diaryId, type } = useStore();
 
     const canvasRef = useRef(null);
     const textboxRef = useRef<fabric.Textbox>(null);
@@ -91,7 +87,7 @@ const DiaryWrite = () => {
         };
 
         const diary = await getDiaryByDate({diaryId: diaryId, date: selectedDate});
-        if(!diary) {
+        if(!diary.data) {
             await writeDiary.mutateAsync(data);
             goCalendar();
         } else {
