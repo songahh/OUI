@@ -80,12 +80,14 @@ const ShareAnalysis = () => {
 
     const [ userName, setUserName ] = useState( "" );
     const { currentMonth, setCurrentMonth } = useDate()
-    const [chartData, setChartData] = useState({}); 
+    const [ personal, setPersonal ] = useState({});
+    const [ myMonth, setMyMonth ] = useState({});
+    const [ friendNames, setFriendNames ] = useState([]);
+    const [ friendEmtoins, setFriendEmtioins ] = useState([]);
     const { diaryId } = useStore()
     const { data: memberData, refetch: refetchMember } = useQuery(['memberData'], getMember, {
         onSuccess: ( res ) => {
           setUserName( res.data.nickName );
-          console.log( res.data );
         }
     });
 
@@ -95,16 +97,14 @@ const ShareAnalysis = () => {
 
     const getEmotion = () =>{
         getDiaryEmotion({ diaryId: diaryId, date:today }).then(( res )=>{
-            console.log( res.data )
-            setChartData({
-                labels: Object.keys(res.data),
-                datasets: [{
-                    label: '감정 통계',
-                    data: Object.values(res.data),
-                    backgroundColor: [],
-                    hoverOffset: 4
-                }]
-            });
+            setPersonal( res.data.myPersonalEmotion)
+            setMyMonth(res.data.myMonthEmotion)
+            if (res.data.members) {
+                const names = res.data.members.map(member => member.memberName+"님");
+                const emotions = res.data.members.map(member => member.emotion);
+                setFriendNames(names);
+                setFriendEmtioins(emotions);
+            }
         })
     }
 
@@ -129,13 +129,13 @@ const ShareAnalysis = () => {
                         { userName && <TitleWrapper> { userName }님이 { format( currentMonth, 'M' )}월에 느낀 “감정 통계” 를 비교해보아요! </TitleWrapper>}
                     </div>
                     <BoxWrapper>
-                        <Chart leftText={ '공유한 나의 감정' } rightText={['나만 보는 감정']}/>
+                        <Chart leftText={ '공유한 나의 감정' } rightText={['나만 보는 감정']} leftData={ myMonth } rightData={ personal } />
                     </BoxWrapper>
                     <div style={{ width: '100%', marginBottom: '0px', fontWeight: 'bold' }}>
                         { userName && <TitleWrapper> { userName }님과 친구의 { format( currentMonth, 'M' )}월에 느낀 “감정 통계” 를 비교해보아요! </TitleWrapper>}
                     </div>
-                    <BoxWrapper>
-                        <Chart leftText={ `${userName}님의 감정`} rightText={['Alice', 'Bob', 'Charlie']} />
+                    <BoxWrapper style={{marginBottom:'60px' }}>
+                        <Chart leftText={ `${userName}님`} rightText={ friendNames } leftData={ myMonth } rightDataList={ friendEmtoins }/>
                     </BoxWrapper>
                     <BottomNavi/>
                 

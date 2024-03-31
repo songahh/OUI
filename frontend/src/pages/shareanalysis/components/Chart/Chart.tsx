@@ -139,7 +139,7 @@ const SelectWrapper = styled.select<SelectWrapperProps>`
 `;
 
 
-const Chart = ({ leftText, rightText }) => {
+const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:ChartProps) => {
 
   const tags = {
     sad: '슬픔',
@@ -148,7 +148,6 @@ const Chart = ({ leftText, rightText }) => {
     embarrassed: '당황',
     comfortable: '느긋',
     happy: '기쁨',
-
   }
 
   const images = {
@@ -160,42 +159,45 @@ const Chart = ({ leftText, rightText }) => {
     happy: happy,
   };
 
-
-  const initialChartData = [
-    {
-      labels: ['sad', 'doubtful', 'angry', 'embarrassed', 'comfortable', 'happy'],
-      datasets: [
-        {
-          data: [65, 59, 80, 81, 56, 55],
-          backgroundColor: ['#C0DEFF', '#BDB5FF', '#F09690', '#BBDED6', '#FFC814', '#FFDD6B'],
-        },
-        {
-          data: [28, 48, 40, 19, 86, 27], 
-          backgroundColor: ['#C0DEFF', '#BDB5FF', '#F09690', '#BBDED6', '#FFC814', '#FFDD6B'],
-        },
-      ],
-    },
-  ];
+  const colors = {
+    sad: '#C0DEFF',
+    doubtful: '#BDB5FF',
+    angry: '#F09690',
+    embarrassed: '#BBDED6',
+    comfortable: '#FFC814',
+    happy: '#FFDD6B',
+  }
 
 
-  const [ chartData, setChartData ] = useState(initialChartData)
+
+  const [ leftChartData, setLeftChartData ] = useState({
+    labels: [],
+    datasets: [],
+})
+  const [ rightChartData, setRightChartData ] = useState({
+    labels: [],
+    datasets: [],
+})
 
   const [ emotionScores, setEmotionScores ] = useState({ });
   const [ selectedChart, setSelectedChart ] = useState( null ); 
   const [selectedName, setSelectedName] = useState(rightText[0] || ''); 
-
+  const [ selectedRight, setSelectedRight ] = useState( rightData );
   const handleClick = ( chartIndex ) => () => {
     if (selectedChart === chartIndex) {
       setSelectedChart(null);
       setEmotionScores({}); 
     } else {
       setSelectedChart(chartIndex);
-      const selectedData = chartData[0].datasets[chartIndex].data;
-      const newEmotionScores = chartData[0].labels.reduce((acc, label, index) => {
-        acc[label] = selectedData[index];
+      const selectedData = chartIndex === 0 ? leftData : selectedRight;
+      console.log(selectedRight)
+      const scores = Object.keys(tags).reduce((acc, key) => {
+        const tagName = tags[key];
+        acc[tagName] = selectedData[key] || 0;
         return acc;
       }, {});
-      setEmotionScores(newEmotionScores);
+      
+      setEmotionScores(scores);
     }
   };
 
@@ -204,8 +206,100 @@ const Chart = ({ leftText, rightText }) => {
     setSelectedName(e.target.value);
   };
 
+  useEffect(() => {
+    const backgroundColors = Object.keys(tags).map(key => colors[key]);
+    const orderedLeftData = Object.keys(tags).map(key => leftData[key] || 0);
+    if(rightData){
+      const orderedRightData = Object.keys(tags).map(key => rightData[key] || 0);
+      const newRightChartData = {
+        labels: Object.keys(tags), 
+        datasets: [
+          {
+            data: rightData ? orderedRightData : [],
+            backgroundColor: backgroundColors,
+          }
+        ],
+      };
+      setRightChartData(newRightChartData);
+    }
+    const newLeftChartData = {
+      labels: Object.keys(tags), 
+      datasets: [
+        {
+          data: leftData ? orderedLeftData : [],
+          backgroundColor: backgroundColors,
+        }
+      ],
+    };
+    if (rightDataList && selectedName) {
+      const selectedFriendData = rightDataList.find(friend => friend.name === selectedName)?.emotions || {};
+      console.log(selectedFriendData)
+      const orderedRightData = Object.keys(tags).map(key => selectedFriendData[key] || 0);
+      const newRightChartData = {
+        labels: Object.keys(tags).map(key => tags[key]),
+        datasets: [{
+          data: orderedRightData,
+          backgroundColor: backgroundColors,
+        }]
+      };
+      setRightChartData(newRightChartData);
+    }
 
+    setLeftChartData(newLeftChartData);
+  }, [leftData, rightData]); 
 
+  useEffect(() => {
+    const backgroundColors = Object.keys(tags).map(key => colors[key]);
+    const orderedLeftData = Object.keys(tags).map(key => leftData[key] || 0);
+    const newLeftChartData = {
+      labels: Object.keys(tags).map(key => tags[key]),
+      datasets: [{
+        data: orderedLeftData,
+        backgroundColor: backgroundColors,
+      }]
+    };
+  
+    setLeftChartData(newLeftChartData);
+  
+    // rightDataList 처리
+    if (!rightData && rightDataList) {
+      let newRightChartData;
+      if (rightDataList.length === 1) { // 길이1 자동으로
+        const selectedFriendData = rightDataList[0]
+        setSelectedRight(selectedFriendData);
+        const orderedRightData = Object.keys(tags).map(key => selectedFriendData[key] || 0);
+        newRightChartData = {
+          labels: Object.keys(tags).map(key => tags[key]),
+          datasets: [{
+            data: orderedRightData,
+            backgroundColor: backgroundColors,
+          }]
+        };
+      } else if (rightDataList.length > 1 && selectedName) {   //되는지 모름
+
+        const selectedIndex = rightText.findIndex(name => name === selectedName);  // 인덱스 찾고
+        const selectedFriendData = rightDataList[selectedIndex];   // 해당 인덱스에 해당하는 이모션 찾고
+        const orderedRightData = Object.keys(tags).map(key => selectedFriendData[key] || 0); //key별로 정리하고
+          
+        const newRightChartData = {
+          labels: Object.keys(tags).map(key => tags[key]),
+          datasets: [{
+            data: orderedRightData,
+            backgroundColor: backgroundColors,
+          }]
+        };
+  
+        setRightChartData(newRightChartData);
+        setSelectedRight(selectedFriendData);
+      }
+  
+      // 차트 데이터 설정
+      if (newRightChartData) {
+        setRightChartData(newRightChartData);
+      }
+    }
+  }, [leftData, rightDataList, selectedName, rightText]);
+  
 
   return(
       <>
@@ -226,7 +320,7 @@ const Chart = ({ leftText, rightText }) => {
               key={ index }
               style={{ transform: selectedChart === index ? 'scale(1.1)' : selectedChart !== null ? 'scale(0.9)' : 'scale(1)' }}>
               <Doughnut
-                data={ chartData[0] }
+                data={index === 0 ? leftChartData : rightChartData}
                 options={{ onClick: handleClick( index )}}/>
             </ChartContainer>
           ))}  
@@ -250,6 +344,14 @@ const Chart = ({ leftText, rightText }) => {
 type SelectWrapperProps = {
   nameLength: number;
   isSelected?: boolean;
+}
+
+type ChartProps = {
+  leftText?: string;
+  rightText?: string[];
+  leftData?: any; 
+  rightData?: any; 
+  rightDataList?: any;
 }
 
 export default Chart;

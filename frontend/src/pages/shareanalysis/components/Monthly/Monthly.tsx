@@ -114,7 +114,14 @@ const Title = styled.div`
     margin-bottom: 10px;
     justify-content: flex-start;
 `
-
+const colors = {
+  sad: '#C0DEFF',
+  doubtful: '#BDB5FF',
+  angry: '#F09690',
+  embarrassed: '#BBDED6',
+  comfortable: '#FFC814',
+  happy: '#FFDD6B',
+}
 
 const Monthly = () => {
 
@@ -136,15 +143,6 @@ const Monthly = () => {
     comfortable: comfortable,
     happy: happy,
   };
-
-  const colors = {
-    sad: '#C0DEFF',
-    doubtful: '#BDB5FF',
-    angry: '#F09690',
-    embarrassed: '#BBDED6',
-    comfortable: '#FFC814',
-    happy: '#FFDD6B',
-  }
 
 
   const [ chartData, setChartData ] = useState({
