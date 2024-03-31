@@ -5,7 +5,8 @@ import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { AlarmMessage } from "./components";
 import { getAlarm } from "./api";
-import { postAccept, postRefuse } from './api/'
+import { useNavigate } from "react-router-dom";
+import { postAccept, postRefuse, postRead } from './api/'
 import styled from "styled-components";
 
 
@@ -63,6 +64,7 @@ function AlarmModal({ isOpen, closeModal }) {
 
   const [ alarmList, setAlarmList ] = useState([ ]);
   const [alarmUpdateFlag, setAlarmUpdateFlag] = useState(false);
+  const navigator = useNavigate()
 
   const updateAlarmList = () => {  
     setAlarmUpdateFlag(prevFlag => !prevFlag); 
@@ -70,25 +72,33 @@ function AlarmModal({ isOpen, closeModal }) {
 
   const fetchAlarms = () => {
     getAlarm().then((res) => {
-      setAlarmList([...res.data]);
+      setAlarmList([ ...res.data ]);
+      console.log( res.data )
     }).catch((err) => {
       console.log(err);
     });
   };
 
-  const Accept = (diaryId) => {
+  const Accept = ( diaryId: number ) => {
     postAccept({ diaryId }).then(() => {
       console.log("수락");
       fetchAlarms(); 
     });
   };
 
-  const Refuse = (diaryId) => {
+  const Refuse = ( diaryId: number ) => {
     postRefuse({ diaryId }).then(() => {
       console.log("거절");
       fetchAlarms(); 
     });
   };
+
+  const goDiary = ( link: String, alarmId: number ) => {
+    postRead({ alarmId }).then(()=>{
+      if( link !==null )
+        window.location.href = `${ link }`;
+    })
+  }
 
   useEffect(()=>{
     if (isOpen) {
@@ -112,7 +122,7 @@ function AlarmModal({ isOpen, closeModal }) {
           {
             alarmList.map((alarm, index) => (
               <AlarmMessage key={index} Type={ alarm.alarmContentType } Title={ alarm.title } Content={ alarm.content } diaryId={alarm.diaryId}
-              Accept={Accept} Refuse={Refuse}
+              Accept={Accept} Refuse={Refuse} onClick={ goDiary } link = { alarm.link } alarmId = { alarm.alarmId }
               />
             ))
           }

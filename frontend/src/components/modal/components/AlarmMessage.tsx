@@ -82,7 +82,7 @@ const RejectButton = styled(Button)`
 `;
 
 
-    const AlarmMessage = ( { Type, Title, Content ,onClick, diaryId, Accept, Refuse }: AlarmProps  ) => {
+    const AlarmMessage = ( { Type, Title, Content ,onClick, diaryId, Accept, Refuse, link, alarmId }: AlarmProps  ) => {
     
     const SelectedIcon = IconType[ Type ];
 
@@ -105,7 +105,7 @@ const RejectButton = styled(Button)`
                                 <RejectButton variant="outlined" onClick={() => Refuse(diaryId)}>거절</RejectButton>
                             </>
                         ) : (
-                            <IconButton onClick={ onClick }>
+                            <IconButton onClick={()=>{ onClick( link, alarmId ) }}>
                                 <ArrowForwardIosIcon />
                             </IconButton>
                         )}
@@ -122,10 +122,12 @@ type AlarmProps = {
     Type: string,
     Title?: string,
     Content?: string,
-    onClick?: () => void,
+    onClick?: (link: string, alarmId: number) => void,
     diaryId?: number,
     Accept?: ( diaryId: number ) => void,
     Refuse?: ( diaryId: number ) => void,
+    link?: string,
+    alarmId?: number,
 }
 
 export default AlarmMessage;

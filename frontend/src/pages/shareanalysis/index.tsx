@@ -81,7 +81,7 @@ const ShareAnalysis = () => {
     const [ userName, setUserName ] = useState( "" );
     const { currentMonth, setCurrentMonth } = useDate()
     const [chartData, setChartData] = useState({}); 
-
+    const { diaryId } = useStore()
     const { data: memberData, refetch: refetchMember } = useQuery(['memberData'], getMember, {
         onSuccess: ( res ) => {
           setUserName( res.data.nickName );
@@ -94,8 +94,7 @@ const ShareAnalysis = () => {
     const today = format(currentMonth, 'yyyy-MM-01')
 
     const getEmotion = () =>{
-        getDiaryEmotion({ diaryId:17, date:today }).then(( res )=>{
-            console.log("111111")
+        getDiaryEmotion({ diaryId: diaryId, date:today }).then(( res )=>{
             console.log( res.data )
             setChartData({
                 labels: Object.keys(res.data),
