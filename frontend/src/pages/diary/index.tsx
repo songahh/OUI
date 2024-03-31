@@ -5,7 +5,7 @@ import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from 'react-query';
 import { useNavigate } from "react-router-dom";
-import { getDiary, deleteDiary } from './api';
+import { getDiary, deleteDiary, getEmotions } from './api';
 import useStore from 'src/store'
 import styled from 'styled-components';
 
@@ -49,13 +49,13 @@ const Title = styled.span`
     margin: 10px;
 `;
 
-const Emotion = styled.div`
+const Emotion = styled.div<{ color: string }>`
     width: 120px; 
     height: 70px;
     border: 5px solid white;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
     border-radius: 25px;
-    background-color: #BBDED6;
+    background-color: ${( props ) => props.color };
     color: white;
     font-size: 28px;
     font-weight: bold;
@@ -78,11 +78,17 @@ const Comment = styled.div`
 
 const Diary = () => {
     const navigator = useNavigate();
-
-    // const { state } = useLocation();
-    // const { dailyDiaryId, type, diaryId } = state;
     
     const { diaryId, dailyDiaryId, type  } = useStore(); 
+
+    const emotionTag = {
+        'angry': {name: '분노', color: '#F09690'},
+        'embarrassed': {name: '당황', color: '#BBDED6'},
+        'happy': {name: '기쁨', color: '#FFE17D'},
+        'doubtful': {name: '불안', color: '#BDB5FF'},
+        'comfortable': {name: '느긋', color: '#FFC814'},
+        'sad': {name: '슬픔', color: '#C0DEFF'},
+    }
 
     const canvasRef = useRef(null);
     const [ canvas, setCanvas ] = useState<fabric.Canvas>(null);
@@ -93,9 +99,13 @@ const Diary = () => {
         enabled: isFontLoaded
     });
 
+    const { data: emotions } = useQuery('emotions', () => getEmotions(dailyDiaryId), {
+        enabled: isFontLoaded
+    });
+
     useEffect(() => {
         if(!canvas) return;
-        console.log(dailyDiary)
+        console.log('emotions', emotions);
 
         canvas.loadFromJSON(dailyDiary?.data?.dailyContent, () => {
             canvas.renderAll();
@@ -121,14 +131,13 @@ const Diary = () => {
 
     const onClick = async () => {
         await removeDiary.mutateAsync(dailyDiaryId);
-        navigator(`/main`);
-        // navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId}});
+        navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId}});
     }
     return (
         <Container>
             <Header>
-                <BackIcon size={ 40 } onClick={() => { navigator(`/calendar`, {state: { diaryId: diaryId , type: type}}) }} />
-                {/* <Drawer/> */}
+                {/* <BackIcon size={ 40 } onClick={() => { navigator(`/calendar`, {state: { diaryId: diaryId , type: type}}) }} /> */}
+                <Drawer/>
                 <span style={{ fontSize: "30px" }}>{ dailyDiary?.data?.dailyDate.substring(0, 10) }</span>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     {(type === '공유' && isDeco) && (
@@ -155,8 +164,11 @@ const Diary = () => {
             <ResultSection>
                 <Title>나의 감정은?</Title>
                 <div style={{ marginTop: "20px", marginBottom: "60px", display: "flex" }}>
-                    <Emotion>#느긋</Emotion>
-                    <Emotion>#기쁨</Emotion>
+                    {emotions && emotions?.data?.emotionList?.map((emotion, index) => (
+                        <Emotion key={index} color={ emotionTag[emotion].color }>
+                            #{ emotionTag[emotion].name }
+                        </Emotion>
+                    ))}
                 </div>
                 {(type === '개인') && (
                     <>
