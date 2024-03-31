@@ -5,7 +5,7 @@ import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { AlarmMessage } from "./components";
 import { getAlarm } from "./api";
-import { useNavigate } from "react-router-dom";
+import useStore from "src/store";
 import { postAccept, postRefuse, postRead } from './api/'
 import styled from "styled-components";
 
@@ -64,11 +64,8 @@ function AlarmModal({ isOpen, closeModal }) {
 
   const [ alarmList, setAlarmList ] = useState([ ]);
   const [alarmUpdateFlag, setAlarmUpdateFlag] = useState(false);
-  const navigator = useNavigate()
+  const { setDailyDiaryId } = useStore()
 
-  const updateAlarmList = () => {  
-    setAlarmUpdateFlag(prevFlag => !prevFlag); 
-  };
 
   const fetchAlarms = () => {
     getAlarm().then((res) => {
@@ -94,10 +91,13 @@ function AlarmModal({ isOpen, closeModal }) {
   };
 
   const goDiary = ( link: String, alarmId: number ) => {
-    postRead({ alarmId }).then(()=>{
-      if( link !==null )
+    if(link !== null){
+      const array = link.split("/")
+      setDailyDiaryId(Number(array[array.length - 1]))
+      postRead({ alarmId }).then(()=>{
         window.location.href = `${ link }`;
-    })
+      })
+    }
   }
 
   useEffect(()=>{

@@ -23,7 +23,7 @@ const BottomNaviWrapper = styled( BottomNavigation )`
 
 export default function BottomNavi() {
   const [value, setValue] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState( false );
   const navigator = useNavigate();
 
   const goMain = () => {
@@ -31,7 +31,7 @@ export default function BottomNavi() {
   };
 
   const toggleModal = () => { 
-    setIsModalOpen(!isModalOpen);
+    setIsModalOpen( !isModalOpen );
   };
 
   return (
@@ -39,15 +39,15 @@ export default function BottomNavi() {
       <BottomNaviWrapper
         showLabels
         value={value}
-        onChange={(event, newValue) => {
-          setValue(newValue);
+        onChange={( event, newValue ) => {
+          setValue( newValue );
         }}
       >
         <BottomNavigationAction icon={<PersonOutlineOutlinedIcon />} />
-        <BottomNavigationAction icon={<img src={MainLogo} style={{ width: 24, height: 24 }} onClick={goMain} />} />
-        <BottomNavigationAction icon={<NotificationsNoneOutlinedIcon />} onClick={toggleModal} />
+        <BottomNavigationAction icon={<img src={ MainLogo } style={{ width: 24, height: 24 }} onClick={ goMain } />} />
+        <BottomNavigationAction icon={<NotificationsNoneOutlinedIcon />} onClick={ toggleModal } />
       </BottomNaviWrapper>
-      {isModalOpen && <AlarmModal isOpen={isModalOpen} closeModal={toggleModal} />} 
+      {isModalOpen && <AlarmModal isOpen={isModalOpen} closeModal={ toggleModal } />} 
     </>
   );
 }
