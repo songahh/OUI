@@ -131,14 +131,23 @@ public class StatisticsService{
                         DailyDiaryCollection::getNickname,
                         e -> {
                             List<EmotionClass> list = new ArrayList<>();
-                            list.add(e.getEmotion()); // 초기 값으로 EmotionClass 인스턴스의 리스트 생성
+                            if (e.getEmotion() != null) {
+                                list.add(e.getEmotion());
+                            }
                             return list;
                         },
                         (existingList, newList) -> { // 같은 키에 대한 값이 이미 존재할 경우, 리스트를 병합
                             existingList.addAll(newList);
                             return existingList;
-                        }
-                ));
+                        }));
+//        Map<String, List<EmotionClass>> temp = new HashMap<>();
+//        List<String> dtemp = mongoIdList.stream().map(
+//                e-> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId()).getNickname()
+//        ).collect(Collectors.toList());
+//
+//        for(String d: dtemp){
+//            log.info(d);
+//        }
 
         return DiaryEmotionRes.of(member,temp);
 
