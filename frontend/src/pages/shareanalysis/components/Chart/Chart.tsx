@@ -210,10 +210,11 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
     const backgroundColors = Object.keys(tags).map(key => colors[key]);
     const orderedLeftData = Object.keys(tags).map(key => leftData[key] || 0);
     if(rightData){
+      setSelectedRight(rightData);
       const orderedRightData = Object.keys(tags).map(key => rightData[key] || 0);
       const newRightChartData = {
         labels: Object.keys(tags), 
-        datasets: [
+        datasets: [ 
           {
             data: rightData ? orderedRightData : [],
             backgroundColor: backgroundColors,
@@ -231,19 +232,6 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
         }
       ],
     };
-    if (rightDataList && selectedName) {
-      const selectedFriendData = rightDataList.find(friend => friend.name === selectedName)?.emotions || {};
-      console.log(selectedFriendData)
-      const orderedRightData = Object.keys(tags).map(key => selectedFriendData[key] || 0);
-      const newRightChartData = {
-        labels: Object.keys(tags).map(key => tags[key]),
-        datasets: [{
-          data: orderedRightData,
-          backgroundColor: backgroundColors,
-        }]
-      };
-      setRightChartData(newRightChartData);
-    }
 
     setLeftChartData(newLeftChartData);
   }, [leftData, rightData]); 
