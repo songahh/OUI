@@ -16,7 +16,7 @@ spring:
       enabled-protocols:
         - TLSv1.1
         - TLSv1.2
-      key-store: "classpath:env/keystore.p12"
+      key-store: env/keystore.p12
       key-store-password: ${SSL_KEY}
       key-store-type: "PKCS12"
 
@@ -26,7 +26,7 @@ spring:
       max-request-size: 50MB
   jpa:
     hibernate:
-      #      ddl-auto: create #create update none
+#      ddl-auto: create #create update none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
@@ -92,3 +92,13 @@ cloud:
       auto: false
     stack:
       auto: false
+
+#server:
+#  servlet:
+#    context-path: /api
+
+openai:
+  model: gpt-3.5-turbo
+  api:
+    key: ${OPEN_API_KEY}
+    url: ${OPEN_API_URI}
