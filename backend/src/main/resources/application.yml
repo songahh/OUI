@@ -16,7 +16,7 @@ spring:
       enabled-protocols:
         - TLSv1.1
         - TLSv1.2
-      key-store: "classpath:env/keystore.p12"
+      key-store: env/keystore.p12
       key-store-password: ${SSL_KEY}
       key-store-type: "PKCS12"
 
