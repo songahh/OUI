@@ -7,7 +7,6 @@ import re
 import numpy as np
 
 from openvino.runtime import Core
-import gluonnlp as nlp
 from .KoBERT.kobert import get_tokenizer
 from .KoBERT.kobert import get_pytorch_kobert_model
 import os
@@ -26,7 +25,7 @@ class OuiInference(object):
         _, vocab = get_pytorch_kobert_model(cachedir="./ai/KoBERT/.cache")
         tokenizer = get_tokenizer()
         self.tok = nlp.data.BERTSPTokenizer(tokenizer, vocab, lower=False)
-        self.emotion_to_idx = {0:'angry', 1:'embarrassed', 2:'sad', 3:'happy', 4:'doubtful', 5:"comfortable"} 
+        self.emotion_to_idx = {0:'angry', 1:'embarrassed', 2:'sad', 3:'happy', 4:'doubtful', 5:"comfortable", 6:"neutral"} 
         self.max_len = max_len
         self.batch_size=batch_size
         self.threshold=threshold
@@ -63,12 +62,12 @@ class OuiInference(object):
             valid_length= valid_length.long()
             
             out = self.model_onnx.run(None, {
-                "input":np.array(token_ids),
+                "token_ids":np.array(token_ids),
                 "valid_length": np.array(valid_length),
-                "inp": np.array(segment_ids)})
+                "segment_ids": np.array(segment_ids)})
 
             for i in out:
-                logits=i[0]
+                logits=i[0][:6]
                 positive_indices = np.where(logits > self.threshold)[0]
                 positive_values = logits[positive_indices]
                 sorted_indices = positive_indices[np.argsort(positive_values)[::-1]]
@@ -87,7 +86,7 @@ class OuiInference(object):
             out = self.model_pytorch(token_ids, valid_length, segment_ids)
 
             for i in out:
-                logits=i
+                logits=i[:6]
                 logits = logits.detach().cpu().numpy()
                 positive_indices = np.where(logits > self.threshold)[0]
                 positive_values = logits[positive_indices]
@@ -108,7 +107,7 @@ class OuiInference(object):
             out = self.model_openvino([token_ids, valid_length, segment_ids])[self.openvino_outputlayer]
             
             for i in out:
-                logits=i
+                logits=i[:6]
                 positive_indices = np.where(logits > self.threshold)[0]
                 positive_values = logits[positive_indices]
                 sorted_indices = positive_indices[np.argsort(positive_values)[::-1]]
