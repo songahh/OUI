@@ -4,8 +4,10 @@ import { Header } from "src/components/control/Header";
 import { Button } from "src/components";
 import { CustomModal } from "./components/Modal";
 import { AlarmModal } from "src/components/modal";
-import { getDiary, getMember, postCreateDiary, postDeviceToken } from './api';
-import ya from 'src/asset/images/ya.jpg';
+import { getDiary, getMember, postCreateDiary, postDeviceToken, getLogout } from './api';
+import profile from 'src/asset/images/profile.png'
+import logoutBtn from 'src/asset/images/image-icon/logout.png'
+import alarmIcon from 'src/asset/images/icon/alarm-icon.svg'
 import { useQuery } from 'react-query'
 import Slider from "react-slick";
 import useStore from 'src/store'
@@ -15,14 +17,20 @@ import { getToken } from "firebase/messaging";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styled from "styled-components";
-import { NotificationModal } from "src/components/control/NotificationModal";
+
+
+const CarouselContainer = styled.div`
+  max-width: 100%;
+  // margin: auto;
+  overflow: hidden; 
+  padding: 20px 0; 
+`;
 
 const SliderWrapper = styled( Slider )`
   
   .slick-track{
     display: flex;
-    margin: 0 -10px;
-
+    margin: 0 -125px;
   }
 
   .slick-slide {
@@ -59,18 +67,16 @@ const SliderWrapper = styled( Slider )`
 
 
 const YellowBox = styled.div`
-
-  width: 500px;
-  height: 8vh;
-  background-color: #FFE17D;
-  border-radius: 10px;
+  width: 750px;
+  height: 5.5vh;
+  background-color: rgba(255, 225, 125, 0.6);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
-  margin-top: 4vh;
-  margin-bottom: 4vh;
+  margin-top: 12vh;
+  margin-bottom: 1vh;
   align-items: center;
-  margin-left: 5%;
+  margin-left: 6%;
   @media (max-width: 768px) {
     margin-left: 2%; 
     width: 50vw;
@@ -85,12 +91,14 @@ const YellowBox = styled.div`
 `;
 
 const UserRecord = styled.div`
-  position: absolute;
-  top: -40px; 
+  width: 750px;
+  margin-bottom: 8%;
+  margin-left: 8%
   background: transparent;
   padding: 5px 10px;
   border: 0px;
-  font-size: 60px;
+  font-size: 59px;
+  font-weight: bold;
   font-family: "Dovemayo",
   @media (max-width: 768px) {
     font-size: 35px;
@@ -104,49 +112,55 @@ const UserRecord = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 30%;
-  max-width: 150px;
-  max-height: 150px;
-  height: 30%;
+  width: 50%;
+  max-width: 190px;
+  max-height: 190px;
   border-radius: 50%;
   object-fit: cover;
+  margin-top: 25%;
+  margin-left: 8%;
 `;
 
-// const requestPermission = async () => {
-//   if ('serviceWorker' in navigator) {
-//     navigator.serviceWorker.register("/firebase-messaging-sw.js").then(registration => {
-//         registration.update(); // 서비스 워커 갱신 강제 실행
-//         console.log('Service Worker 등록 성공:', registration);
-//   Notification.requestPermission().then(permission => {
-//     if (permission === 'granted') {
-//       console.log('알림 권한 승인됨.');
+const requestPermission = async () => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register("/firebase-messaging-sw.js").then(registration => {
+        registration.update(); // 서비스 워커 갱신 강제 실행
+        console.log('Service Worker 등록 성공:', registration);
+  Notification.requestPermission().then(permission => {
+    if (permission === 'granted') {
+      console.log('알림 권한 승인됨.');
 
-//       navigator.serviceWorker.ready.then((registration) => {
-//         getToken(messaging, {
-//           serviceWorkerRegistration: registration,
-//           vapidKey: process.env.REACT_APP_VAPID_KEY
-//         }).then((currentToken) => {
-//           if (currentToken) {
-//             console.log("디바이스 토큰:", currentToken);
-//             postDeviceToken(currentToken) 
-//               .then(response => {
-//                 console.log('Device token posted successfully:', response);
-//               })
-//               .catch((error) => {
-//                 console.error('Error posting device token:', error);
-//               });
-//           } else {
-//             console.log('디바이스 토큰을 가져올 수 없습니다. 알림 권한을 요청해주세요.');
-//           }
-//         }).catch((err) => {
-//           console.error('토큰 가져오기 실패:', err);
-//         });
-//       });
-//     } else {
-//       console.log('알림 권한 거부됨.');
-//     }
-//   });
-// })}}
+      navigator.serviceWorker.ready.then((registration) => {
+        getToken(messaging, {
+          serviceWorkerRegistration: registration,
+          vapidKey: process.env.REACT_APP_VAPID_KEY
+        }).then((currentToken) => {
+          if (currentToken) {
+            console.log("디바이스 토큰:", currentToken);
+            postDeviceToken(currentToken) 
+              .then(response => {
+                console.log('Device token posted successfully:', response);
+              })
+              .catch((error) => {
+                console.error('Error posting device token:', error);
+              });
+          } else {
+            console.log('디바이스 토큰을 가져올 수 없습니다. 알림 권한을 요청해주세요.');
+          }
+        }).catch((err) => {
+          console.error('토큰 가져오기 실패:', err);
+        });
+      });
+    } else {
+      console.log('알림 권한 거부됨.');
+      showAlertToChangePermission();
+    }
+  });
+})}}
+
+function showAlertToChangePermission() {
+  alert('알림을 받기 위해서는 브라우저 설정에서 알림 권한을 허용해주세요.');
+}
 
 
 const Main = () => {
@@ -158,11 +172,12 @@ const Main = () => {
     focusOnSelect: true,
     slidesToShow: 3,
     speed: 500,
+    accessibility: true,
   };
 
   const navigator = useNavigate()
   
-  const { setDiaryId, setType } = useStore()
+  const { setDiaryId, setType, setAccessToken, setIsLogin, setDailyDiaryId } = useStore()
   const [ isModalOpen, setIsModalOpen ] = useState( false );
   const [ diaryList, setDiaryList ] = useState( [] );
   const [ userName, setUserName ] = useState( "" );
@@ -203,12 +218,14 @@ const Main = () => {
     buttonText: diary.createdAt,
     isDiary: "diary",
     template: diary.templateId,
+    title: diary.diaryName,
     type: diary.type,
   })).concat({
     id: diaryList.length,
-    buttonText: "카드 추가",
+    buttonText: "",
     isDiary: "addButton",
     template: -1,
+    title: "",
     type: "",
   });
 
@@ -239,6 +256,25 @@ const Main = () => {
       console.log( res.data );
     }
   });
+
+
+  function isHangul(str) {
+    const pattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+    return pattern.test(str);
+  }
+  
+
+  const Logout = () =>{
+    getLogout().then(( res )=>{
+      setAccessToken('')
+      setIsLogin(false)
+      setDiaryId(null)
+      setType('')
+      setDailyDiaryId(null)
+      navigator('/login')
+    })
+  }
+
   
   useEffect(() => {
     if ( modalSubmitted ) {
@@ -247,42 +283,53 @@ const Main = () => {
       setModalSubmitted( false );
     }
   }, [ modalSubmitted, refetchDiary, refetchMember]);
+  
+  useEffect(() => {
+    if (!alarmModalOpen) {
+      refetchDiary();
+    }
+  }, [alarmModalOpen, refetchDiary]);
 
+  useEffect(()=>{
+    requestPermission();
+  },[])
 
-  // useEffect(()=>{
-  //   requestPermission();
-  // },[])
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const handleModalClose = () => setModalOpen(false);
-  const handleNotificationSelect = ( value ) => {
-    handleModalClose(); 
-  };
 
   return (
     <>
-    <NotificationModal onNotificationSelect={ handleNotificationSelect }   isOpen={ modalOpen }
-  onClose={ handleModalClose }></NotificationModal>
-    <Header>
-      <ProfileImage src={ userImage || ya } alt="유저 프로필 이미지" />
-      <Button btType='bell' onButtonClick={() => setAlarmModalOpen(true)} />
-    </Header>
+    <div style={{paddingRight:'4%', paddingTop:'4%'}}>
+      <Header>
+        <ProfileImage src={ userImage || profile } alt="유저 프로필 이미지" />
+        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+          <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => Logout()}>
+          <img style={{height:'4em'}} src={logoutBtn} alt="Logout" />
+          </button>
+          <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => setAlarmModalOpen(true)}>
+          <img style={{height:'4.3em'}} src={alarmIcon} alt="Logout" />
+          </button>
+        </div>
+      </Header>
+    </div>
     <YellowBox>
-        {userName && <UserRecord style={{ fontWeight: 'bold' }}>{ userName }님의 감정기록 :)</UserRecord>}
+      <UserRecord>
+      {isHangul(userName) ? (userName.length > 6 ? `${userName.slice(0, 6)}...` : userName) : (userName.length > 10 ? `${userName.slice(0, 10)}...` : userName)} 님의 감정기록 :)
+      </UserRecord>
     </YellowBox>
+
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div className="slider-container" style={{ minHeight: '100%', minWidth: '100%' }}>      
+      <CarouselContainer>
+      {/* <div className="slider-container" style={{ minHeight: '100%', minWidth: '100%' }}>       */}
         <SliderWrapper { ...settings }>
         {cards.map(( card, index ) => (
           <div key={index}>
-            <Card buttonText={ card.buttonText } templateId={ card.template } 
+            <Card buttonText={ card.buttonText } templateId={ card.template } title={ card.title }
               onClick={ card.isDiary === "addButton" ? openModal : () => moveDiary( card?.type, card.id ) } />
-          </div> 
-        ))}
-          <Card/>
-          <Card/>
+                </div> 
+               ))}
+            <Card/>
         </SliderWrapper>
-      </div>
+      </CarouselContainer>
+      {/* </div> */}
     </div>
     <AlarmModal isOpen={ alarmModalOpen } closeModal={() => setAlarmModalOpen(false)} />
     <CustomModal isOpen={ isModalOpen } closeModal={ closeModal } isFinish={ addCard } />
