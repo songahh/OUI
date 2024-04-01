@@ -5,3 +5,4 @@ export * from './postDiary';
 export * from './postDiaryDeco';
 export * from './deleteDiary';
 export * from './getEmotions';
+export * from './getComment';
