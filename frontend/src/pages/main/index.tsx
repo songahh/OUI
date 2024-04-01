@@ -6,6 +6,7 @@ import { CustomModal } from "./components/Modal";
 import { AlarmModal } from "src/components/modal";
 import { getDiary, getMember, postCreateDiary, postDeviceToken, getLogout } from './api';
 import profile from 'src/asset/images/profile.png'
+import logoutBtn from 'src/asset/images/image-icon/logout.png'
 import { useQuery } from 'react-query'
 import Slider from "react-slick";
 import useStore from 'src/store'
@@ -68,7 +69,6 @@ const YellowBox = styled.div`
   width: 750px;
   height: 5.5vh;
   background-color: rgba(255, 225, 125, 0.6);
-  border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
@@ -111,7 +111,7 @@ const UserRecord = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 35%;
+  width: 50%;
   max-width: 190px;
   max-height: 190px;
   border-radius: 50%;
@@ -299,8 +299,12 @@ const Main = () => {
     <div style={{paddingRight:'4%', paddingTop:'4%'}}>
     <Header>
       <ProfileImage src={ userImage || profile } alt="유저 프로필 이미지" />
-      <Button btType='logout' onButtonClick={() => Logout()} />
-      <Button btType='bell' onButtonClick={() => setAlarmModalOpen(true)} />
+      <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+        <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => Logout()}>
+         <img style={{height:'3.4em'}} src={logoutBtn} alt="Logout" />
+        </button>
+        <Button btType='bell' onButtonClick={() => setAlarmModalOpen(true)} />
+      </div>
     </Header>
     </div>
     <YellowBox>
