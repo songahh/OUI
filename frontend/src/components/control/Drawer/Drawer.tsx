@@ -63,6 +63,10 @@ const Drawer = () => {
       type === '공유' && 
       navigator(`/shareanalysis`)
     }
+
+    const goSetting = () => {
+      navigator( '/setting' )
+    }
   
     const DrawerList = (
       <Box sx={{ maxWidth: '1024px' }} role="presentation">
@@ -82,8 +86,7 @@ const Drawer = () => {
             <ListItemIcon><ShowChartIcon/></ListItemIcon>
             <ListItemText primary='감정 통계' />
           </ListItemButton>
-          {/* 설정 페이지 생기면 라우팅 */}
-          <ListItemButton>
+          <ListItemButton onClick={ goSetting }>
             <ListItemIcon><SettingsOutlinedIcon/></ListItemIcon>
             <ListItemText primary='설정' />
           </ListItemButton>

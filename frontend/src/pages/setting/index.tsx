@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Switch from '@mui/material/Switch';
 import styled from "styled-components";
-
+import { useNavigate } from "react-router-dom";
 import CheckCircle from 'src/asset/images/image-icon/checkCircle.png';
 import diary1 from 'src/asset/images/diary1.png';
 import diary2 from 'src/asset/images/diary2.png';
@@ -13,7 +13,6 @@ import diary3 from 'src/asset/images/diary3.png';
 import diary4 from 'src/asset/images/diary4.png';
 import diary5 from 'src/asset/images/diary5.png';
 import searchBtn from 'src/asset/images/image-icon/search.png';
-
 import { getFIndMember, getDiary, putModify, putDelete } from "./api";
 import useStore from "src/store";
 import { BottomNavi, Drawer } from "src/components";
@@ -136,6 +135,7 @@ const Setting = () => {
   const [switchState, setSwitchState] = useState( 0 );
   const { diaryId, type } = useStore();
   const label = { inputProps: { 'aria-label': 'Color switch demo' } };
+  const navigator = useNavigate()
 
   useEffect(() => {
     getDiary( diaryId ).then(( res ) => {
@@ -185,6 +185,7 @@ const Setting = () => {
 
   const modify = ( title, templateId, memberList, alarm ) => {
     putModify(diaryId, { name: title, templateId: templateId, alarm: alarm, memberList: memberList }).then(( res )=>{
+      navigator('/main')
     })
   }
 
@@ -319,16 +320,18 @@ const Setting = () => {
                       ))}
                   </div>
                 </div>
+                <ExitWrapper onClick={ delelte }>
+                  나가기
+                </ExitWrapper>
               </>
             )}
-            <ExitWrapper onClick={ delelte }>
-              나가기
-            </ExitWrapper>
+
             <button
               style={{
                 width: '70%',
                 maxWidth: '350px',
                 height: '60px',
+                marginTop: '5%',
                 backgroundColor: '#88B3E2',
                 color: 'white',
                 border: 'none',
