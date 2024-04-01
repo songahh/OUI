@@ -180,12 +180,12 @@ public class DiaryServiceImpl implements DiaryService{
             log.info("텍스트 파일 위치를 찾을 수 없습니다.");
         }
 
-        // 1) 일기 수정이 아닌 작성일 때
-        // 2) 공유 다이어리일 때
-        // 친구들에게 본인 일기 알람 전송
-        String diaryType = dailyDiary.getDiary().getType().toString();
-        if(type==1 && diaryType.equals("공유"))
-            alarmService.sendFriendDiary(diary, dailyDiary.getId(), member);
+//        // 1) 일기 수정이 아닌 작성일 때
+//        // 2) 공유 다이어리일 때
+//        // 친구들에게 본인 일기 알람 전송
+//        String diaryType = dailyDiary.getDiary().getType().toString();
+//        if(type==1 && diaryType.equals("공유"))
+//            alarmService.sendFriendDiary(diary, dailyDiary.getId(), member);
     }
 
     // ChatGPT 코멘트 값 받아서 몽고디비에 저장하기
@@ -380,50 +380,27 @@ public class DiaryServiceImpl implements DiaryService{
         if(diary.getType().toString().equals("개인")){
             return SearchDiarySettingRes.privateRes(diary, alarmStatus);
         }else{
-            List<Member> memberList = memberDiaryRepository.findMemberByDiaryId(diaryId);
+            List<String> memberList = memberDiaryRepository.findEmailByDiaryId(diaryId);
             return SearchDiarySettingRes.SharingRes(diary, alarmStatus, memberList);
         }
     }
     
      // 다이어리 설정 수정하기
-    public void updateDiarySetting(UpdateDiarySettingReq req, Integer diaryId, Integer memberId){
+    public void updateDiarySetting(UpdateDiarySettingReq req, Integer diaryId, Member member){
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(IllegalArgumentException::new);
+        // 일기 이름, 템플릿 종류 수정
         diary.updateDiary(req.getName(), req.getTemplateId());
 
+        int memberId = member.getMemberId();
         MemberDiary memberDiary = memberDiaryRepository.findById(memberId)
                 .orElseThrow(IllegalArgumentException::new);
+        // 알람 ON/OFF 상태 수정
         memberDiary.updateAlarm(req.getAlarm());
 
+        // 새로운 멤버들에게 일기 초대 알림 보내기
         if(diary.getType().toString().equals("공유")){
-            List<Member> newMemberList = req.getMemberList();
-            List<MemberDiary> oldMemberDiaryList = diary.getMemberDiaryList();
-
-            top:
-            for(MemberDiary oldMemberDiary : oldMemberDiaryList){
-                Member member = oldMemberDiary.getMember();
-                for (Member newMember : newMemberList) {
-                    if (Objects.equals(member.getMemberId(), newMember.getMemberId())) {
-                        continue top;
-                    }
-                }
-                oldMemberDiary.updateIsDeleted();
-            }
-
-            for(Member member : newMemberList){
-                MemberDiary rep = memberDiaryRepository.findByMemberId(member.getMemberId());
-                if(rep==null){
-                    MemberDiary newMemberDiary = MemberDiary.builder()
-                            .alarm(AlarmType.ON)
-                            .orders(memberDiaryRepository.countByMemberId(member.getMemberId())+1)
-                            .isDeleted(0)
-                            .diary(diary)
-                            .member(member)
-                            .build();
-
-                    memberDiaryRepository.save(memberDiary);
-                }
-            }
+            alarmService.inviteDiary(req.getMemberList(), diaryId, member.getNickname());
         }
     }
 
