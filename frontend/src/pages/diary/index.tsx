@@ -5,7 +5,7 @@ import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from 'react-query';
 import { useNavigate } from "react-router-dom";
-import { getDiary, deleteDiary, getEmotions } from './api';
+import { getDiary, deleteDiary, getEmotions, getComment } from './api';
 import useStore from 'src/store'
 import styled from 'styled-components';
 
@@ -103,6 +103,10 @@ const Diary = () => {
         enabled: isFontLoaded
     });
 
+    const { data: comment } = useQuery('comment', () => getComment(dailyDiaryId), {
+        enabled: isFontLoaded
+    });
+
     useEffect(() => {
         if(!canvas) return;
         console.log('emotions', emotions);
@@ -174,7 +178,7 @@ const Diary = () => {
                     <>
                         <Title>AI 코멘트</Title>
                         <Comment>
-                            코멘트 ...
+                            { comment &&  comment?.data?.comment}
                         </Comment>
                     </>
                 )}
