@@ -7,6 +7,7 @@ import { AlarmModal } from "src/components/modal";
 import { getDiary, getMember, postCreateDiary, postDeviceToken, getLogout } from './api';
 import profile from 'src/asset/images/profile.png'
 import logoutBtn from 'src/asset/images/image-icon/logout.png'
+import alarmIcon from 'src/asset/images/icon/alarm-icon.svg'
 import { useQuery } from 'react-query'
 import Slider from "react-slick";
 import useStore from 'src/store'
@@ -20,7 +21,7 @@ import styled from "styled-components";
 
 const CarouselContainer = styled.div`
   max-width: 100%;
-  margin: auto;
+  // margin: auto;
   overflow: hidden; 
   padding: 20px 0; 
 `;
@@ -29,7 +30,7 @@ const SliderWrapper = styled( Slider )`
   
   .slick-track{
     display: flex;
-    margin: 0 -30px;
+    margin: 0 -125px;
   }
 
   .slick-slide {
@@ -297,20 +298,22 @@ const Main = () => {
   return (
     <>
     <div style={{paddingRight:'4%', paddingTop:'4%'}}>
-    <Header>
-      <ProfileImage src={ userImage || profile } alt="유저 프로필 이미지" />
-      <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-        <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => Logout()}>
-         <img style={{height:'3.4em'}} src={logoutBtn} alt="Logout" />
-        </button>
-        <Button btType='bell' onButtonClick={() => setAlarmModalOpen(true)} />
-      </div>
-    </Header>
+      <Header>
+        <ProfileImage src={ userImage || profile } alt="유저 프로필 이미지" />
+        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+          <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => Logout()}>
+          <img style={{height:'4em'}} src={logoutBtn} alt="Logout" />
+          </button>
+          <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => setAlarmModalOpen(true)}>
+          <img style={{height:'4.3em'}} src={alarmIcon} alt="Logout" />
+          </button>
+        </div>
+      </Header>
     </div>
     <YellowBox>
-    <UserRecord>
-    {isHangul(userName) ? (userName.length > 6 ? `${userName.slice(0, 6)}...` : userName) : (userName.length > 10 ? `${userName.slice(0, 10)}...` : userName)} 님의 감정기록 :)
-  </UserRecord>
+      <UserRecord>
+      {isHangul(userName) ? (userName.length > 6 ? `${userName.slice(0, 6)}...` : userName) : (userName.length > 10 ? `${userName.slice(0, 10)}...` : userName)} 님의 감정기록 :)
+      </UserRecord>
     </YellowBox>
 
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -321,11 +324,11 @@ const Main = () => {
           <div key={index}>
             <Card buttonText={ card.buttonText } templateId={ card.template } title={ card.title }
               onClick={ card.isDiary === "addButton" ? openModal : () => moveDiary( card?.type, card.id ) } />
-          </div> 
-        ))}
-          <Card/>
+                </div> 
+               ))}
+            <Card/>
         </SliderWrapper>
-        </CarouselContainer>
+      </CarouselContainer>
       {/* </div> */}
     </div>
     <AlarmModal isOpen={ alarmModalOpen } closeModal={() => setAlarmModalOpen(false)} />
