@@ -12,10 +12,10 @@ import loadMyDiary from 'src/asset/images/calendar/loadMyDiary.png'
 import goToWriteDiary from 'src/asset/images/calendar/goToWriteDiary.png'
 import { createPortal } from 'react-dom'
 import useDate from 'src/util/date'
-import styled from 'styled-components'
 import { getCalendar, getShareCalendar } from './api';
 import { Header } from 'src/components/control/Header';
 import { BottomNavi } from 'src/components/control/BottomNavi';
+import styled from 'styled-components'
 
 const Title = styled.div`
     font-size: 35px;
@@ -113,11 +113,7 @@ const Calendar = () =>{
 
   const navigator = useNavigate()
 
-  // const { state }  = useLocation(); // 메인에서 넘어온 데이터 사용
-  // const { diaryId, type } = state;
-  // console.log( diaryId, type );
-
-  const [ isDiaryWrite, setIsDiaryWrite ] = useState<boolean>(false); // 일기쓰기 버튼 클릭시 개인/공유 분리
+  const [ isDiaryWrite, setIsDiaryWrite ] = useState<boolean>( false ); // 일기쓰기 버튼 클릭시 개인/공유 분리
   const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() // 달력 옆 버튼
   const { startDate, endDate } = calculateDateRange()
   const { isModalOpened, updateModal } = useStore() // Day 컴포넌트에서 업데이트 된 상태 가져오기
@@ -131,7 +127,7 @@ const Calendar = () =>{
   }
 
   const closeWrite = () => { 
-      setIsDiaryWrite(false)
+      setIsDiaryWrite( false )
       html?.classList.remove( 'scroll-locked' )
   }
 
@@ -152,7 +148,6 @@ const Calendar = () =>{
   }
 
   const goWrite = () => {
-    // navigator(`/diary/write/${diaryId}`, { state: { diaryId:  diaryId, type: type }})
     navigator(`/diary/write/${diaryId}`)
   }
 
@@ -174,14 +169,9 @@ const Calendar = () =>{
   }
 
   const goDiaryWrite = () =>{
-    if(type==='개인'){
-      // navigator(`/diary/write/${diaryId}`, {state: {diaryId:  diaryId ,type: type}})
-      navigator(`/diary/write/${diaryId}`)
-    }else{ //공유일 때
-      setIsDiaryWrite(true)      
-    }
-
-
+    type==='개인' ? navigator(`/diary/write/${diaryId}`)
+     : setIsDiaryWrite(true)      
+    
   }
   
 
@@ -202,27 +192,24 @@ const Calendar = () =>{
   let queryKey = null; // 개인과 공유 키 분리
   let queryParams = null; // 개인과 공유 파람 분리
 
-  if (type === '개인') {
-    queryKey = ['calendars', currentMonth];
-    queryParams = () => getCalendar(today);
+  if ( type === '개인' ) {
+    queryKey = [ 'calendars', currentMonth ]
+    queryParams = () => getCalendar( today )
   } else {
-    queryKey = ['calendars', currentMonth];
-    queryParams = () => getShareCalendar({ date: today, diaryId: diaryId });
+    queryKey = [ 'calendars', currentMonth ]
+    queryParams = () => getShareCalendar({ date: today, diaryId: diaryId })
   }
 
-  const { data: calendars, refetch } = useQuery<any>(queryKey, queryParams);
+  const { data: calendars, refetch } = useQuery<any>( queryKey, queryParams );
 
-  console.log(calendars?.data)
-    
   useEffect(() => { refetch() }, [ currentMonth, refetch ])
-  console.log("Calendar", calendars)
-  
+
   return(
     <>
           <Header>
-            <Drawer></Drawer>
-            <Button></Button>
-            <Button></Button>
+            <Drawer/>
+            <Button/>
+            <Button/>
           </Header>
           <CalendarWrapper>
             <CalendarHeaderWrapper>
@@ -235,28 +222,28 @@ const Calendar = () =>{
             </CalendarHeaderRightWrapper>
             </CalendarHeaderMiddleWrapper>
             </CalendarHeaderWrapper>
-            
-        { 
-          isModalOpened && type==='개인'
-          && 
-            <ModalPortal onClose={ closeModal }>
-              <Modal><MyModal schedules= { calendars?.data?.schedules } diaryId= { diaryId }></MyModal></Modal>
-            </ModalPortal>
-        }
+            { 
+              isModalOpened && type==='개인' &&
+                <ModalPortal onClose={ closeModal }>
+                  <Modal>
+                    <MyModal schedules= { calendars?.data?.schedules } diaryId= { diaryId }/>
+                  </Modal>
+                </ModalPortal>
+            }
+            { 
+              isModalOpened && type==='공유' &&
+                <ModalPortal onClose={ closeModal }>
+                  <Modal>
+                    <ShareModal diaries= { calendars?.data?.members }
+                                diaryId = { diaryId } members= { calendars?.data?.members } />
+                  </Modal>
+                </ModalPortal>
+            }
 
-        { 
-          isModalOpened && type==='공유'
-          && 
-            <ModalPortal onClose={ closeModal }>
-              <Modal><ShareModal diaries= { calendars?.data?.members } diaryId = { diaryId } members= { calendars?.data?.members } /></Modal>
-            </ModalPortal>
-        }
-
-        {
-          isDiaryWrite && 
-          <WriteModalPortal onClose={ closeWrite } />
-        }
-
+            {
+              isDiaryWrite && 
+              <WriteModalPortal onClose={ closeWrite } />
+            }
             <DateList/>
             <DayList list = { days } calendars = { calendars?.data } type = { type }/>
             </CalendarWrapper>

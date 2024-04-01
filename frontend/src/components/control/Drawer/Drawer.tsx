@@ -17,6 +17,8 @@ import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import useStore from 'src/store'
+import { useQuery } from 'react-query';
+import { getDiaryTitle } from 'src/pages/calendar/api';
 import styled from 'styled-components';
 
 const BottomWrapper = styled( Bottom )`
@@ -52,40 +54,52 @@ const Drawer = () => {
 
     const goCalendar = () => {
       type === '개인' &&
-      navigator('/calendar') 
+        navigator('/calendar') 
       type === '공유' && 
-      navigator(`/calendar/${ diaryId }`)
+        navigator(`/calendar/${ diaryId }`)
     }
 
     const goAnalysis = () => {
       type === '개인' &&
-      navigator('/analysis') 
+        navigator('/analysis') 
       type === '공유' && 
-      navigator(`/shareanalysis`)
+        navigator(`/shareanalysis`)
     }
+
+    const { data: diaryTitle } = useQuery( 'diaryTitle', () => getDiaryTitle( diaryId ))
   
     const DrawerList = (
       <Box sx={{ maxWidth: '1024px' }} role="presentation">
-        <TitleWrapper>My Diary</TitleWrapper>
-        <Divider />
+        <TitleWrapper>
+          { diaryTitle?.data }
+        </TitleWrapper>
+        <Divider/>
         <List>
         {/* 오늘의 일기 */}
           <ListItemButton onClick={ goWriteDiary }>
-            <ListItemIcon><AutoStoriesOutlinedIcon/></ListItemIcon>
+            <ListItemIcon>
+              <AutoStoriesOutlinedIcon/>
+            </ListItemIcon>
             <ListItemText primary='오늘의 일기' />
           </ListItemButton>
           <ListItemButton onClick={ goCalendar }>
-            <ListItemIcon><CalendarTodayOutlinedIcon/></ListItemIcon>
+            <ListItemIcon>
+              <CalendarTodayOutlinedIcon/>
+            </ListItemIcon>
             <ListItemText primary='캘린더' />
           </ListItemButton>
           <ListItemButton onClick={ goAnalysis }>
-            <ListItemIcon><ShowChartIcon/></ListItemIcon>
-            <ListItemText primary='감정 통계' />
+            <ListItemIcon>
+              <ShowChartIcon/>
+            </ListItemIcon>
+            <ListItemText primary='감정 통계'/>
           </ListItemButton>
           {/* 설정 페이지 생기면 라우팅 */}
           <ListItemButton>
-            <ListItemIcon><SettingsOutlinedIcon/></ListItemIcon>
-            <ListItemText primary='설정' />
+            <ListItemIcon>
+              <SettingsOutlinedIcon/>
+            </ListItemIcon>
+            <ListItemText primary='설정'/>
           </ListItemButton>
         </List>
       </Box>
@@ -93,9 +107,11 @@ const Drawer = () => {
     
     return(
         <div>
-          <Button btType='hamburger' name="temp"  onButtonClick={ toggleDrawer(true) } ></Button>
-          <BottomWrapper anchor={'bottom'} open={open} onClose={ toggleDrawer(false) } onOpen={toggleDrawer( true )} >
-            <IconButton onClick={ toggleDrawer(false) } sx={{ position: 'absolute', right: 8, top: 8, zIndex: 1 }} >
+          <Button btType='hamburger' name="temp" onButtonClick={ toggleDrawer( true )}/>
+          <BottomWrapper anchor={'bottom'} open={ open }
+                        onClose={ toggleDrawer( false )} onOpen={toggleDrawer( true )} >
+            <IconButton onClick={ toggleDrawer( false )}
+                            sx={{ position: 'absolute', right: 8, top: 8, zIndex: 1 }} >
               <CloseIcon /> 
             </IconButton>
                 { DrawerList }
