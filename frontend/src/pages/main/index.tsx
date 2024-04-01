@@ -4,8 +4,7 @@ import { Header } from "src/components/control/Header";
 import { Button } from "src/components";
 import { CustomModal } from "./components/Modal";
 import { AlarmModal } from "src/components/modal";
-import { getDiary, getMember, postCreateDiary, postDeviceToken } from './api';
-import ya from 'src/asset/images/ya.jpg';
+import { getDiary, getMember, postCreateDiary, postDeviceToken, getLogout } from './api';
 import profile from 'src/asset/images/profile.png'
 import { useQuery } from 'react-query'
 import Slider from "react-slick";
@@ -177,7 +176,7 @@ const Main = () => {
 
   const navigator = useNavigate()
   
-  const { setDiaryId, setType } = useStore()
+  const { setDiaryId, setType, setAccessToken, setIsLogin, setDailyDiaryId } = useStore()
   const [ isModalOpen, setIsModalOpen ] = useState( false );
   const [ diaryList, setDiaryList ] = useState( [] );
   const [ userName, setUserName ] = useState( "" );
@@ -257,11 +256,24 @@ const Main = () => {
     }
   });
 
+
   function isHangul(str) {
     const pattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
     return pattern.test(str);
   }
   
+
+  const Logout = () =>{
+    getLogout().then(( res )=>{
+      setAccessToken('')
+      setIsLogin(false)
+      setDiaryId(null)
+      setType('')
+      setDailyDiaryId(null)
+      navigator('/login')
+    })
+  }
+
   
   useEffect(() => {
     if ( modalSubmitted ) {
@@ -287,6 +299,7 @@ const Main = () => {
     <div style={{paddingRight:'4%', paddingTop:'4%'}}>
     <Header>
       <ProfileImage src={ userImage || profile } alt="유저 프로필 이미지" />
+      <Button btType='logout' onButtonClick={() => Logout()} />
       <Button btType='bell' onButtonClick={() => setAlarmModalOpen(true)} />
     </Header>
     </div>
