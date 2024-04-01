@@ -14,11 +14,7 @@ import axios from "axios"
 const instance = axios.create({
     baseURL: process.env.REACT_APP_BASE_URL,
     timeout: 10000,
-    withCredentials: true,
-    headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        "Access-Control-Allow-Origin": "*",
-      }
+    withCredentials: true
   });
 
 export const getLogin = async ( params: String ) => {
