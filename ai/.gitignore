@@ -1,9 +1,9 @@
 dataset/
-model/onnx/
-model/pytorch/
-model/openvino/
+onnx/
+pytorch/
+openvino/
 
-
+.cache
 __pycache__
 
 application-secrets.json
