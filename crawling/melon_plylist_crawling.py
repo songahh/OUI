@@ -21,7 +21,6 @@ class PlylistCrawler:
     def __init__(self, id_path="id_test.csv",
                  plylst_path="plylst_test.csv",
                  song_id_path="song_id_test.csv",
-                 song_path="song_test.csv",
                  genre_path="genre_cat1_test.csv"):
         # plylst id
         self.plylist_id = set()
@@ -40,8 +39,8 @@ class PlylistCrawler:
         if os.path.exists(song_id_path):
             song_id_df = pd.read_csv(song_id_path)
             self.song_id = song_id_df["song_id"].tolist()
-            with open("./data/start_song_idx.txt", "r") as f:
-                self.start_song_idx = int(f.readline())
+            # with open("./data/start_song_idx.txt", "r") as f:
+            #     self.start_song_idx = int(f.readline())
         else:
             # 만들기
             if os.path.exists(plylst_path):
@@ -50,11 +49,12 @@ class PlylistCrawler:
 
         self.options = webdriver.ChromeOptions()
         self.options.add_argument("headless")
+        self.options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        self.options.add_argument('--log-level=3')
 
         self.id_path = id_path
         self.plylst_path = plylst_path
         self.genre_path = genre_path
-        self.song_path = song_path
         self.song_id_path = song_id_path
 
     def __load_genre_cat1(self, dataframe):
@@ -66,7 +66,6 @@ class PlylistCrawler:
     def __make_song_id(self, song_id_path, dataframe):
         dataframe["songs"] = dataframe["songs"].apply(ast.literal_eval)
         song_id = list(set(dataframe[["songs"]].explode("songs")["songs"].tolist()))
-        
         
         data = []
         for id in song_id:
@@ -204,7 +203,8 @@ class PlylistCrawler:
         print(f"error_id: {error_id}")
         self.__export_plylst_to_csv(tags, songs, like_cnt, updt_date, plylist_title)
 
-    def do_crawling_song(self):
+    def do_crawling_song(self, start_idx, end_idx):
+        print(f"pid: {os.getpid()}, start: {start_idx}, end: {end_idx}")
         # * `song_gn_dtl_gnr_basket`: 세부 장르 코드 리스트 (X)
         # * `issue_date`: 발행 날짜
         # * `album_name`: 앨범 이름 
@@ -222,8 +222,11 @@ class PlylistCrawler:
         album_name = dict()
         issue_date = dict()
         song_gn_gnr_basket = dict()
+        lyrics = dict()
+
+        song_id = self.song_id[start_idx:end_idx]
         
-        for idx, song_id in enumerate(tqdm(self.song_id)):
+        for idx, song_id in enumerate(tqdm(song_id)):
             try:
                 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.options)
                 curr_url = PlylistCrawler.__make_song_next_url(song_id)
@@ -237,7 +240,7 @@ class PlylistCrawler:
                 time.sleep(1)
                 title = driver.find_element(By.CLASS_NAME, "song_name").text            
                 song_name[song_id] = title
-                #print(title)
+                print(title)
 
                 # 아티스트 id & 이름
                 artist_id_list = []
@@ -277,7 +280,6 @@ class PlylistCrawler:
                 #print(f"{a_name} 앨범 이름")
 
                 # 발매일 & 장르
-                
                 issdate = album_issdate_and_genres[1].text
                 #print(f"{issdate} 발행 날짜")
                 issue_date[song_id] = issdate
@@ -292,12 +294,24 @@ class PlylistCrawler:
                 except:
                     print(f"{song_id} 장르가 없습니다.")
                     error_id.add(song_id)
+
+                lyric_element = driver.find_element(By.CLASS_NAME, "lyric").text
+                lyric_element = lyric_element.replace("\n", " ")
+                lyric_element = lyric_element.replace(",", " ")
+                #print(f"가사 {lyric_element}")
+                try:
+                    lyrics[song_id] = lyric_element
+                except:
+                    print(f"{song_id} 가사가 없습니다.")
+                    error_id.add(song_id)
+
                 driver.quit()
             except:
                 error_id.add(song_id)
-            
+
+
             if idx % 100 == 0:
-                self.__export_song_to_csv(song_name, artist_id_basket, artist_name_basket, album_id, album_name, issue_date, song_gn_gnr_basket, idx)
+                self.__export_song_to_csv(lyrics, song_name, artist_id_basket, artist_name_basket, album_id, album_name, issue_date, song_gn_gnr_basket, start_idx+idx)
                 song_name = dict()
                 artist_id_basket = dict()
                 artist_name_basket = dict()
@@ -305,10 +319,11 @@ class PlylistCrawler:
                 album_name = dict()
                 issue_date = dict()
                 song_gn_gnr_basket = dict()
+                lyrics = dict()
 
         print("크롤링 종료")
         print(f"error_id: {error_id}")
-        self.__export_song_to_csv(song_name, artist_id_basket, artist_name_basket, album_id, album_name, issue_date, song_gn_gnr_basket, "end")
+        self.__export_song_to_csv(lyrics, song_name, artist_id_basket, artist_name_basket, album_id, album_name, issue_date, song_gn_gnr_basket, end_idx)
 
     def __get_id_in_href(self, href):
         matched = re.search(r"\('([^']+)'\)", href)
@@ -318,23 +333,22 @@ class PlylistCrawler:
         end = matched.end() - 2
         return href[start:end]
 
-    def __export_song_to_csv(self, song_name, artist_id_basket, artist_name_basket, album_id, album_name, issue_date, song_gn_gnr_basket, idx):
+    def __export_song_to_csv(self, lyrics, song_name, artist_id_basket, artist_name_basket, album_id, album_name, issue_date, song_gn_gnr_basket, idx):
         data = []
         for song_id in self.song_id:
             try:
-                row = {"id": song_id, "song_name":song_name[song_id], "album_id":album_id[song_id], "album_name":album_name[song_id], "artist_id_basket":issue_date[song_id],
+                row = {"id": song_id, "lyrics":lyrics[song_id], "song_name":song_name[song_id], "album_id":album_id[song_id], "album_name":album_name[song_id], "artist_id_basket":issue_date[song_id],
                        "artist_name_basket":artist_name_basket[song_id], "artist_id_basket":artist_id_basket[song_id], "song_gn_gnr_basket": song_gn_gnr_basket[song_id]}
                 data.append(row)
             except:
                 continue
 
         plylist_df=pd.DataFrame(data)
-        plylist_df.to_csv("./data/song_{}_{}.csv".format(PlylistCrawler.__fit_id_dateformat_with_nospace(datetime.today()), idx), index=False)
+        plylist_df.to_csv("./crawling/data/song_{}_{}.csv".format(PlylistCrawler.__fit_id_dateformat_with_nospace(datetime.today()), idx), index=False)
 
-        with open('./data/start_song_idx.txt', 'w') as f:
-            f.write(str(self.start_song_idx + idx))
-
-        print(f"{self.song_path} 저장완료")
+        # with open('./data/start_song_idx.txt', 'w') as f:
+        #     f.write(str(self.start_song_idx + idx))
+        print(f"{"./crawling/data/song_{}_{}.csv".format(PlylistCrawler.__fit_id_dateformat_with_nospace(datetime.today()), idx)} 저장완료")
 
     def __export_id_to_csv(self):
         plylist_id_df=pd.DataFrame(self.plylist_id).rename(columns={0: "plylist_id"})

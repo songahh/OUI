@@ -5,3 +5,5 @@ model/openvino/
 
 
 __pycache__
+
+application-secrets.json

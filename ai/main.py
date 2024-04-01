@@ -1,58 +1,28 @@
-import sys
 import logging
-
 import argparse
+
+from fastapi import FastAPI
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from routers import analysis, recommendation
+from db.mongodb import mongodb
 
-from dto import DailyDiaryRequestDto, SongRequestDto
+logging.basicConfig(level=logging.INFO)
 
-from model.model import OuiInference
+app = FastAPI()
+app.include_router(analysis.router)
+app.include_router(recommendation.router)
 
-ai_server = FastAPI()
+@app.get("/")
+def root():
+    return {"message": "OUI AI Server"}
 
-@ai_server.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@ai_server.post("/analysis/openvino")
-async def analysis(body: DailyDiaryRequestDto):
-    body_dict = body.dict()
-    text = body_dict["text"]
-    logging.info(f"main:analysis {text}")
-    
-    # 10글자가 안될 때,
-    if len(text) < 10:
-        raise HTTPException(status_code=422, detail="입력 데이터가 너무 짧습니다.")
-    
-    result = oui.predict_openvino(body_dict["text"])
-    return result
-
-@ai_server.post("/analysis/onnx")
-async def analysis(body: DailyDiaryRequestDto):
-    body_dict = body.dict()
-    text = body_dict["text"]
-    logging.info(f"main:analysis {text}")
-    
-    # 10글자가 안될 때,
-    if len(text) < 10:
-        raise HTTPException(status_code=422, detail="입력 데이터가 너무 짧습니다.")
-    
-    result = oui.predict_onnx(body_dict["text"])
-    return result
-
-@ai_server.post("/analysis/pytorch")
-async def analysis(body: DailyDiaryRequestDto):
-    body_dict = body.dict()
-    text = body_dict["text"]
-    logging.info(f"main:analysis {text}")
-    
-    # 10글자가 안될 때,
-    if len(text) < 10:
-        raise HTTPException(status_code=422, detail="입력 데이터가 너무 짧습니다.")
-    
-    result = oui.predict_pytorch(body_dict["text"])
-    return result
+@app.on_event("startup")
+async def on_app_start():
+	mongodb.connect()
+ 
+@app.on_event("shutdown")
+async def on_app_shutdown():
+	mongodb.close()
 
 
 if __name__ == '__main__':
@@ -64,8 +34,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.INFO)
-
     # uvicorn main:ai_server --reload --port=8008
-    oui = OuiInference()
-    uvicorn.run(ai_server, host=args.host, port=args.port)
+    uvicorn.run(app, host=args.host, port=args.port)

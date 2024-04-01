@@ -8,37 +8,35 @@ import numpy as np
 
 from openvino.runtime import Core
 import gluonnlp as nlp
-from KoBERT.kobert import get_tokenizer
-from KoBERT.kobert import get_pytorch_kobert_model
+from .KoBERT.kobert import get_tokenizer
+from .KoBERT.kobert import get_pytorch_kobert_model
 import os
 
-class OuiInference:
+
+class OuiInference(object):
     def __init__(self, threshold=0.5, max_len=100, batch_size=128, device="cpu"):
-        
-        os.chdir("./model")
-        self.model_pytorch = torch.jit.load('./pytorch/oui_240328_torchscript.pt')
-        self.model_onnx = onnxruntime.InferenceSession("./onnx/oui_240328.onnx")
+        self.model_pytorch = torch.jit.load('./ai/pytorch/oui_240329_acc57_torchscript.pt')
+        self.model_onnx = onnxruntime.InferenceSession("./ai/onnx/oui_acc57_240329.onnx")
 
         ie = Core()
-        network = ie.read_model(model="./openvino/oui_240328.xml", weights="./openvino/oui_240328.bin")
+        network = ie.read_model(model="./ai/openvino/oui_acc57_240329.xml", weights="./ai/openvino/oui_acc57_240329.bin")
         self.model_openvino = ie.compile_model(model=network, device_name="CPU")
         self.openvino_outputlayer = next(iter(self.model_openvino.outputs))
-    
-        os.chdir("../KoBERT")
-        _, vocab = get_pytorch_kobert_model(cachedir=".cache")
+        
+        _, vocab = get_pytorch_kobert_model(cachedir="./ai/KoBERT/.cache")
         tokenizer = get_tokenizer()
         self.tok = nlp.data.BERTSPTokenizer(tokenizer, vocab, lower=False)
         self.emotion_to_idx = {0:'angry', 1:'embarrassed', 2:'sad', 3:'happy', 4:'doubtful', 5:"comfortable"} 
         self.max_len = max_len
         self.batch_size=batch_size
         self.threshold=threshold
-        self.device = device
-
+        self.device = device  
+    
     def __transform__(self, X):
         X_split = [X]
         sentences = [[re.sub('[^a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ\s]','',x).replace(" ", ""), 0]  for x in X_split]
         dataset = BERTDataset(sentences, 0, 1, self.tok, self.max_len, True, False)
-        dataloader = DataLoader(dataset, batch_size=self.batch_size, num_workers=5)
+        dataloader = DataLoader(dataset, batch_size=self.batch_size, num_workers=1)
         return dataloader
     
     def __to__json__(self, result):
@@ -140,3 +138,5 @@ class BERTDataset(Dataset):
 
     def __len__(self):
         return (len(self.labels))
+    
+oui = OuiInference()
