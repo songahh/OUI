@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faBars, faTrash, faUser, faHouse } from '@fortawesome/free-solid-svg-icons';
-import { faCircleCheck, faBell } from '@fortawesome/free-regular-svg-icons';
+import { faArrowLeft, faBars, faTrash, faUser, faHouse  } from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 
 const ButtonWrapper = styled.button`
@@ -11,15 +11,16 @@ const ButtonWrapper = styled.button`
     &:hover {
         background-color: #e0e0e0;
     }
-    font-size: 40px;
-`;
+    font-size: 50px;
+    margin-right: 20px;
+    margin-top: 20px;
+    `;
 
 const iconPaths = {
     back: faArrowLeft,
     hamburger: faBars,
     check: faCircleCheck, 
     trash: faTrash,
-    bell: faBell, 
     user: faUser,
     home: faHouse,
 }
@@ -34,7 +35,7 @@ const Button = ( props: ButtonProps ) => {
     const navigator = useNavigate();
     
     const eventHandle = () => {
-        if ( btType === 'hamburger' || btType === 'bell' ) {  //햄버거 메뉴
+        if ( btType === 'hamburger') {  //햄버거 메뉴
             if( typeof onButtonClick === 'function' ) {
               onButtonClick();
             }
