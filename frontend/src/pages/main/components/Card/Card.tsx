@@ -75,7 +75,7 @@ const Card = ({ buttonText, onClick, templateId, title }: CardProps ) => {
   return (
     <CardWrapper onClick={ onClick } $templateId={ templateId }>
       {title && <CardTitle>{title}</CardTitle>}
-      {date && <CardButton>{date}</CardButton>}
+      {date && <CardButton>{date} ~</CardButton>}
     </CardWrapper>
   );
 };
