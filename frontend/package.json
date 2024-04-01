@@ -52,6 +52,7 @@
     "sonarqube": "^0.0.1",
     "styled-components": "^6.1.8",
     "typescript": "^5.4.2",
+    "uuid": "^9.0.1",
     "web-vitals": "^2.1.4",
     "webfontloader": "^1.6.28",
     "workbox-background-sync": "^6.5.4",
