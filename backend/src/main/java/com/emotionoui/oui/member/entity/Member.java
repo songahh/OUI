@@ -38,9 +38,6 @@ public class Member implements UserDetails {
     @Column(name="nickname")
     private String nickname;
 
-    @Column(name="password")
-    private String password;
-
     @Column(name="img")
     private String img;
 
@@ -59,7 +56,7 @@ public class Member implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return null;
     }
 
     @Override
