@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import { Drawer, MusicPlayer2, Button, EditIcon, DecoIcon, DeleteIcon, BackIcon } from 'src/components';
+import { Drawer, MusicPlayer2, EditIcon, DecoIcon, DeleteIcon, BottomNavi } from 'src/components';
 import { Canvas } from './components';
 import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useState, useEffect, useRef } from 'react';
@@ -74,6 +74,7 @@ const Comment = styled.div`
     border-radius: 20px;
     font-size: 24px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    line-height: 40px;
 `
 
 const Diary = () => {
@@ -110,6 +111,7 @@ const Diary = () => {
     useEffect(() => {
         if(!canvas) return;
         console.log('emotions', emotions);
+        console.log('comment', comment);
 
         canvas.loadFromJSON(dailyDiary?.data?.dailyContent, () => {
             canvas.renderAll();
@@ -178,14 +180,14 @@ const Diary = () => {
                     <>
                         <Title>AI 코멘트</Title>
                         <Comment>
-                            Comment...
-                            {/* { comment &&  comment?.data?.comment} */}
+                            { comment &&  comment?.data}
                         </Comment>
                     </>
                 )}
                 <Title>추천 음악</Title>
                 <MusicPlayer2 />
             </ResultSection>
+            <BottomNavi />
         </Container>
     )
 };
