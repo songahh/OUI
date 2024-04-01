@@ -178,7 +178,8 @@ const Diary = () => {
                     <>
                         <Title>AI 코멘트</Title>
                         <Comment>
-                            { comment &&  comment?.data?.comment}
+                            Comment...
+                            {/* { comment &&  comment?.data?.comment} */}
                         </Comment>
                     </>
                 )}

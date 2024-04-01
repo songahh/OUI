@@ -7,7 +7,6 @@ import joy from 'src/asset/images/emotion/joy.png'
 import nervous from 'src/asset/images/emotion/nervous.png'
 import relax from 'src/asset/images/emotion/relax.png'
 import sad from 'src/asset/images/emotion/sad.png'
-import ya from 'src/asset/images/ya.jpg'
 import staticStore from 'src/store'
 import { useNavigate } from 'react-router-dom'
 
@@ -149,7 +148,7 @@ const Day = ( props: DayProps ) =>{
             updateModal()
             }
         }
-        console.log("Diary", diaries)
+
 
     
     return(
