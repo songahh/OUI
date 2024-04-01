@@ -3,7 +3,7 @@ onnx/
 pytorch/
 openvino/
 
-.cache
-__pycache__
+.cache/
+__pycache__/
 
 application-secrets.json
