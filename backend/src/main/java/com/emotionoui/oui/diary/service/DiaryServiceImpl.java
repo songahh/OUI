@@ -517,4 +517,12 @@ public class DiaryServiceImpl implements DiaryService{
 
         return list;
     }
+
+    // mongoDB Id로 일기 찾기
+    @Override
+    public Integer findDailyDiaryIdByMongoId(String mongoId){
+        System.out.println("mongoId = " + mongoId);
+        Integer dailyDiaryId = dailyDiaryRepository.findDailyDiaryIdByMongoId(mongoId);
+        return dailyDiaryId;
+    }
 }
