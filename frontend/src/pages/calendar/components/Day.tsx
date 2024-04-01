@@ -143,7 +143,7 @@ const Day = ( props: DayProps ) =>{
         } else {
             
             // navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
-            navigator(`/diary/${diary.diary.daily_diary_id}`)
+            // navigator(`/diary/${diary.diary.daily_diary_id}`)
             updateDate( date )
             updateModal()
             }
