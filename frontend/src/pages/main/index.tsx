@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card } from "src/pages/main/components/Card";
 import { Header } from "src/components/control/Header";
-import { Button } from "src/components";
 import { CustomModal } from "./components/Modal";
 import { AlarmModal } from "src/components/modal";
 import { getDiary, getMember, postCreateDiary, postDeviceToken, getLogout } from './api';
@@ -68,7 +67,7 @@ const SliderWrapper = styled( Slider )`
 
 
 const YellowBox = styled.div`
-  width: 660px;
+  width: 680px;
   height: 5.5vh;
   background-color: rgba(255, 225, 125, 0.6);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -91,13 +90,13 @@ const YellowBox = styled.div`
 `;
 
 const UserRecord = styled.div`
-  width: 660px;
+  width: 680px;
   margin-bottom: 8%;
   margin-left: 8%
   background: transparent;
   padding: 5px 10px;
   border: 0px;
-  font-size: 50px;
+  font-size: 49px;
   font-weight: bold;
   font-family: "Dovemayo",
   @media (max-width: 768px) {
@@ -117,7 +116,7 @@ const ProfileImage = styled.img`
   max-height: 190px;
   border-radius: 50%;
   object-fit: cover;
-  margin-top: 50%;
+  margin-top: 43%;
   margin-left: 8%;
 `;
 
@@ -177,7 +176,7 @@ const Main = () => {
 
   const navigator = useNavigate()
   
-  const { setDiaryId, setType, setAccessToken, setIsLogin, setDailyDiaryId } = useStore()
+  const { setDiaryId, setType, setAccessToken, setIsLogin, setDailyDiaryId, isModalOpened, updateModal } = useStore()
   const [ isModalOpen, setIsModalOpen ] = useState( false );
   const [ diaryList, setDiaryList ] = useState( [] );
   const [ userName, setUserName ] = useState( "" );
@@ -197,7 +196,7 @@ const Main = () => {
     const data = {
       diaryName: title,
       templateId: templateId,
-      members: members,
+    members: members, 
     };
   
     try {
@@ -275,6 +274,10 @@ const Main = () => {
     })
   }
 
+  const viewMyPage = () =>{
+    updateModal()
+  }
+
   
   useEffect(() => {
     if ( modalSubmitted ) {
@@ -294,12 +297,16 @@ const Main = () => {
     requestPermission();
   },[])
 
+  useEffect(()=>{
+    refetchMember();
+  },[isModalOpened])
+
 
   return (
     <>
     <div style={{paddingRight:'4%', paddingTop:'6%'}}>
       <Header>
-        <ProfileImage src={ userImage || profile } alt="유저 프로필 이미지" />
+        <ProfileImage onClick={ viewMyPage } src={ userImage || profile } alt="유저 프로필 이미지" />
         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
           <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => Logout()}>
           <img style={{height:'3.3em'}} src={logoutBtn} alt="Logout" />

@@ -48,9 +48,9 @@ const CardTitle = styled.div`
   top: 75px; // 상단 마진 조절
   left: 50%; // 가운데 정렬을 위해 왼쪽에서 50% 위치
   transform: translateX(-50%); // 정확한 가운데 정렬을 위해 자신의 너비의 50%만큼 왼쪽으로 이동
-  width: 90%; // 박스 너비에 맞춰 조절
+  width: 85%; // 박스 너비에 맞춰 조절
   color: white;
-  font-size: clamp(95px, 2.5vw, 70px); // 뷰포트 너비에 따라 글자 크기 동적 조절
+  font-size: clamp(80px, 2.5vw, 70px); // 뷰포트 너비에 따라 글자 크기 동적 조절
   text-align: center; // 텍스트 가운데 정렬
   white-space: nowrap; // 텍스트를 한 줄로 유지
   overflow: hidden; // 넘치는 텍스트 숨김

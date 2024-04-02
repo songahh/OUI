@@ -35,7 +35,7 @@ const DiaryWrite = () => {
     const [ activeTool, setActiveTool ] = useState("textbox");
     const [ selectedDate, setSelectedDate ] = useState('');
     const [ textboxProps, setTextboxProps ] = useState({
-        selectedFont: 'Dovemayo',
+        selectedFont: 'JGaegujaengyi',
         fontWeight: 'normal',
         textAlign: 'left',
         fontColor: '#262626',
@@ -50,7 +50,7 @@ const DiaryWrite = () => {
             top: 60,
             width: 400,
             fontSize: 24,
-            fontFamily: "Dovemayo",
+            fontFamily: "JGaegujaengyi",
             fill: "#262626",
             textAlign: "left",
             fontWeight: "normal",
@@ -79,8 +79,8 @@ const DiaryWrite = () => {
     // 저장
     const saveDiary = async () => {
         // string으로 전달
-        const canvasDic = canvas?._activeObject
-        const textSize =  canvasDic['text'].length != null ? canvasDic['text'].length : 0;
+        const textbox = canvas.getObjects()[0].toJSON();
+        const textSize =  textbox["text"].length;
 
         if(textSize <11) {
             alert('글자를 10글자 이상 입력해주세요.');

@@ -5,7 +5,7 @@ import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from 'react-query';
 import { useNavigate } from "react-router-dom";
-import { getDiary, deleteDiary, getEmotions, getComment } from './api';
+import { getDiary, deleteDiary, getEmotions, getComment, getMusicList } from './api';
 import useStore from 'src/store'
 import styled from 'styled-components';
 
@@ -25,8 +25,8 @@ const Container = styled.div`
 `;
 
 const Tab = styled.button<{ $isDeco: boolean }>`
-    width: 150px; 
-    height: 60px; 
+    width: 130px; 
+    height: 50px; 
     background-color: ${( props ) => props.$isDeco ? "#FFFEFC" : "#EEEEEE"}; 
     font-color: ${( props ) => props.$isDeco ? "#262626" : "#9E9D9D"}; 
     font-weight: ${( props ) => props.$isDeco ? "bold" : "normal"}; 
@@ -40,7 +40,7 @@ const ResultSection = styled.div`
     width: 90%;
     text-align: left; 
     margin-top: 50px; 
-    margin-bottom: 40px;
+    margin-bottom: 80px;
 `
 
 const Title = styled.span`
@@ -56,9 +56,9 @@ const Emotion = styled.div<{ color: string }>`
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
     border-radius: 25px;
     background-color: ${( props ) => props.color };
-    color: white;
-    font-size: 28px;
-    font-weight: bold;
+    color: #FFFEFC;
+    padding-top: 5px;
+    font-size: 32px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -95,6 +95,8 @@ const Diary = () => {
     const [ canvas, setCanvas ] = useState<fabric.Canvas>(null);
     const [ isFontLoaded, setIsFontLoaded ] = useState<boolean>(false);
     const [ isDeco, setIsDeco ] = useState<boolean>(true);
+    const [ isOnlyNeutral, setIsOnlyNeutral ] = useState<boolean>(false);
+    const [ playList, setPlayList ] = useState<Array<Object>>([]);
 
     const { data: dailyDiary } = useQuery('dailyDiary', () => getDiary(dailyDiaryId), {
         enabled: isFontLoaded
@@ -103,15 +105,25 @@ const Diary = () => {
     const { data: emotions } = useQuery('emotions', () => getEmotions(dailyDiaryId), {
         enabled: isFontLoaded
     });
+    
 
     const { data: comment } = useQuery('comment', () => getComment(dailyDiaryId), {
         enabled: isFontLoaded
     });
 
+    const { data: musics } = useQuery('music', () => getMusicList(dailyDiaryId), {
+        enabled: isFontLoaded
+    });
+
     useEffect(() => {
         if(!canvas) return;
-        // console.log('emotions', emotions);
-        // console.log('comment', comment);
+
+        setPlayList(musics?.data);
+
+
+        if(emotions?.data?.emotionList.length === 1 && emotions?.data?.emotionList[0] === 'neutral') {
+            setIsOnlyNeutral(true);
+        }
 
         canvas.loadFromJSON(dailyDiary?.data?.dailyContent, () => {
             canvas.renderAll();
@@ -148,6 +160,9 @@ const Diary = () => {
                     {(type === '공유' && isDeco) && (
                         <DecoIcon size={ 55 } onClick={() => navigator(`/diary/deco/${ dailyDiaryId }`, {state: {dailyDiaryId: dailyDiaryId, type: type}})} />
                     )}
+                    {((type ==='공유' && !isDeco) && (dailyDiary?.data.writerId !== dailyDiary?.data.memberId)) && (
+                        <span style={{ width: "55px" }} />
+                    )}
                     {/* 공유일기 + 원본일기 -> 본인 일기일 때만 버튼이 나와야 함 */}
                     {(((type === '개인') || (type ==='공유' && !isDeco) && (dailyDiary?.data.writerId === dailyDiary?.data.memberId))) && (
                         <EditIcon size={ 55 } onClick={() => navigator(`/diary/edit/${ dailyDiaryId }`, {state: {dailyDiaryId: dailyDiaryId, type: type}})} />
@@ -164,28 +179,36 @@ const Diary = () => {
                 </div>
             )}
             <Canvas canvasRef={ canvasRef } canvas={ canvas } setCanvas={ setCanvas } setIsFontLoaded={ setIsFontLoaded } />
-            <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ paddingTop: "30px", marginBottom: "10px" }} />
-            <div style={{ fontSize: "24px", fontWeight: "bold" }}>분석 결과 보러 가기</div>
-            <ResultSection>
-                <Title>나의 감정은?</Title>
-                <div style={{ marginTop: "20px", marginBottom: "60px", display: "flex" }}>
-                    {emotions && emotions?.data?.emotionList?.map((emotion, index) => (
-                        <Emotion key={index} color={ emotionTag[emotion].color }>
-                            #{ emotionTag[emotion].name }
-                        </Emotion>
-                    ))}
-                </div>
-                {(type === '개인') && (
-                    <>
-                        <Title>AI 코멘트</Title>
-                        <Comment>
-                            { comment &&  comment?.data}
-                        </Comment>
-                    </>
-                )}
-                <Title>추천 음악</Title>
-                <MusicPlayer3 />
-            </ResultSection>
+            {/* 감정 분석 결과 '중립'만 올 경우 감정 분석 결과부분 아예 X */}
+            {(!isOnlyNeutral) && (
+                <>
+                    <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ marginTop: "20px", marginBottom: "10px" }} />
+                    <div style={{ fontSize: "24px", fontWeight: "bold" }}>분석 결과 보러 가기</div>
+                    <ResultSection>
+                                <Title>나의 감정은?</Title>
+                                {/* '중립'은 감정 태그에서 제외 */}
+                                <div style={{ marginTop: "10px", marginBottom: "60px", display: "flex" }}>
+                                    {emotions && emotions.data.emotionList.map((emotion, index) => 
+                                        (emotion !== 'neutral') ? (
+                                            <Emotion key={index} color={emotionTag[emotion].color}>
+                                                #{emotionTag[emotion].name}
+                                            </Emotion>
+                                        ) : null
+                                    )}
+                                </div>
+                        {(type === '개인') && (
+                            <>
+                                <Title>AI 코멘트</Title>
+                                <Comment>
+                                    { comment &&  comment?.data}
+                                </Comment>
+                            </>
+                        )}
+                        <Title>추천 음악</Title>
+                        <MusicPlayer3 playList={ playList }/>
+                    </ResultSection>
+                </>
+            )}
             <BottomNavi />
         </Container>
     )
