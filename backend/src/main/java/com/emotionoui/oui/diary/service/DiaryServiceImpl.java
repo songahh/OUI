@@ -4,8 +4,10 @@ import com.emotionoui.oui.alarm.service.AlarmService;
 import com.emotionoui.oui.calendar.entity.Emotion;
 import com.emotionoui.oui.calendar.repository.EmotionRepository;
 import com.emotionoui.oui.diary.dto.EmotionClass;
+import com.emotionoui.oui.diary.dto.RecommendMusicClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.DecorateDailyDiaryReq;
+import com.emotionoui.oui.diary.dto.req.RecommendMusicReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDiarySettingReq;
 import com.emotionoui.oui.diary.dto.res.DecorateDailyDiaryRes;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
@@ -28,7 +30,10 @@ import com.emotionoui.oui.member.repository.MemberDiaryRepository;
 import com.emotionoui.oui.music.service.MusicService;
 import com.emotionoui.oui.openai.service.CustomBotService;
 import com.emotionoui.oui.querydsl.QuerydslRepositoryCustom;
+import com.emotionoui.oui.survey.repository.PreferenceRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +69,7 @@ public class DiaryServiceImpl implements DiaryService{
     private final AlarmService alarmService;
     private final CustomBotService customBotService;
     private final QuerydslRepositoryCustom querydslRepositoryCustom;
+    private final PreferenceRepository preferenceRepository;
 
 
     // 일기 생성하기
@@ -161,7 +167,31 @@ public class DiaryServiceImpl implements DiaryService{
                 // 2) 감정분석 후 노래 추천 기능
                 CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
                     try {
-                        sendDataToAI(finalText, dailyDate, document, dailyDiary, member, type);
+                        // 감정분석 결과 노래추천 json파일 넘어옴
+                        String music = sendDataToAI(finalText, dailyDate, document, dailyDiary, member, type);
+
+                        ObjectMapper objectMapper2 = new ObjectMapper();
+
+                        List<RecommendMusicClass> musicList = null;
+                        try {
+                            musicList = objectMapper2.readValue(music, new TypeReference<List<RecommendMusicClass>>() {});
+                        } catch (IOException e) {
+                            log.error("JSON 변환 중 오류 발생: " + e.getMessage());
+                        }
+
+                        assert musicList != null;
+                        for (RecommendMusicClass musicOne : musicList) {
+                            if(musicOne.getUri()==null){
+
+                            }
+
+//                            log.info("여기까지 옵니까??");
+//                            log.info(musicOne.getSongName());
+//                            System.out.println(musicOne.getSongName() + " - " + musicOne.getArtistNameBasket()[0] + " (" + musicOne.getUri() + ")");
+                        }
+
+
+
                     } catch (ExecutionException e) {
                         throw new RuntimeException(e);
                     } catch (InterruptedException e) {
@@ -196,10 +226,10 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     // AI를 통한 감정분석 및 음악추천 결과값 받기
-    public void sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary, Member member, Integer type) throws ExecutionException, InterruptedException {
+    public String sendDataToAI(String text, Date dailyDate, DailyDiaryCollection document, DailyDiary dailyDiary, Member member, Integer type) throws ExecutionException, InterruptedException {
         // 감정분석 AI Url
         String aiServerUrl = "http://j10a506.p.ssafy.io:8008/analysis/openvino";
-        String aiServerUrl2 = "http://ai-server-2/process-data";
+        String aiServerUrl2 = "http://j10a506.p.ssafy.io:8008/recommendation";
 
         // CompletableFuture를 사용하여 감정분석 요청을 보내고 데이터 받기
         // supplyAsync: 비동기 + 반환값이 있는 경우
@@ -213,10 +243,11 @@ public class DiaryServiceImpl implements DiaryService{
             // thenAccept: 반환 값을 받아 처리하고 값읋 반환하지 않음
             // thenRun: 반환 값을 받지 않고 다른 작업을 실행함
             ObjectMapper objectMapper = new ObjectMapper();
+            EmotionClass emotionRes;
             try {
                 // 감정분석 결과를 MongoDB에 넣기
                 log.info("emotionRes 까지 왔나요?");
-                EmotionClass emotionRes = objectMapper.readValue(s, EmotionClass.class);
+                emotionRes = objectMapper.readValue(s, EmotionClass.class);
 
                 document.setEmotion(emotionRes);
                 dailyDiaryMongoRepository.save(document);
@@ -248,13 +279,26 @@ public class DiaryServiceImpl implements DiaryService{
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
-            // 실험실험
-            return null;
+
+            String userType = preferenceRepository.getTypeByMemberId(member.getMemberId());
+            userType = userType.equals("Yellow")?"COVT":"REP";
+
+            // AI 서버에 보낼 데이터 생성
+            RecommendMusicReq req = RecommendMusicReq.builder()
+                    .angry(emotionRes.getAngry())
+                    .sad(emotionRes.getSad())
+                    .happy(emotionRes.getHappy())
+                    .comfortable(emotionRes.getComfortable())
+                    .doubtful(emotionRes.getDoubtful())
+                    .embarrassed(emotionRes.getEmbarrassed())
+                    .user_type(userType)
+                    .build();
+
             // 감정분석 보내고 음악추천 결과 받기
-            // return sendEmotionData(s, aiServerUrl2);
+             return sendEmotionData(req, aiServerUrl2);
         });
 
-//        return future.get();
+        return future.get();
     }
 
     // 감정처리를 위한 요청을 보내고 감정분석 결과를 받는 메서드
@@ -272,6 +316,7 @@ public class DiaryServiceImpl implements DiaryService{
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(aiServerUrl))
+                .version(HttpClient.Version.HTTP_1_1)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
@@ -287,18 +332,32 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     // 음악추천을 위한 요청을 보내고 음악추천 결과를 받는 메서드
-    private static String sendEmotionData(String emotionData, String aiServerUrl) {
+    private static String sendEmotionData(RecommendMusicReq req, String aiServerUrl) {
         HttpClient client = HttpClient.newHttpClient();
+
+        log.info("sendEmotionData 까지 왔음 !");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String musicJson = null;
+        
+        try {
+            musicJson = objectMapper.writeValueAsString(req);
+            System.out.println(musicJson);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assert musicJson != null;
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(aiServerUrl))
+                .version(HttpClient.Version.HTTP_1_1)
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(emotionData))
+                .POST(HttpRequest.BodyPublishers.ofString(musicJson))
                 .build();
 
         try {
             HttpResponse<String> musicData = client.send(request, HttpResponse.BodyHandlers.ofString());
+            log.info(musicData.body().toString());
             return musicData.body();
-
         } catch (Exception e) {
             e.printStackTrace();
             return null;
