@@ -53,9 +53,9 @@ const TodoWrapper = styled.div`
 
 const TodoItemWrapperContainer = styled.div`
     width: 100%;
-    height: 12px;
+    height: 10px;
     display: flex;
-    margin: 2px;
+    margin-top: 2px;
 `
 
 const TodoItemWrapper = styled.div<{ color: string }>`
@@ -63,14 +63,16 @@ const TodoItemWrapper = styled.div<{ color: string }>`
     height: 10px;
     display: flex;
     justify-content: center;
-    margin-top:2px;
-    background-color: ${ ( props ) => props.color };
+    background-color: ${( props ) => props.color };
     text-align: center;
+    opacity: 0.8;
 `
 
 const TodoHeaderWrapper = styled.div<{color: string}>`
     width: 10px;
-    background-color: ${ ( props ) => props.color };
+    height:10px;    
+    background-color: ${(props) => props.color};
+    
 `
 
 
