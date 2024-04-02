@@ -73,6 +73,7 @@ const RejectButton = styled(Button)`
     font-size: 0.85rem; 
     padding: 6px; 
     box-shadow: none;
+    min-width: 50px;
 `;
 
 
