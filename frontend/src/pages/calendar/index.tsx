@@ -27,7 +27,7 @@ const CalendarWrapper = styled.div`
   box-sizing: border-box;
   display: flex;
   width: 100%;
-  height: calc(100% - 150px);
+  height: calc(90% - 100px);
   align-items: center;
   flex-direction: column;
   padding-bottom: 50px; 

@@ -3,7 +3,7 @@ import { putAxios } from "src/api/util";
 
 export const putMyInfo = async( data: DataType ) => {
     try{
-        return await putAxios(`/member`, data, {
+        return await putAxios(`/member`, data.ImgUrl, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },})
@@ -14,5 +14,5 @@ export const putMyInfo = async( data: DataType ) => {
 
 interface DataType {
     memberNickname: string,
-    ImgUrl: string,
+    ImgUrl: FormData,
 }
