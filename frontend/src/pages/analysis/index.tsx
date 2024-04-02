@@ -46,7 +46,7 @@ const BoxWrapper = styled.div`
     border-radius: 4px;
     display: flex;
     flex-direction: column;
-    padding: 5px;
+    padding: 5px 5px 120px 5px;
     justify-content: center;
     align-items: center;
     overflow: hidden; 
@@ -153,16 +153,28 @@ const Analysis = () => {
         maintainAspectRatio: false,
         scales: {
             x: {
+                ticks: {
+                    font: {
+                        size: 18,
+                        family: 'JGaegujaengyi',
+                    },
+                },
                 grid: {
-                    color: 'rgba(0, 0, 0, 0.1',
+                    color: 'rgba(0, 0, 0, 0.1)',
                 },
                 border: {
                     dash: [8,4],
                 },  
             },
             y: {
+                ticks: {
+                    font: {
+                        size: 18,
+                        family: 'JGaegujaengyi',
+                    },
+                },
                 grid: {
-                    color: 'rgba(0, 0, 0, 0.1',
+                    color: 'rgba(0, 0, 0, 0.1)',
                 },
                 border: {
                     dash: [8,4],
@@ -173,25 +185,27 @@ const Analysis = () => {
     return(
         <>
                 <Header>
-                    <Drawer></Drawer>
+                    <span style={{ marginTop: "39px", marginLeft: "8px" }}>
+                        <Drawer />
+                    </span>
                     <Button></Button>
                     <Button></Button>
                 </Header>
+                <div>
                     <SwitchWrapper setKeyType={ setKeyType } keyType={ keyType } ></SwitchWrapper>
                     <BoxWrapper>
                     {keyType === 2 && (
                         <>
-                                <div style={{ marginTop:'5%', marginBottom:'1.5%', fontSize: '33px', width:'85%', display:"flex"}}>
-                                    { userName } 님의 이번 주  <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}> “행복 그래프”</p> 예요!
-                                </div>
+                            <div style={{ marginTop:'5%', marginBottom:'1.5%', fontSize: '28px', width:'85%', display:"flex"}}>
+                                { userName } 님의 이번 주  <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}> “행복 그래프”</p> 예요!
+                            </div>
                             <div style={{ padding:'20px', width: '85%', borderRadius:'15px', backgroundColor:'#FFFEFC' }}>
                                 <GraphWrapper>
                                     <Line data={ happyDataSet } options={ options } />
                                 </GraphWrapper>
                                 
-
                             </div>
-                            <div style={{ marginTop:'10%', marginBottom:'1.5%', fontSize: '33px', width:'85%', display:"flex"}}>
+                            <div style={{ marginTop:'10%', marginBottom:'1.5%', fontSize: '28px', width:'85%', display:"flex"}}>
                                     { userName } 님의 이번 주 <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}>“우울 그래프”</p> 예요!
                                 </div>
                             <div style={{ padding:'20px', width: '85%', borderRadius:'15px', backgroundColor:'#FFFEFC' }}>
@@ -208,7 +222,8 @@ const Analysis = () => {
                         </>
                     )}
                     </BoxWrapper>
-                    <BottomNavi/>
+                </div>
+                <BottomNavi/>
                 
         </>
     );
