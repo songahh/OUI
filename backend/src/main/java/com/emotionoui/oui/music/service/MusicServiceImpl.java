@@ -114,11 +114,13 @@ public class MusicServiceImpl implements MusicService{
 
     @Override
     public void uploadSong() throws IOException {
-//        String jsonFilePath = "C:\\music\\song_meta.json";
-//        insertJsonData(jsonFilePath);
+        // 노래 넣기
+        String jsonFilePath = "C:\\music\\song_meta.json";
+        insertJsonData(jsonFilePath);
 
-        String csvFilePath = "C:\\music\\song_tag.csv";
-        updateMongoWithCsv(csvFilePath);
+        // 태그 관련 csv
+//        String csvFilePath = "C:\\music\\song_tag.csv";
+//        updateMongoWithCsv(csvFilePath);
     }
 
     private void updateMongoWithCsv(String csvFilePath) throws IOException {
