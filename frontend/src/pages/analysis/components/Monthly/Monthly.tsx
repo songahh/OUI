@@ -52,16 +52,14 @@ const ChartBoxWrapper = styled.div`
 `;
 
 const EmotionTagWrapper = styled.div`
-  font-size: 25px;
+  font-size: 28px;
   color: #333;
 `;
 
 const EmotionScoreWrapper = styled.div`
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 25px;
   color: #666;
   margin-bottom: 20%;
-  margin-top: 5%;
 `;
 
 const ImageWrapper = styled.div`
@@ -76,10 +74,9 @@ const TitleWrapper = styled.div`
   justify-content: flex-start;
   align-items: center;
   width: 80%;
-  font-size: 30px;
+  font-size: 33px;
   text-align: left; 
   margin-top: 5%;
-  margin-bottom: 1%; 
 `;
 
 const DoughnutWrapper = styled.div`
@@ -106,10 +103,11 @@ const CalendarHeaderMiddleWrapper = styled.div`
 `
 
 const Title = styled.div`
-    font-size: 35.5px;
+    font-size: 37px;
     font-weight: 600;
     margin-left: 4%;
     margin-right: 4%;
+    margin-top: 1.5%;
     justify-content: flex-start;
 `
 
