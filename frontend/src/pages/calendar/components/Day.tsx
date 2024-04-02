@@ -5,6 +5,7 @@ import angry from 'src/asset/images/emotion/angry.png'
 import embarrass from 'src/asset/images/emotion/embarrass.png'
 import joy from 'src/asset/images/emotion/joy.png'
 import nervous from 'src/asset/images/emotion/nervous.png'
+import soso from 'src/asset/images/emotion/soso.png'
 import relax from 'src/asset/images/emotion/relax.png'
 import sad from 'src/asset/images/emotion/sad.png'
 import staticStore from 'src/store'
@@ -82,9 +83,7 @@ const Day = ( props: DayProps ) =>{
     const navigator = useNavigate()
 
     const { day, calendars, type, diaryId } = props
-    // const { day, calendars } = props
     const { updateDate, updateModal } = useStore()
-    // const { setDailyDiaryId, diaryId, type } = staticStore()
     const { setDailyDiaryId } = staticStore()
 
     const emotionPositions = [
@@ -102,9 +101,9 @@ const Day = ( props: DayProps ) =>{
         todos = calendars?.schedules?.filter(( schedule ) => schedule?.date?.substring( 5, 10 ) === format( day, 'MM-dd'))
     } else {
         diaries = calendars?.members?.flatMap( member => member?.diaries )?.filter( diary => {
-            if ( diary && diary.date ) {
+            if ( diary && diary?.date ) {
                 const currentDate = format( day, 'MM-dd' )
-                const diaryDate = diary.date.substring( 5, 10 )
+                const diaryDate = diary?.date.substring( 5, 10 )
 
                 return diaryDate === currentDate
             }
@@ -112,9 +111,9 @@ const Day = ( props: DayProps ) =>{
         })
 
         todos = calendars?.members?.flatMap( member => member?.schedules )?.filter( schedule => {
-            if ( schedule && schedule.date ) {
+            if ( schedule && schedule?.date ) {
                 const currentDate = format( day, 'MM-dd' )
-                const diaryDate = schedule.date.substring( 5, 10 )
+                const diaryDate = schedule?.date.substring( 5, 10 )
 
                 return diaryDate === currentDate
             }
@@ -129,7 +128,8 @@ const Day = ( props: DayProps ) =>{
         'happy': joy,
         'doubtful': nervous,
         'comfortable': relax,
-        'sad': sad
+        'sad': sad,
+        'neutral': soso
     }
 
     function listTodo (e, date): void{
@@ -157,11 +157,11 @@ const Day = ( props: DayProps ) =>{
             <EmotionWrapper>
                 { diaries?.map(( diary, index ) => (
                     <EmotionIcon 
-                        src={ emotionImg[ diary?.emotion ]} 
+                        src={ emotionImg[ diary?.emotion ]}
                         alt='' 
-                        onClick={(e) => goMyDiary({ diary }, day)} 
-                        style={{ ...emotionPositions[ index ] }} // 이모티콘 위치조정
-                        key={index}
+                        onClick={(e) => goMyDiary({ diary }, day )} 
+                        style={{ ...emotionPositions[ index ]}} // 이모티콘 위치조정
+                        key={ index }
                     />
                 ))}
             </EmotionWrapper>
