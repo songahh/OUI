@@ -13,8 +13,8 @@ const CardWrapper = styled.div<CardWrapperProps>`
   padding: 20px;
   margin-top: 50px;
   max-width: 700px;
-  width: 42vh;
-  height: 57vh;
+  width: 40vh;
+  height: 54vh;
   background-size: 100% 100%;
   background-image: ${(props) => props.$templateId !== undefined 
     && props.$templateId !== -1 && getImageUrl(props.$templateId) ? `url(${getImageUrl(props.$templateId)})` : 'none'};
