@@ -16,4 +16,8 @@ public class UpdateMemberReq {
         this.memberNickname = memberNickname;
         ImgUrl = imgUrl;
     }
+
+    public UpdateMemberReq(String memberNickname) {
+        this.memberNickname = memberNickname;
+    }
 }
