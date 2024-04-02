@@ -10,6 +10,12 @@ import HakgyoansimGaeulsopungBold from '../asset/fonts/HakgyoansimGaeulsopung_Bo
 
 const GlobalStyle = createGlobalStyle`
       @font-face {
+            font-family: 'JGaegujaengyi';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/JGaegujaengyi-Medium-KO.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+      }
+      @font-face {
             font-family: 'DoveMayo';
             src: local('DoveMayo'), url(${DoveMayo}) format('woff');
             font-style: normal;
@@ -57,6 +63,6 @@ const GlobalStyle = createGlobalStyle`
             font-style: normal;
             font-weight: bold;
       }
-`
+        `
 
 export default GlobalStyle;

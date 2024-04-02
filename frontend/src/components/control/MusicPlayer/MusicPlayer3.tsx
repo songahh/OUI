@@ -2,7 +2,6 @@ import { useState, useRef, SetStateAction } from 'react';
 import PauseIcon from 'src/asset/images/icon/pause.svg';
 import NextIcon from 'src/asset/images/icon/next.svg';
 import PrevIcon from 'src/asset/images/icon/prev.svg';
-// import RefreshIcon from 'src/asset/images/icon/refresh.svg';
 import PlayIcon from 'src/asset/images/icon/play.svg';
 import ReactPlayer from 'react-player';
 import styled from 'styled-components';
@@ -17,7 +16,7 @@ const PlayerWrapper = styled.div`
   border-radius: 20px;
   width: 100%;
   padding: 30px 50px;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 40px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   line-height: 40px;
