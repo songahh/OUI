@@ -169,9 +169,9 @@ const Calendar = () =>{
   }
 
   const goDiaryWrite = () =>{
-    type==='개인' ? navigator(`/diary/write/${diaryId}`)
-     : setIsDiaryWrite(true)      
-    
+    navigator(`/diary/write/${diaryId}`)
+    // type==='개인' ? navigator(`/diary/write/${diaryId}`)
+    //  : setIsDiaryWrite(true)
   }
   
 
@@ -239,10 +239,10 @@ const Calendar = () =>{
                   </Modal>
                 </ModalPortal>
             }
-            {
+            {/* {
               isDiaryWrite && 
               <WriteModalPortal onClose={ closeWrite } />
-            }
+            } */}
             <DateList/>
             <DayList list = { days } calendars = { calendars?.data } type = { type }/>
             </CalendarWrapper>
