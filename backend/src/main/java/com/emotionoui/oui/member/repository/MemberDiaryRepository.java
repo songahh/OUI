@@ -33,7 +33,7 @@ public interface MemberDiaryRepository extends JpaRepository<MemberDiary, Intege
     @Query("SELECT COUNT(m.id) FROM MemberDiary m WHERE m.member.memberId = :memberId AND m.isDeleted = 0")
     Integer countByMemberId(@Param("memberId") Integer memberId);
 
-    @Query("SELECT m FROM MemberDiary m WHERE m.member.memberId = :memberId AND m.diary.type = :diaryType")
+    @Query("SELECT m FROM MemberDiary m WHERE m.member.memberId = :memberId AND m.diary.type = :diaryType and m.isDeleted = 0")
     Optional<MemberDiary> findPersonalMemberDiary(@Param("memberId") Integer memberId, @Param("diaryType") DiaryType diaryType);
 
 }
