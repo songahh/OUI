@@ -35,4 +35,11 @@ public class PreferenceController {
         String type =  preferenceService.getTypeByMemberId(member);
         return new ResponseEntity<String>(type, HttpStatus.OK);
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updatePreference(@RequestBody PreferenceReq preferenceReq){
+        preferenceService.updatePreferenceByMemberId(preferenceReq.getMemberId(), preferenceReq.getType());
+
+        return ResponseEntity.noContent().build();
+    }
 }

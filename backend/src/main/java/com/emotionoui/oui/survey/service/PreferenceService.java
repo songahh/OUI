@@ -1,6 +1,7 @@
 package com.emotionoui.oui.survey.service;
 
 import com.emotionoui.oui.member.entity.Member;
+import com.emotionoui.oui.member.repository.MemberRepository;
 import com.emotionoui.oui.survey.dto.req.PreferenceReq;
 import com.emotionoui.oui.survey.entity.Preference;
 import com.emotionoui.oui.survey.entity.PreferenceType;
@@ -17,6 +18,7 @@ import java.util.Objects;
 public class PreferenceService {
 
     private final PreferenceRepository preferenceRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void savePreference(Member member, PreferenceReq preferenceReq){
@@ -40,5 +42,21 @@ public class PreferenceService {
 
     public String getTypeByMemberId(Member member){
         return preferenceRepository.getTypeByMemberId(member.getMemberId());
+    }
+
+    public void updatePreferenceByMemberId(Integer memberId, String type){
+        Preference preference = preferenceRepository.getPreferenceByMemberId(memberId);
+        preference.setIsDeleted(1);
+        preferenceRepository.save(preference);
+
+        Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
+
+        Preference newPreference = Preference.builder()
+                .member(member)
+                .type(PreferenceType.valueOf(type))
+                .isDeleted(0)
+                .build();
+
+        preferenceRepository.save(newPreference);
     }
 }
