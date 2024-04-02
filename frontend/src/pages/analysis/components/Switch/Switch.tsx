@@ -7,30 +7,34 @@ type ButtonWrapperProps = {
 }
 
 const BoxWrapper = styled(Box)`
-    border-radius: 4px;
-    display: flex;
     justify-content: flex-end;
-    margin-left: auto;
-    align-items: center;
-    width: auto; 
-    padding: 5px; 
-    max-width: 800px;
+    width: 25%;
+    height: 8%;
+    display: flex;
+    margin: 0 0 0 68%;
+    padding: 3px;
+    border-radius: 10px;
+    gap: 6px;
+    background-color: #FFFEFC;
 `;
 
 const ButtonWrapper = styled.button<ButtonWrapperProps>`
-    background-color: ${(props) => (props.selected ? "#84BBAF" : "white")};
-    color: ${(props) => (props.selected ? "white" : "#84BBAF")};
-    border: 0px;
+    background-color: ${(props) => (props.selected ? "#84BBAF" : "#FFFEFC")};
+    color: ${(props) => (props.selected ? "#FFFEFC" : "#84BBAF")};
     padding: 10px; 
-    margin: 3px;
+    margin: 2px;
     cursor: pointer;
-    font-family: 'IMHyeMin';
-    font-weight: bold;
+    font-size: 29px;
+    // font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    width: 100%;
 `;
 
 const Switch = ({ keyType, setKeyType }) => {
     
     return (
+        <>
         <BoxWrapper>
             <ButtonWrapper onClick={() => setKeyType(1)} selected={keyType === 1}>
                 월간
@@ -39,6 +43,8 @@ const Switch = ({ keyType, setKeyType }) => {
                 주간
             </ButtonWrapper>
         </BoxWrapper>
+        </>
+
     );
 }
 

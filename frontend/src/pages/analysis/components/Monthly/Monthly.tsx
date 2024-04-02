@@ -16,17 +16,15 @@ import styled from "@emotion/styled";
 
 
 const IconWrapper = styled.div`
-  max-width: 1024px;
+  width: 100%;
   display: flex;
-  flex-direction: row; 
-  justify-content: space-evenly; 
-  flex-wrap: wrap; 
-  margin: auto; 
+  margin-top: 6%;
 
   img, div {
     flex: 1 1 auto;
-    max-width: 100px; 
-    margin: 10px; 
+    width: 100%; 
+    margin-left: 8px; 
+    margin-right: 8px;
     height: auto; 
 
     @media (max-width: 768px) {
@@ -35,12 +33,11 @@ const IconWrapper = styled.div`
   }
 `;
 const ChartBoxWrapper = styled.div`
-  background-color: white; 
-  border-radius: 10px; 
+  background-color: #FFFEFC; 
+  border-radius: 15px; 
   padding: 20px;
-  width: 80%; 
+  width: 85%; 
   margin: 20px 0; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   justify-content: center; 
   align-items: center;
   @media (max-width: 768px) {
@@ -55,19 +52,16 @@ const ChartBoxWrapper = styled.div`
 `;
 
 const EmotionTagWrapper = styled.div`
-  font-family: 'IMHyeMin', sans-serif; 
   font-size: 25px;
-  font-weight: bold;
   color: #333;
-  margin-top: 8px; // 간격 조정 예시
 `;
 
 const EmotionScoreWrapper = styled.div`
-  font-family: 'IMHyeMin', sans-serif; 
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   color: #666;
-  margin-bottom: 12px;
+  margin-bottom: 20%;
+  margin-top: 5%;
 `;
 
 const ImageWrapper = styled.div`
@@ -78,22 +72,23 @@ const ImageWrapper = styled.div`
 `;
 
 const TitleWrapper = styled.div`
-  font-family: 'IMHyeMin', sans-serif;
-  font-weight: bold;
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  width: 70%;
-  font-size: 16px;
+  width: 80%;
+  font-size: 30px;
   text-align: left; 
-  margin-left: 20px; 
-  margin-bottom: 10px; 
+  margin-top: 5%;
+  margin-bottom: 1%; 
 `;
 
 const DoughnutWrapper = styled.div`
   width: 75%;
   height: auto;
   margin: auto; 
+  display: flex;
+  justify-content: center;
+  margin-top: 4%;
 
   @media (max-width: 768px) {
     width: 90%;
@@ -105,15 +100,16 @@ const CalendarHeaderMiddleWrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 30px; 
-  width: 70%;
+  width: 80%;
   margin-top: 10px;
   flex: 1;
 `
 
 const Title = styled.div`
-    font-size: 20px;
+    font-size: 35.5px;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-left: 4%;
+    margin-right: 4%;
     justify-content: flex-start;
 `
 
@@ -203,11 +199,11 @@ const Monthly = () => {
   return(
       <>
           <CalendarHeaderMiddleWrapper>
-              <LeftIcon size= { 20 } onClick={ movePrevMonth }/>
+              <LeftIcon size= { 33 } onClick={ movePrevMonth }/>
               <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
-              <RightIcon size= { 20 } onClick={ moveNextMonth }/>
+              <RightIcon size= { 33 } onClick={ moveNextMonth }/>
           </CalendarHeaderMiddleWrapper>
-           { userName && <TitleWrapper> { userName }님이 3월에 느낀 “감정 통계” 예요! </TitleWrapper>}
+           { userName && <TitleWrapper> { userName } 님이 3월에 느낀 <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}> “감정 통계”</p> 예요! </TitleWrapper>}
           <ChartBoxWrapper>
               <DoughnutWrapper>
                 <Doughnut data={chartData}></Doughnut>
@@ -217,13 +213,14 @@ const Monthly = () => {
               {Object.entries(images).map(([emotion, image], index) => (
                 <ImageWrapper  key={index}>
                   <img src={image} alt={emotion} />
+                  <div style={{marginTop:'10%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                   <EmotionTagWrapper>{tags[emotion]}</EmotionTagWrapper>
                   <EmotionScoreWrapper>{emotionScores[tags[emotion]] || 0}%</EmotionScoreWrapper>
+                  </div>
                 </ImageWrapper >
               ))}
             </IconWrapper>
           </ChartBoxWrapper>
-
       </>
       
   );
