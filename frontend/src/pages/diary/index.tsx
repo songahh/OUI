@@ -118,7 +118,7 @@ const Diary = () => {
     useEffect(() => {
         if(!canvas) return;
 
-        setPlayList(musics.data);
+        setPlayList(musics?.data);
 
 
         if(emotions?.data?.emotionList.length === 1 && emotions?.data?.emotionList[0] === 'neutral') {
