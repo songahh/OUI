@@ -110,7 +110,7 @@ const Text = styled.div<{ isSelected?: boolean }>`
   width: 60%;
   background-color: #F9F3EE;
   font-size: 20px;
-  padding-top: 2%;
+  padding-top: 6px;
   border-radius: 6px;
   height: 30px;
   color: ${(props) => (props.isSelected ? "#9E9D9D" : "#262626")};
@@ -123,17 +123,19 @@ const SelectWrapper = styled.select<SelectWrapperProps>`
   background-color: #F9F3EE;
   border: none;
   border-radius: 6px;
-  padding-top: 2%;
+  padding-top: 6px;
   width: 60%; 
-  line-height: 30px;
+  line-height: 36px;
+  min-height: 36px;
   &:disabled {
     opacity: 1;
   }
   color: ${(props) => (props.isSelected ? "#9E9D9D" : "#262626")};
-  ${(props) => props.nameLength === 1 && `
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  // 글자는 다 보이는데 화살표가 안보이는 상황...
+  ${(props) => props.nameLength === 1 && `
   background-image: none; // 화살표 이미지 제거
 `}
 `;
@@ -303,12 +305,13 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
           <ChartBoxWrapper>
             <NameBox>
               <TextContainer>
-                <Text isSelected={selectedChart !== null && selectedChart !== 0}>{ leftText }</Text></TextContainer>
+                <Text isSelected={selectedChart !== null && selectedChart !== 0}>{ leftText }</Text>
+              </TextContainer>
               <TextContainer>
                 <SelectWrapper onChange={handleNameChange} value={selectedName} nameLength={rightText.length} disabled={rightText.length === 1}
                   isSelected={selectedChart !== null && selectedChart === 0} >
                     {rightText.map((name, index) => (
-                      <option style={{fontFamily:'JGaegujaengyi', fontSize:'14px'}} key={index} value={name}> {`${name}${rightText.length > 1 ? " 님의 감정" : ""}`} </option>))}
+                      <option style={{fontFamily:'JGaegujaengyi', fontSize:'14px'}} key={index} value={name}> {`${name}${rightText.length > 1 ? " 의 감정" : ""}`} </option>))}
                 </SelectWrapper>
               </TextContainer>
             </NameBox>
