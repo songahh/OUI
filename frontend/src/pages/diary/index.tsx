@@ -25,15 +25,15 @@ const Container = styled.div`
 `;
 
 const Tab = styled.button<{ $isDeco: boolean }>`
-    width: 150px; 
-    height: 60px; 
+    width: 130px; 
+    height: 50px; 
     background-color: ${( props ) => props.$isDeco ? "#FFFEFC" : "#EEEEEE"}; 
     font-color: ${( props ) => props.$isDeco ? "#262626" : "#9E9D9D"}; 
     font-weight: ${( props ) => props.$isDeco ? "bold" : "normal"}; 
     border: none;
     border-radius: 10px 10px 0 0;
     margin-left: 20px;
-    font-size: 22px;
+    font-size: 20px;
 `;
 
 const ResultSection = styled.div`
@@ -147,6 +147,9 @@ const Diary = () => {
                 <div style={{ display: "flex", alignItems: "center" }}>
                     {(type === '공유' && isDeco) && (
                         <DecoIcon size={ 55 } onClick={() => navigator(`/diary/deco/${ dailyDiaryId }`, {state: {dailyDiaryId: dailyDiaryId, type: type}})} />
+                    )}
+                    {(type === '공유' && !isDeco) && (
+                        <span style={{ width: "55px" }} />
                     )}
                     {/* 공유일기 + 원본일기 -> 본인 일기일 때만 버튼이 나와야 함 */}
                     {(((type === '개인') || (type ==='공유' && !isDeco) && (dailyDiary?.data.writerId === dailyDiary?.data.memberId))) && (
