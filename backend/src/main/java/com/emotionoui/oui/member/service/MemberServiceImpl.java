@@ -68,11 +68,12 @@ public class MemberServiceImpl implements MemberService {
             // 닉네임 변경
             member.setNickname(updateMemberReq.getMemberNickname());
             // 이미지 변경
-            if(!updateMemberReq.getImgUrl().isEmpty()){
+            if( updateMemberReq.getImgUrl() != null){
                 String storedFileName= s3Uploader.upload(updateMemberReq.getImgUrl(),"imgs");
                 member.setImg(storedFileName);
             }
         }catch (Exception e){
+            System.out.println("e = " + e);
             throw new NotUpdateMemberException();
         }
 
