@@ -11,4 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class UpdateMemberReq {
     private String memberNickname;
     private MultipartFile ImgUrl;
+
+    public UpdateMemberReq(String memberNickname, MultipartFile imgUrl) {
+        this.memberNickname = memberNickname;
+        ImgUrl = imgUrl;
+    }
 }

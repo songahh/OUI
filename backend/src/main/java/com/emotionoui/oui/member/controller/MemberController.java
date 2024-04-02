@@ -46,9 +46,11 @@ public class MemberController {
      * @param member
      * @return
      */
-    @PutMapping
-    public ResponseEntity<Void> updateMember(@AuthenticationPrincipal Member member, UpdateMemberReq updateMemberReq){
-        System.out.println(updateMemberReq.getImgUrl());
+    @PutMapping(consumes = "multipart/form-data")
+    public ResponseEntity<Void> updateMember(@AuthenticationPrincipal Member member,
+         @RequestPart MultipartFile file, @RequestParam String memberNickname){
+        UpdateMemberReq updateMemberReq = new UpdateMemberReq(memberNickname, file);
+//        System.out.println("updateMemberReq = " + updateMemberReq.getImgUrl());
         memberService.updateMember(member, updateMemberReq);
         return ResponseEntity.ok().build();
     }
