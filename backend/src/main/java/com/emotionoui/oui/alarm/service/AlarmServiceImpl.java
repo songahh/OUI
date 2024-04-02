@@ -146,16 +146,11 @@ public class AlarmServiceImpl implements AlarmService{
                 .orElseThrow(IllegalArgumentException::new);
         String diaryName = diary.getName();
 
-//        // emails = null일 경우 처리
-//        if(emails.isEmpty()){
-//            throw new IllegalArgumentException("Emails is empty");
-//        }
-
         String title, content, link;
         title = "공유 다이어리 초대";
         content = "'" + createrNickname + "'님이 '" + diaryName + "' 다이어리에 초대했어요.";
         // 알림창이 있는 메인페이지로 이동
-        link = "http://localhost:3000/main";
+        link = "https://j10a506.p.ssafy.io/main";
 
         List<String> deviceTokens = new ArrayList<>();
 
@@ -181,8 +176,6 @@ public class AlarmServiceImpl implements AlarmService{
 
             memberAlarmRepository.save(memberAlarm);
 
-            // test용
-//            deviceTokens.add("eCKbs2zkGtXCXhHZh_KGnb:APA91bF5LuFA_AumHn330BdsSMHafPz8uTWe-Ku3Jgma-VX4HWF7D0rLqIn1TlEUItbphs4wopekhFT2WtRjBfopss74rhvH2CqJbr72G3nxZerwhAc8Hu0JJUVYHdZwH6JwVknQVaTz");
             deviceTokens.add(member.getFcmInfo().getDeviceToken());
         }
 
@@ -204,7 +197,7 @@ public class AlarmServiceImpl implements AlarmService{
         title = "너 오늘 일기 안 써?!";
         content = "'" + diaryName + "' 다이어리에서 '" + pusherNickname + "'님이 " + dateSplit[1] + "월 " + dateSplit[2] + "일 일기 쓰기를 재촉했어요!";
         // 일기 쓰는 페이지로 이동
-        link = "http://localhost:3000/diary/write/" + diaryId;
+        link = "https://j10a506.p.ssafy.io/diary/write/" + diaryId;
 
         Alarm alarm = Alarm.builder()
                 .type(AlarmContentType.FriendForcing)
@@ -226,21 +219,25 @@ public class AlarmServiceImpl implements AlarmService{
                 .build();
         memberAlarmRepository.save(memberAlarm);
 
-        FcmInfo info = fcmInfoRepository.findByMember(member);
+        // 알림설정이 켜져있을 때
+        AlarmType alarmType = memberDiaryRepository.findAlarmByMemberIdAndDiaryId(diaryId, memberId);
+        if(alarmType.toString().equals("ON")){
+            FcmInfo info = fcmInfoRepository.findByMember(member);
 
-        if(info.getDeviceToken()!=null){
-            try{
-                // 메세지 보내기
-                String message = makeMessage(
-                        info.getDeviceToken(), title, content, link
-                );
-                System.out.println("message: " + message);
-                sendMessage(message);
-            } catch (Exception e){
-                log.info("request error");
+            if(info.getDeviceToken()!=null){
+                try{
+                    // 메세지 보내기
+                    String message = makeMessage(
+                            info.getDeviceToken(), title, content, link
+                    );
+                    System.out.println("message: " + message);
+                    sendMessage(message);
+                } catch (Exception e){
+                    log.info("request error");
+                }
+            } else {
+                log.info(member.getNickname() + "의 UserDeviceToken이 존재하지 않습니다.");
             }
-        } else {
-            log.info(member.getNickname() + "의 UserDeviceToken이 존재하지 않습니다.");
         }
     }
 
@@ -255,7 +252,7 @@ public class AlarmServiceImpl implements AlarmService{
             content = "오늘 하루는 어땠어?";
         else
             content = s;
-        link = "http://localhost:3000/calendar";
+        link = "https://j10a506.p.ssafy.io/calendar";
 
         Alarm alarm = Alarm.builder()
                 .type(AlarmContentType.SystemForcing)
@@ -340,7 +337,7 @@ public class AlarmServiceImpl implements AlarmService{
         title = diaryName + " 다이어리";
         content = "'" + member.getNickname() + "' 친구가 일기를 작성했어요~";
         // 일기 작성 페이지로 이동
-        link = "http://localhost:3000/diary/" + dailyId;
+        link = "https://j10a506.p.ssafy.io/diary/" + dailyId;
 
         List<String> deviceTokens = new ArrayList<>();
 
@@ -370,7 +367,9 @@ public class AlarmServiceImpl implements AlarmService{
 
             memberAlarmRepository.save(memberAlarm);
 
-            deviceTokens.add(friend.getFcmInfo().getDeviceToken());
+            // 알림설정이 켜져있을 때
+            if(memberDiary.getAlarm().toString().equals("ON"))
+                deviceTokens.add(friend.getFcmInfo().getDeviceToken());
         }
 
         sendMultiMessage(title, content, link, deviceTokens);
