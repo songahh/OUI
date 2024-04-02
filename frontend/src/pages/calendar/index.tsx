@@ -146,7 +146,9 @@ const Calendar = () =>{
   return(
     <>
           <Header>
-            <Drawer/>
+            <span style={{ marginTop: "39px", marginLeft: "8px" }}>
+              <Drawer/>
+            </span>
             <div/>
             <div/>
           </Header>
