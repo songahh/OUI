@@ -4,7 +4,7 @@ const DateListWrapper = styled.div`
   display: flex;
   box-sizing: border-box;
   flex-direction: rows;
-  width: 85%;
+  width: 90%;
   font-weight: bold;
   justify-content: space-around;
   padding-top: 20px;
