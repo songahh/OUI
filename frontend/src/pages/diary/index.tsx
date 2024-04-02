@@ -173,7 +173,7 @@ const Diary = () => {
                 </div>
             </Header>
             {(type === '공유') && (
-                <div style={{ width: "93%" }}>
+                <div style={{ width: "750px" }}>
                     <Tab onClick={() => setIsDeco(true)} $isDeco={ isDeco }>꾸민 일기</Tab>
                     <Tab onClick={() => setIsDeco(false)} $isDeco={ !isDeco }>원본 일기</Tab>
                 </div>
