@@ -17,4 +17,7 @@ public interface PreferenceRepository extends JpaRepository<Preference, Integer>
     @Query("SELECT p.type FROM Preference p WHERE p.member.memberId = :memberId AND p.isDeleted = 0")
     String getTypeByMemberId(Integer memberId);
 
+    @Query("SELECT p FROM Preference p WHERE p.member.memberId = :memberId AND p.isDeleted = 0")
+    Preference getPreferenceByMemberId(Integer memberId);
+
 }
