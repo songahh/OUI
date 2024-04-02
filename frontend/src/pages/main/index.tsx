@@ -74,7 +74,7 @@ const YellowBox = styled.div`
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
-  margin-top: 11vh;
+  margin-top: 13.5vh;
   align-items: center;
   margin-left: 6%;
   @media (max-width: 768px) {
@@ -117,7 +117,7 @@ const ProfileImage = styled.img`
   max-height: 190px;
   border-radius: 50%;
   object-fit: cover;
-  margin-top: 25%;
+  margin-top: 50%;
   margin-left: 8%;
 `;
 
