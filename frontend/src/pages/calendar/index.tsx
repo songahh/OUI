@@ -80,7 +80,7 @@ const WriteModalBackground = styled.div`
 `
     
 const Modal = styled.div`
-  height: 50%;
+  height: 40%;
   width: 100%;
   background-color: #FFFEFC;
   position: fixed;
@@ -239,7 +239,6 @@ const Calendar = () =>{
                   </Modal>
                 </ModalPortal>
             }
-
             {
               isDiaryWrite && 
               <WriteModalPortal onClose={ closeWrite } />
