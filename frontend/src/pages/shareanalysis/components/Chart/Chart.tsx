@@ -234,6 +234,15 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
     };
 
     setLeftChartData(newLeftChartData);
+
+    setSelectedChart(0);
+    const selectedData = leftData;
+    const scores = Object.keys(tags).reduce((acc, key) => {
+      const tagName = tags[key];
+      acc[tagName] = selectedData[key] || 0;
+      return acc;
+    }, {});
+    setEmotionScores(scores);
   }, [leftData, rightData]); 
 
   useEffect(() => {
