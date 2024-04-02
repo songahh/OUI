@@ -8,6 +8,7 @@ import relax from 'src/asset/images/emotion/relax.png'
 import sad from 'src/asset/images/emotion/sad.png'
 import urge from 'src/asset/images/calendar/urge.png'
 import useStore from '../store'
+import MainStore from 'src/store'
 import { postUrge, getDailyDiary } from '../api'
 import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
@@ -65,13 +66,9 @@ const DiaryCard = ( props ) =>{
     const navigator = useNavigate()
 
     const { clickDate } = useStore()
+    const { setDailyDiaryId } = MainStore();
 
-    const { diary, member, diaryId } = props
-
-    
-    const isExist = diary?.filter(( diary ) => 
-                    (diary?.dailyDate?.substring( 5, 10 ) === format( clickDate, 'MM-dd')) && 
-                    (diary?.writerId === member?.memberId))
+    const { member, diaryId, isExist } = props
     
     const goAlarm = useMutation( postUrge )
     const getDiary = useMutation( getDailyDiary )
@@ -88,7 +85,8 @@ const DiaryCard = ( props ) =>{
 
     const moveDailyDiary = async( id ) =>{
         const dailyDiaryId = await getDiary.mutateAsync( id )
-        navigator(`/diary/${ dailyDiaryId }`)
+        setDailyDiaryId(dailyDiaryId?.data)
+        navigator(`/diary/${ dailyDiaryId?.data }`)
     }
 
     const postAlarm = async (id) =>{
