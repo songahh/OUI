@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PreferenceReq {
 
-    private int memberId;
-
     private String type;
 
 }
