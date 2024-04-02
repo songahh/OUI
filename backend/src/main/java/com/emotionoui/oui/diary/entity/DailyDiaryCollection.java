@@ -1,6 +1,7 @@
 package com.emotionoui.oui.diary.entity;
 
 import com.emotionoui.oui.diary.dto.EmotionClass;
+import com.emotionoui.oui.diary.dto.RecommendMusicClass;
 import com.emotionoui.oui.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,7 +38,7 @@ public class DailyDiaryCollection {
     private EmotionClass emotion;
 
     // 음악 추천 리스트
-    private List<String> music;
+    private List<RecommendMusicClass> music;
 
     // 코멘트 내용
     private String comment;

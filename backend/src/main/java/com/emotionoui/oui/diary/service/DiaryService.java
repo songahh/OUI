@@ -1,6 +1,7 @@
 package com.emotionoui.oui.diary.service;
 
 import com.emotionoui.oui.diary.dto.EmotionClass;
+import com.emotionoui.oui.diary.dto.RecommendMusicClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.DecorateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDiarySettingReq;
@@ -21,7 +22,7 @@ public interface DiaryService {
     Boolean searchDailyDiaryByDate(Integer diaryId, String date, Integer memberId);
     String searchDiaryTitleById(Integer diaryId);
     EmotionClass searchEmotion(Integer dailyId);
-    List<String> searchMusic(Integer dailyId);
+    List<RecommendMusicClass> searchMusic(Integer dailyId);
     String searchComment(Integer dailyId);
     SearchDiarySettingRes searchDiarySetting(Integer diaryId, Integer memberId);
     void updateDiarySetting(UpdateDiarySettingReq req, Integer diaryId, Member member);
