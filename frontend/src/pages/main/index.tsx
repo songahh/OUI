@@ -68,7 +68,7 @@ const SliderWrapper = styled( Slider )`
 
 const YellowBox = styled.div`
   width: 680px;
-  height: 5.5vh;
+  height: 5vh;
   background-color: rgba(255, 225, 125, 0.6);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -91,10 +91,10 @@ const YellowBox = styled.div`
 
 const UserRecord = styled.div`
   width: 680px;
-  margin-bottom: 8%;
+  margin-bottom: 4%;
   margin-left: 8%
   background: transparent;
-  padding: 5px 10px;
+  padding: 5px 25px;
   border: 0px;
   font-size: 49px;
   font-weight: bold;
@@ -116,7 +116,7 @@ const ProfileImage = styled.img`
   max-height: 190px;
   border-radius: 50%;
   object-fit: cover;
-  margin-top: 43%;
+  margin-top: 33%;
   margin-left: 8%;
 `;
 
@@ -319,7 +319,7 @@ const Main = () => {
     </div>
     <YellowBox>
       <UserRecord>
-      {isHangul(userName) ? (userName.length > 6 ? `${userName.slice(0, 6)}...` : userName) : (userName.length > 10 ? `${userName.slice(0, 10)}...` : userName)} 님의 감정기록 :)
+        {isHangul(userName) ? (userName.length > 6 ? `${userName.slice(0, 6)}...` : userName) : (userName.length > 10 ? `${userName.slice(0, 10)}...` : userName)} 님의 감정기록 :)
       </UserRecord>
     </YellowBox>
 
