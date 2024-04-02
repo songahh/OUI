@@ -95,7 +95,8 @@ const DiaryWrite = () => {
             dailyContent: diaryToString,
         };
 
-        const diary = await getDiaryByDate({diaryId: diaryId, date: selectedDate});
+
+        const diary = await getDiaryByDate({ diaryId: diaryId, date: selectedDate });
         if(!diary.data) {
             await writeDiary.mutateAsync(data);
             goCalendar();

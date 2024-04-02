@@ -40,7 +40,7 @@ const ResultSection = styled.div`
     width: 90%;
     text-align: left; 
     margin-top: 50px; 
-    margin-bottom: 40px;
+    margin-bottom: 80px;
 `
 
 const Title = styled.span`
@@ -95,6 +95,7 @@ const Diary = () => {
     const [ canvas, setCanvas ] = useState<fabric.Canvas>(null);
     const [ isFontLoaded, setIsFontLoaded ] = useState<boolean>(false);
     const [ isDeco, setIsDeco ] = useState<boolean>(true);
+    const [ isOnlyNeutral, setIsOnlyNeutral ] = useState<boolean>(false);
 
     const { data: dailyDiary } = useQuery('dailyDiary', () => getDiary(dailyDiaryId), {
         enabled: isFontLoaded
@@ -103,6 +104,7 @@ const Diary = () => {
     const { data: emotions } = useQuery('emotions', () => getEmotions(dailyDiaryId), {
         enabled: isFontLoaded
     });
+    
 
     const { data: comment } = useQuery('comment', () => getComment(dailyDiaryId), {
         enabled: isFontLoaded
@@ -110,8 +112,10 @@ const Diary = () => {
 
     useEffect(() => {
         if(!canvas) return;
-        // console.log('emotions', emotions);
-        // console.log('comment', comment);
+
+        if(emotions?.data?.emotionList.length === 1 && emotions?.data?.emotionList[0] === 'neutral') {
+            setIsOnlyNeutral(true);
+        }
 
         canvas.loadFromJSON(dailyDiary?.data?.dailyContent, () => {
             canvas.renderAll();
@@ -167,28 +171,36 @@ const Diary = () => {
                 </div>
             )}
             <Canvas canvasRef={ canvasRef } canvas={ canvas } setCanvas={ setCanvas } setIsFontLoaded={ setIsFontLoaded } />
-            <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ paddingTop: "30px", marginBottom: "10px" }} />
-            <div style={{ fontSize: "24px", fontWeight: "bold" }}>분석 결과 보러 가기</div>
-            <ResultSection>
-                <Title>나의 감정은?</Title>
-                <div style={{ marginTop: "20px", marginBottom: "60px", display: "flex" }}>
-                    {emotions && emotions?.data?.emotionList?.map((emotion, index) => (
-                        <Emotion key={index} color={ emotionTag[emotion].color }>
-                            #{ emotionTag[emotion].name }
-                        </Emotion>
-                    ))}
-                </div>
-                {(type === '개인') && (
-                    <>
-                        <Title>AI 코멘트</Title>
-                        <Comment>
-                            { comment &&  comment?.data}
-                        </Comment>
-                    </>
-                )}
-                <Title>추천 음악</Title>
-                <MusicPlayer3 />
-            </ResultSection>
+            {/* 감정 분석 결과 '중립'만 올 경우 감정 분석 결과부분 아예 X */}
+            {(!isOnlyNeutral) && (
+                <>
+                    <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ paddingTop: "30px", marginBottom: "10px" }} />
+                    <div style={{ fontSize: "24px", fontWeight: "bold" }}>분석 결과 보러 가기</div>
+                    <ResultSection>
+                                <Title>나의 감정은?</Title>
+                                {/* '중립'은 감정 태그에서 제외 */}
+                                <div style={{ marginTop: "20px", marginBottom: "60px", display: "flex" }}>
+                                    {emotions && emotions.data.emotionList.map((emotion, index) => 
+                                        (emotion !== 'neutral') ? (
+                                            <Emotion key={index} color={emotionTag[emotion].color}>
+                                                #{emotionTag[emotion].name}
+                                            </Emotion>
+                                        ) : null
+                                    )}
+                                </div>
+                        {(type === '개인') && (
+                            <>
+                                <Title>AI 코멘트</Title>
+                                <Comment>
+                                    { comment &&  comment?.data}
+                                </Comment>
+                            </>
+                        )}
+                        <Title>추천 음악</Title>
+                        <MusicPlayer3 />
+                    </ResultSection>
+                </>
+            )}
             <BottomNavi />
         </Container>
     )
