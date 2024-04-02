@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card } from "src/pages/main/components/Card";
 import { Header } from "src/components/control/Header";
-import { Button } from "src/components";
 import { CustomModal } from "./components/Modal";
 import { AlarmModal } from "src/components/modal";
 import { getDiary, getMember, postCreateDiary, postDeviceToken, getLogout } from './api';
@@ -177,7 +176,7 @@ const Main = () => {
 
   const navigator = useNavigate()
   
-  const { setDiaryId, setType, setAccessToken, setIsLogin, setDailyDiaryId } = useStore()
+  const { setDiaryId, setType, setAccessToken, setIsLogin, setDailyDiaryId, isModalOpened, updateModal } = useStore()
   const [ isModalOpen, setIsModalOpen ] = useState( false );
   const [ diaryList, setDiaryList ] = useState( [] );
   const [ userName, setUserName ] = useState( "" );
@@ -197,7 +196,7 @@ const Main = () => {
     const data = {
       diaryName: title,
       templateId: templateId,
-      members: members,
+    members: members, 
     };
   
     try {
@@ -275,6 +274,10 @@ const Main = () => {
     })
   }
 
+  const viewMyPage = () =>{
+    updateModal()
+  }
+
   
   useEffect(() => {
     if ( modalSubmitted ) {
@@ -294,12 +297,16 @@ const Main = () => {
     requestPermission();
   },[])
 
+  useEffect(()=>{
+    refetchMember();
+  },[isModalOpened])
+
 
   return (
     <>
     <div style={{paddingRight:'4%', paddingTop:'6%'}}>
       <Header>
-        <ProfileImage src={ userImage || profile } alt="유저 프로필 이미지" />
+        <ProfileImage onClick={ viewMyPage } src={ userImage || profile } alt="유저 프로필 이미지" />
         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
           <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => Logout()}>
           <img style={{height:'3.3em'}} src={logoutBtn} alt="Logout" />
