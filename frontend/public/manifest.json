@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "OUI",
+  "name": "OUI",
   "icons": [
     {
       "src": "favicon.ico",
@@ -24,8 +24,13 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "https://j10a506.p.ssafy.io",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "categories": [
+    "lifestyle",
+    "music"
+  ],
+  "lang": "ko"
 }
