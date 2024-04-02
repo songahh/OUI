@@ -91,10 +91,10 @@ const DiaryDeco = () => {
                 memberId.current = frame.headers['user-name'];
 
                 stompClient.current.subscribe(`/sub/decorate/${dailyDiaryId}`, (resp) => {
-                    const object = JSON.parse(JSON.parse(resp.body).body.decoration);
+                    const object = JSON.parse(JSON.parse(resp.body).body.oneDecoration);
                     
-                    const objectMemberId = JSON.parse(JSON.parse(resp.body).body.decoration).memberId;
-                    const action = JSON.parse(JSON.parse(resp.body).body.decoration).action;
+                    const objectMemberId = JSON.parse(JSON.parse(resp.body).body.oneDecoration).memberId;
+                    const action = JSON.parse(JSON.parse(resp.body).body.oneDecoration).action;
 
                     const existContent = canvas.getObjects().some(obj => obj.id === object.id);
                     
@@ -179,10 +179,16 @@ const DiaryDeco = () => {
 
         const addedObject = JSON.stringify(jsonObj);
 
+        // canvas에서 selectable이 true인 객체들만 필터링
+        const decoObjects = canvas.getObjects().filter((obj: any) => obj.selectable);
+
+        // 필터링된 객체들을 JSON 문자열로 변환
+        const decoration = JSON.stringify(decoObjects.map((obj: any) => obj.toJSON(['id', 'action','memberId'])));
+
         stompClient.current.send(
             `/pub/decorate/${dailyDiaryId}`,
             {},
-            JSON.stringify({decoration: addedObject}),
+            JSON.stringify({oneDecoration: addedObject, allDecoration: decoration}),
         );
     };
 
@@ -195,10 +201,16 @@ const DiaryDeco = () => {
 
         const removedObject = JSON.stringify(jsonObj);
 
+        // canvas에서 selectable이 true인 객체들만 필터링
+        const decoObjects = canvas.getObjects().filter((obj: any) => obj.selectable);
+
+        // 필터링된 객체들을 JSON 문자열로 변환
+        const decoration = JSON.stringify(decoObjects.map((obj: any) => obj.toJSON(['id', 'action','memberId'])));
+
         stompClient.current.send(
             `/pub/decorate/${dailyDiaryId}`,
             {},
-            JSON.stringify({decoration: removedObject}),
+            JSON.stringify({oneDecoration: removedObject, allDecoration: decoration}),
         );
     };    
 
@@ -219,11 +231,17 @@ const DiaryDeco = () => {
         }
 
         const movingObject = JSON.stringify(jsonObj);
+
+        // canvas에서 selectable이 true인 객체들만 필터링
+        const decoObjects = canvas.getObjects().filter((obj: any) => obj.selectable);
+
+        // 필터링된 객체들을 JSON 문자열로 변환
+        const decoration = JSON.stringify(decoObjects.map((obj: any) => obj.toJSON(['id', 'action','memberId'])));
         
         stompClient.current.send(
             `/pub/decorate/${dailyDiaryId}`,
             {},
-            JSON.stringify({decoration: movingObject}),
+            JSON.stringify({oneDecoration: movingObject, allDecoration: decoration}),
         );
     }
 
@@ -237,10 +255,17 @@ const DiaryDeco = () => {
 
         const modifyObject = JSON.stringify(jsonObj);
 
+        // canvas에서 selectable이 true인 객체들만 필터링
+        const decoObjects = canvas.getObjects().filter((obj: any) => obj.selectable);
+
+        // 필터링된 객체들을 JSON 문자열로 변환
+        const decoration = JSON.stringify(decoObjects.map((obj: any) => obj.toJSON(['id', 'action','memberId'])));
+        console.log(decoration);
+
         stompClient.current.send(
             `/pub/decorate/${dailyDiaryId}`,
             {},
-            JSON.stringify({decoration: modifyObject}),
+            JSON.stringify({oneDecoration: modifyObject, allDecoration: decoration}),
         );
     }
 
@@ -280,11 +305,12 @@ const DiaryDeco = () => {
     }
 
     return (
+        // <SaveIcon size={ 70 } onClick={ saveDiary }/>
         <Container>
             <Header>
                 <BackIcon size={ 40 } onClick={ () => { navigator(`/diary/${dailyDiaryId}`, {state: {dailyDiaryId: dailyDiaryId, type: type}}) }} />
                 <span style={{ fontSize: "30px" }}>{ dailyDiary?.data?.dailyDate.substring(0, 10) }</span>
-                <SaveIcon size={ 70 } onClick={ saveDiary }/>
+                <span style={{ width: "70px"}}></span>
             </Header>
             <Canvas canvasRef={ canvasRef } canvas={ canvas } setCanvas={ setCanvas } activeTool={ activeTool } setIsFontLoaded={ setIsFontLoaded } />
             <BottomSheet activeTool={ activeTool } setActiveTool={ setActiveTool } canvas={ canvas } isDeco={ true } />
