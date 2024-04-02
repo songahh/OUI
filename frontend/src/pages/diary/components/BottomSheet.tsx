@@ -17,7 +17,7 @@ const Container = styled.div`
 
 const Header = styled.div`
   height: 60px;
-  padding: 10px 30px;
+  padding: 0px 30px;
   background-color: white;
   display: flex;
   justify-content: space-around;
@@ -31,7 +31,7 @@ const Tab = styled.button`
     border: none;
     cursor: pointer;
     background-color: transparent;
-    font-size: 24px;
+    font-size: 30px;
     font-family: 
 `
 

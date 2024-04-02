@@ -33,7 +33,7 @@ const Tab = styled.button<{ $isDeco: boolean }>`
     border: none;
     border-radius: 10px 10px 0 0;
     margin-left: 20px;
-    font-size: 20px;
+    font-size: 22px;
 `;
 
 const ResultSection = styled.div`
@@ -56,9 +56,9 @@ const Emotion = styled.div<{ color: string }>`
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
     border-radius: 25px;
     background-color: ${( props ) => props.color };
-    color: white;
-    font-size: 28px;
-    font-weight: bold;
+    color: #FFFEFC;
+    padding-top: 5px;
+    font-size: 32px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -160,7 +160,7 @@ const Diary = () => {
                     {(type === '공유' && isDeco) && (
                         <DecoIcon size={ 55 } onClick={() => navigator(`/diary/deco/${ dailyDiaryId }`, {state: {dailyDiaryId: dailyDiaryId, type: type}})} />
                     )}
-                    {(type === '공유' && !isDeco) && (
+                    {((type ==='공유' && !isDeco) && (dailyDiary?.data.writerId !== dailyDiary?.data.memberId)) && (
                         <span style={{ width: "55px" }} />
                     )}
                     {/* 공유일기 + 원본일기 -> 본인 일기일 때만 버튼이 나와야 함 */}
@@ -182,12 +182,12 @@ const Diary = () => {
             {/* 감정 분석 결과 '중립'만 올 경우 감정 분석 결과부분 아예 X */}
             {(!isOnlyNeutral) && (
                 <>
-                    <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ paddingTop: "30px", marginBottom: "10px" }} />
+                    <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ marginTop: "20px", marginBottom: "10px" }} />
                     <div style={{ fontSize: "24px", fontWeight: "bold" }}>분석 결과 보러 가기</div>
                     <ResultSection>
                                 <Title>나의 감정은?</Title>
                                 {/* '중립'은 감정 태그에서 제외 */}
-                                <div style={{ marginTop: "20px", marginBottom: "60px", display: "flex" }}>
+                                <div style={{ marginTop: "10px", marginBottom: "60px", display: "flex" }}>
                                     {emotions && emotions.data.emotionList.map((emotion, index) => 
                                         (emotion !== 'neutral') ? (
                                             <Emotion key={index} color={emotionTag[emotion].color}>

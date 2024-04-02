@@ -64,10 +64,11 @@ const ColorPicker = styled.input`
 
 const TextboxContent = ( props: ContentProps ) => {
     const fontList = [
-        { fontId: 1, fontTitle: "둘기마요체", fontFamily: "Dovemayo" },
-        { fontId: 2, fontTitle: "IM혜민체", fontFamily: "IMHyeMin" },
-        { fontId: 3, fontTitle: "슈퍼매직체", fontFamily: "Cafe24Supermagic" },
-        { fontId: 4, fontTitle: "가을소풍체", fontFamily: "HakgyoansimGaeulsopung" },
+        { fontId: 1, fontTitle: "J개구쟁이체", fontFamily: "JGaegujaengyi" },
+        { fontId: 2, fontTitle: "둘기마요체", fontFamily: "Dovemayo" },
+        { fontId: 3, fontTitle: "IM혜민체", fontFamily: "IMHyeMin" },
+        { fontId: 4, fontTitle: "슈퍼매직체", fontFamily: "Cafe24Supermagic" },
+        { fontId: 5, fontTitle: "가을소풍체", fontFamily: "HakgyoansimGaeulsopung" },
     ];
 
     const colorPalette = [
@@ -83,13 +84,13 @@ const TextboxContent = ( props: ContentProps ) => {
     const { canvas, textboxRef, textboxProps } = props;
     
 
-    const [ selectedFont, setSelectedFont ] = useState('Dovemayo');
+    const [ selectedFont, setSelectedFont ] = useState('JGaegujaengyi');
     const [ fontWeight, setFontWeight ] = useState(false);
     const [ textAlign, setTextAlign ] = useState('left');
     const [ fontColor, setFontColor ] = useState('#262626');
 
     useEffect(() => {
-        setSelectedFont(textboxProps?.selectedFont || 'Dovemayo');
+        setSelectedFont(textboxProps?.selectedFont || 'JGaegujaengyi');
         setTextAlign(textboxProps?.textAlign || 'left');
         setFontColor(textboxProps?.fontColor || '#262626');
         setFontWeight(textboxProps?.fontWeight === 'bold' ? true : false);
@@ -157,18 +158,18 @@ const TextboxContent = ( props: ContentProps ) => {
         <ContentWrapper>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start"}}>
                 <SelectWrapper>
-                    <InputLabel style={{ fontWeight: "bold", fontSize: "20px", fontFamily: "Dovemayo", margin: "20px" }}>글씨체</InputLabel>
+                    <InputLabel style={{ fontWeight: "bold", fontSize: "24px", fontFamily: "JGaegujaengyi", margin: "20px" }}>글씨체</InputLabel>
                     <Select
                         value={ selectedFont }
                         onChange={ handleFontChange }
                         sx={{ width: '250px' }}
-                        style={{ fontFamily: `${ selectedFont }` }}
+                        style={{ fontFamily: `${ selectedFont }`, fontSize: "22px" }}
                     >
                         {fontList.map((font) => (
                             <MenuItem
                                 key={ font.fontId }
                                 value={ font.fontFamily }
-                                style={{ fontFamily: `${font.fontFamily}` }}
+                                style={{ fontFamily: `${font.fontFamily}`, fontSize: "22px" }}
                             >
                                 { font.fontTitle }
                             </MenuItem>
