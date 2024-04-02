@@ -16,7 +16,7 @@ const BottomNaviWrapper = styled( BottomNavigation )`
     position: fixed;
     bottom: 0;
     left: 50%;
-    height: 10%;
+    height: 8%;
     transform: translateX(-50%);
     max-width: 1024px;
     width: 100%;
@@ -50,9 +50,9 @@ export default function BottomNavi() {
           setValue( newValue );
         }}
       >
-        <BottomNavigationAction icon={<PersonOutlineOutlinedIcon style={{ width: '40%', height: '40%' }} />} onClick={ viewMyPage } />
-        <BottomNavigationAction icon={<img src={ MainLogo } style={{ width: '40%', height: '40%' }} onClick={ goMain } />} />
-        <BottomNavigationAction icon={<NotificationsNoneOutlinedIcon style={{ width: '40%', height: '40%' }} />} onClick={ toggleModal } />
+        <BottomNavigationAction icon={<PersonOutlineOutlinedIcon style={{ width: '35%', height: '35%' }} />} onClick={ viewMyPage } />
+        <BottomNavigationAction icon={<img src={ MainLogo } style={{ width: '35%', height: '35%' }} onClick={ goMain } />} />
+        <BottomNavigationAction icon={<NotificationsNoneOutlinedIcon style={{ width: '35%', height: '35%' }} />} onClick={ toggleModal } />
       </BottomNaviWrapper>
       {isModalOpen && <AlarmModal isOpen={isModalOpen} closeModal={ toggleModal } />} 
     </>
