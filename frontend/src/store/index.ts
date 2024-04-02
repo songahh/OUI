@@ -22,6 +22,11 @@ const useStore = create(
       dailyDiaryId: null,
       setDailyDiaryId: ( dailyDiaryId ) => set( { dailyDiaryId } ),
 
+      memberId: null,
+      setMemberId: ( memberId ) => set( { memberId } ),
+    
+      isModalOpened: false,
+      updateModal: () => set(( state ) => ({ isModalOpened: !state.isModalOpened })),
     }),
     {
       name: 'userStorage',
@@ -49,4 +54,9 @@ type MainStore = {
   dailyDiaryId: number
   setDailyDiaryId: ( dailyDiaryId: number ) => void
 
+  memberId: number,
+  setMemberId: ( memberId: number ) => void
+
+  isModalOpened: boolean,
+  updateModal: () => void
 }
