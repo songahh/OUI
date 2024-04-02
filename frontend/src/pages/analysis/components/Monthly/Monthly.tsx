@@ -111,9 +111,11 @@ const CalendarHeaderMiddleWrapper = styled.div`
 `
 
 const Title = styled.div`
-    font-size: 20px;
+    font-size: 28px;
     font-weight: 600;
-    margin-bottom: 10px;
+    // margin-bottom: 10px;
+    margin-left: 15px;
+    margin-right: 15px;
     justify-content: flex-start;
 `
 
@@ -203,9 +205,9 @@ const Monthly = () => {
   return(
       <>
           <CalendarHeaderMiddleWrapper>
-              <LeftIcon size= { 20 } onClick={ movePrevMonth }/>
+              <LeftIcon size= { 28 } onClick={ movePrevMonth }/>
               <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
-              <RightIcon size= { 20 } onClick={ moveNextMonth }/>
+              <RightIcon size= { 28 } onClick={ moveNextMonth }/>
           </CalendarHeaderMiddleWrapper>
            { userName && <TitleWrapper> { userName }님이 3월에 느낀 “감정 통계” 예요! </TitleWrapper>}
           <ChartBoxWrapper>
