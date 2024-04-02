@@ -30,7 +30,7 @@ const SliderWrapper = styled( Slider )`
   
   .slick-track{
     display: flex;
-    margin: 0 -34%;
+    margin: 0 -38%;
   }
 
   .slick-slide {
@@ -68,14 +68,13 @@ const SliderWrapper = styled( Slider )`
 
 
 const YellowBox = styled.div`
-  width: 750px;
+  width: 660px;
   height: 5.5vh;
   background-color: rgba(255, 225, 125, 0.6);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
-  margin-top: 12vh;
-  margin-bottom: 1vh;
+  margin-top: 11vh;
   align-items: center;
   margin-left: 6%;
   @media (max-width: 768px) {
@@ -92,13 +91,13 @@ const YellowBox = styled.div`
 `;
 
 const UserRecord = styled.div`
-  width: 750px;
+  width: 660px;
   margin-bottom: 8%;
   margin-left: 8%
   background: transparent;
   padding: 5px 10px;
   border: 0px;
-  font-size: 59px;
+  font-size: 50px;
   font-weight: bold;
   font-family: "Dovemayo",
   @media (max-width: 768px) {
@@ -113,7 +112,7 @@ const UserRecord = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 50%;
+  width: 45%;
   max-width: 190px;
   max-height: 190px;
   border-radius: 50%;
@@ -298,15 +297,15 @@ const Main = () => {
 
   return (
     <>
-    <div style={{paddingRight:'4%', paddingTop:'4%'}}>
+    <div style={{paddingRight:'4%', paddingTop:'6%'}}>
       <Header>
         <ProfileImage src={ userImage || profile } alt="유저 프로필 이미지" />
         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
           <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => Logout()}>
-          <img style={{height:'4em'}} src={logoutBtn} alt="Logout" />
+          <img style={{height:'3.3em'}} src={logoutBtn} alt="Logout" />
           </button>
           <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => setAlarmModalOpen(true)}>
-          <img style={{height:'4.3em'}} src={alarmIcon} alt="Logout" />
+          <img style={{height:'3.7em'}} src={alarmIcon} alt="Logout" />
           </button>
         </div>
       </Header>
