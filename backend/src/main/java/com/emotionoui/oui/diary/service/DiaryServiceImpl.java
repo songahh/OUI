@@ -162,7 +162,8 @@ public class DiaryServiceImpl implements DiaryService{
 
             // objects[0].text 안에 있는 텍스트 파일내용 추출
             text = jsonNode.get("objects").get(0).get("text").asText();
-            // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
+
+            // 텍스트 내용이 없거나, 10자 이내일 때는 대표감정만 "중립"으로 넣고 텍스트 분석하지 않음
             if(Objects.equals(text, "")||text.length()<10){
                 Emotion emotion;
                 // 일기 작성이면
@@ -183,6 +184,7 @@ public class DiaryServiceImpl implements DiaryService{
                 return;
             }
 
+            // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
             // 비동기 처리
             String finalText = text;
 
@@ -284,14 +286,30 @@ public class DiaryServiceImpl implements DiaryService{
                 log.info("emotionRes 까지 왔나요?");
                 emotionRes = objectMapper.readValue(s, EmotionClass.class);
 
+                // 대표감정이 아무것도 없을 때 "중립"을 대표감정으로 넣어줌
+                if(emotionRes.getEmotionList().isEmpty()){
+                    emotionRes.setEmotionList(List.of(new String[]{"neutral"}));
+                }
+
                 document.setEmotion(emotionRes);
                 dailyDiaryMongoRepository.save(document);
 
-                String newEmotion = emotionRes.getEmotionList().get(0);
+                String newEmotion;
+                // 대표감정이 한 개일 때
+                if(emotionRes.getEmotionList().size()==1){
+                    newEmotion = emotionRes.getEmotionList().get(0);
+                }
+                else{
+                    // "중립" 감정이 1순위일 때는 차순위로 대표감정을 넣음
+                    if(emotionRes.getEmotionList().get(0).equals("neutral"))
+                        newEmotion = emotionRes.getEmotionList().get(1);
+                    else
+                        newEmotion = emotionRes.getEmotionList().get(0);
+                }
+
                 Emotion emotion;
                 // 일기를 저장할 때
                 if(type==1){
-                    log.info("여기 들어옵니까 ^_^");
                     // MariaDB에 대표감정(Emotion) 정보 저장
                     emotion = Emotion.builder()
                             .dailyDiary(dailyDiary)
