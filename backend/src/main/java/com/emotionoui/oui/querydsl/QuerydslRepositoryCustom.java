@@ -3,6 +3,7 @@ package com.emotionoui.oui.querydsl;
 import com.emotionoui.oui.main.dto.res.SearchDiaryListRes;
 import com.emotionoui.oui.member.entity.Member;
 
+import java.util.Date;
 import java.util.List;
 
 public interface QuerydslRepositoryCustom {
@@ -30,4 +31,8 @@ public interface QuerydslRepositoryCustom {
     Integer checkDiary(Member member, Integer diaryId);
 
     void deleteAlarmByMemberIdAndDiaryId(Member member, Integer diaryId);
+
+    List<Integer> findByDiaryIdAndDate(Integer diaryId, Date date);
+
+    Integer findByDailyDiaryIdAndDate(Integer dailyDairyId, Integer memberId);
 }
