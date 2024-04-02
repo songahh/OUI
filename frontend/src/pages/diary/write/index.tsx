@@ -1,7 +1,7 @@
 import { fabric } from 'fabric';
 import { SaveIcon, BackIcon } from 'src/components';
 import { DateSelect, BottomSheet, Canvas } from '../components';
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useEffect, useState, useRef } from 'react';
 import { useQuery, useMutation } from 'react-query';
 import useStore from 'src/store';
@@ -63,6 +63,7 @@ const DiaryWrite = () => {
         canvas.setActiveObject(textbox);
     }, [ canvas ]);
 
+
     const writeDiary = useMutation( postDiary );
     
     const goCalendar = () => {
@@ -78,6 +79,14 @@ const DiaryWrite = () => {
     // 저장
     const saveDiary = async () => {
         // string으로 전달
+        const canvasDic = canvas?._activeObject
+        const textSize =  canvasDic['text'].length
+
+        if(textSize <11) {
+            alert('글자를 10글자 이상 입력해주세요.');
+            return;
+        }
+        
         const diaryToString = JSON.stringify(canvas.toJSON());
         
         const data = {
@@ -85,6 +94,7 @@ const DiaryWrite = () => {
             dailyDate: selectedDate,
             dailyContent: diaryToString,
         };
+
 
         const diary = await getDiaryByDate({diaryId: diaryId, date: selectedDate});
         if(!diary.data) {
