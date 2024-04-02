@@ -46,9 +46,6 @@ class OuiInference(object):
             idx = int(key)
             name = self.emotion_to_idx[key]
 
-            if idx==6:
-                continue
-
             result_dict[name] = float(scores[idx])
         result_dict["emotionList"] = emotions
         return result_dict
@@ -67,7 +64,7 @@ class OuiInference(object):
                 "segment_ids": np.array(segment_ids)})
 
             for i in out:
-                logits=i[0][:6]
+                logits=i[0]
                 positive_indices = np.where(logits > self.threshold)[0]
                 positive_values = logits[positive_indices]
                 sorted_indices = positive_indices[np.argsort(positive_values)[::-1]]
@@ -86,7 +83,7 @@ class OuiInference(object):
             out = self.model_pytorch(token_ids, valid_length, segment_ids)
 
             for i in out:
-                logits=i[:6]
+                logits=i
                 logits = logits.detach().cpu().numpy()
                 positive_indices = np.where(logits > self.threshold)[0]
                 positive_values = logits[positive_indices]
@@ -107,7 +104,7 @@ class OuiInference(object):
             out = self.model_openvino([token_ids, valid_length, segment_ids])[self.openvino_outputlayer]
             
             for i in out:
-                logits=i[:6]
+                logits=i
                 positive_indices = np.where(logits > self.threshold)[0]
                 positive_values = logits[positive_indices]
                 sorted_indices = positive_indices[np.argsort(positive_values)[::-1]]
