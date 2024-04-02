@@ -79,8 +79,8 @@ const DiaryWrite = () => {
     // 저장
     const saveDiary = async () => {
         // string으로 전달
-        const canvasDic = canvas?._activeObject
-        const textSize =  canvasDic['text'].length
+        const textbox = canvas.getObjects()[0].toJSON();
+        const textSize =  textbox["text"].length;
 
         if(textSize <11) {
             alert('글자를 10글자 이상 입력해주세요.');
@@ -94,7 +94,6 @@ const DiaryWrite = () => {
             dailyDate: selectedDate,
             dailyContent: diaryToString,
         };
-
 
         const diary = await getDiaryByDate({diaryId: diaryId, date: selectedDate});
         if(!diary.data) {
