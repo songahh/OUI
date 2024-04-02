@@ -68,7 +68,7 @@ const SliderWrapper = styled( Slider )`
 
 
 const YellowBox = styled.div`
-  width: 660px;
+  width: 680px;
   height: 5.5vh;
   background-color: rgba(255, 225, 125, 0.6);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -91,13 +91,13 @@ const YellowBox = styled.div`
 `;
 
 const UserRecord = styled.div`
-  width: 660px;
+  width: 680px;
   margin-bottom: 8%;
   margin-left: 8%
   background: transparent;
   padding: 5px 10px;
   border: 0px;
-  font-size: 50px;
+  font-size: 49px;
   font-weight: bold;
   font-family: "Dovemayo",
   @media (max-width: 768px) {
@@ -117,7 +117,7 @@ const ProfileImage = styled.img`
   max-height: 190px;
   border-radius: 50%;
   object-fit: cover;
-  margin-top: 50%;
+  margin-top: 43%;
   margin-left: 8%;
 `;
 
