@@ -312,7 +312,7 @@ const Main = () => {
           <img style={{height:'3.3em'}} src={logoutBtn} alt="Logout" />
           </button>
           <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => setAlarmModalOpen(true)}>
-          <img style={{height:'3.7em'}} src={alarmIcon} alt="Logout" />
+          <img style={{height:'3.7em'}} src={alarmIcon} alt="Alarm" />
           </button>
         </div>
       </Header>

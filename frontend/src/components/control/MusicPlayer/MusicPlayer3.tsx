@@ -15,7 +15,7 @@ const PlayerWrapper = styled.div`
   background-color: white;
   border-radius: 20px;
   width: 100%;
-  padding: 30px 50px;
+  padding: 30px;
   margin-top: 10px;
   margin-bottom: 40px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
@@ -77,10 +77,31 @@ const Thumbnail = styled.img`
   margin-right: 5px; 
 `;
 
+const TitleContainer = styled.div`
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+`;
 
-// 
+const TitleWrapper = styled.div<{ length: number }>`
+  display: inline-block;
+  padding: 10px;
+  font-size: 36px;
+  font-weight: bold;
+  
+  ${props => props.length >= 22 && `
+    animation: slideText 10s linear infinite;
 
-
+    @keyframes slideText {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: translateX(-100%);
+      }
+    }
+  `}
+`;
 
 const AudioVideoPlayer = ( props: MusicListProps ) => {
 
@@ -151,10 +172,10 @@ const AudioVideoPlayer = ( props: MusicListProps ) => {
     <PlayerWrapper>
         <Thumbnail src={ getThumbnailUrl( recommends[ trackIndex ]?.uri)} alt="Video thumbnail" />
         <ControlWrapper>
-            <div style={{ width: '80%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-              <span style={{ fontSize: '40px', fontWeight: 'bold', padding: '10px' }}>{Title || 'title'}</span>
-              <span style={{ fontSize: '25px', padding: '10px'  }}>{Singer || 'singer'}</span>
-            </div>
+            <TitleContainer>
+              <TitleWrapper length={ Title.length }>{Title || 'title'}</TitleWrapper>
+              <div style={{ fontSize: '28px', padding: '10px'  }}>{Singer || 'singer'}</div>
+            </TitleContainer>
             <ProgressWrapper onClick={ seekTo }>
                 <ProgressBar style={{ width: `${played * 100}%` }} />
             </ProgressWrapper>
