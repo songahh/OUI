@@ -51,7 +51,7 @@ const MainWrapper = styled.div`
 const TitleWrapper = styled.div`
   text-align: center;
   flex-grow: 1;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: bold;
 `;
 
@@ -65,11 +65,12 @@ const DeleteWrapper = styled.div`
   margin-bottom: 0px;
   margin-right: 20px;
   padding-bottom: 0px;
+  font-size: 20px;
 `;
 
 const AlarmWrapper = styled.div`
-  border-top: 2px solid #262626;
-  border-bottom: 2px solid #262626;
+  border-top: 2px solid #9E9D9D;
+  border-bottom: 2px solid #9E9D9D;
   height: 84%;
   overflow-y: auto;
   overflow-x: hidden;
