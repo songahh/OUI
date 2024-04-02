@@ -35,7 +35,7 @@ const DiaryWrite = () => {
     const [ activeTool, setActiveTool ] = useState("textbox");
     const [ selectedDate, setSelectedDate ] = useState('');
     const [ textboxProps, setTextboxProps ] = useState({
-        selectedFont: 'Dovemayo',
+        selectedFont: 'JGaegujaengyi',
         fontWeight: 'normal',
         textAlign: 'left',
         fontColor: '#262626',
@@ -50,7 +50,7 @@ const DiaryWrite = () => {
             top: 60,
             width: 400,
             fontSize: 24,
-            fontFamily: "Dovemayo",
+            fontFamily: "JGaegujaengyi",
             fill: "#262626",
             textAlign: "left",
             fontWeight: "normal",

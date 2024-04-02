@@ -1,6 +1,5 @@
 import { fabric } from 'fabric';
 import { useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import WebFont from 'webfontloader';
 
 const Canvas = ( props: CanvasProps ) => {
@@ -9,7 +8,7 @@ const Canvas = ( props: CanvasProps ) => {
   useEffect(() => {
     WebFont.load({
         custom: {
-          families: ['DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
+          families: ['JGaegujaengyi', 'DoveMayo', 'DoveMayoBold', 'IMHyeMin', 'IMHyeMinBold', 'Cafe24Supermagic', 'Cafe24SupermagicBold', 'HakgyoansimGaeulsopung', 'HakgyoansimGaeulsopungBold'],
           urls: ['src/asset/fonts']
         },
         active: () => {
@@ -22,7 +21,7 @@ const Canvas = ( props: CanvasProps ) => {
     // 캔버스 생성
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: 750,
-      height: 900,
+      height: 850,
       backgroundColor: '#FFFEFC'
     });
 

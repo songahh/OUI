@@ -38,7 +38,7 @@ const DiaryEdit = () => {
     const todayDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     
     const [ textboxProps, setTextboxProps ] = useState({
-        selectedFont: 'Dovemayo',
+        selectedFont: 'JGaegujaengyi',
         fontWeight: 'normal',
         textAlign: 'left',
         fontColor: '#262626',
