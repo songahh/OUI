@@ -24,13 +24,14 @@ const ModalHeaderWrapper = styled.div`
 
 const HeaderBoxWrapper = styled.button<{ color: string }>`
   background-color: #fff;
+  font-size: 19px;
   margin-top: 10px;
   margin-left: 20px;
-  width: 10%;
+  width: 14%;
   border: none;
   cursor: pointer;
   transparent: 0.2;
-  border-radius: 5px;
+  border-radius: 5px 5px 0px 0px;
   height: 40px;
   ${( props ) =>
     props.color ==='trans' &&
@@ -43,10 +44,9 @@ const HeaderBoxWrapper = styled.button<{ color: string }>`
 const DateWrapper = styled.div`
     display: flex;
     justify-content: flex-end;
-    font-size: 12px;
+    font-size: 16px;
     margin: 2% 2%;
-    font-weight: bold;
-`
+`  
 
 const PlusButton = styled.button`
   border: 1px solid;
