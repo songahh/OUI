@@ -1,6 +1,7 @@
 package com.emotionoui.oui.diary.controller;
 
 import com.emotionoui.oui.diary.dto.EmotionClass;
+import com.emotionoui.oui.diary.dto.RecommendMusicClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.DecorateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDiarySettingReq;
@@ -86,7 +87,7 @@ public class DiaryController {
     // 추천노래 보여주기
     @GetMapping("/music/{dailyId}")
     public ResponseEntity<?> searchMusic(@PathVariable("dailyId") Integer dailyId){
-        return new ResponseEntity<List<String>>(diaryService.searchMusic(dailyId), HttpStatus.OK);
+        return new ResponseEntity<List<RecommendMusicClass>>(diaryService.searchMusic(dailyId), HttpStatus.OK);
     }
 
     // AI 코멘트 보여주기
