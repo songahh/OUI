@@ -7,7 +7,6 @@ import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -47,9 +46,11 @@ public class MemberController {
      * @param member
      * @return
      */
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updateMember(@AuthenticationPrincipal Member member, UpdateMemberReq updateMemberReq){
-        System.out.println(updateMemberReq.getImgUrl());
+    @PutMapping(consumes = "multipart/form-data")
+    public ResponseEntity<Void> updateMember(@AuthenticationPrincipal Member member,
+         @RequestPart MultipartFile file, @RequestParam String memberNickname){
+        UpdateMemberReq updateMemberReq = new UpdateMemberReq(memberNickname, file);
+//        System.out.println("updateMemberReq = " + updateMemberReq.getImgUrl());
         memberService.updateMember(member, updateMemberReq);
         return ResponseEntity.ok().build();
     }
