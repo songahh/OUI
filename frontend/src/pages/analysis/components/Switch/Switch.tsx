@@ -8,10 +8,10 @@ type ButtonWrapperProps = {
 
 const BoxWrapper = styled(Box)`
     justify-content: flex-end;
-    width: 20%;
+    width: 25%;
     height: 8%;
     display: flex;
-    margin: 0 0 0 70%;
+    margin: 0 0 0 68%;
     padding: 3px;
     border-radius: 10px;
     gap: 6px;
@@ -21,12 +21,11 @@ const BoxWrapper = styled(Box)`
 const ButtonWrapper = styled.button<ButtonWrapperProps>`
     background-color: ${(props) => (props.selected ? "#84BBAF" : "#FFFEFC")};
     color: ${(props) => (props.selected ? "#FFFEFC" : "#84BBAF")};
-    border: 0px;
     padding: 10px; 
     margin: 2px;
     cursor: pointer;
+    font-size: 29px;
     // font-weight: bold;
-    font-size: 21px;
     border: none;
     border-radius: 10px;
     width: 100%;
