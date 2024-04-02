@@ -54,15 +54,15 @@ const BoxWrapper = styled.div`
 
 
 const GraphWrapper = styled.div`
-    width: 60%;
+    width: 89%;
     height: 30vh;
     margin: auto; 
 
     display: flex; 
     justify-content: center; 
     align-items: center; 
-    margin-bottom: 50px;
-    margin-top: 20px;
+    margin-bottom: 3%;
+    margin-top: 3%;
 `;
 
 
@@ -121,7 +121,7 @@ const Analysis = () => {
                 datasets: [{
                     data: tempHappyData,
                     fill: true,
-                    backgroundColor: "white",
+                    backgroundColor: "#FFFEFC",
                     borderColor: "#FFDD6B",
                     pointBackgroundColor: "#FFDD6B",
                     pointBorderWidth: 2,
@@ -134,7 +134,7 @@ const Analysis = () => {
                 datasets: [{
                     data: tempSadData,
                     fill: true,
-                    backgroundColor: "white",
+                    backgroundColor: "#FFFEFC",
                     borderColor: "#C0DEFF",
                     pointBackgroundColor: "#C0DEFF",
                     pointBorderWidth: 2,
@@ -181,20 +181,20 @@ const Analysis = () => {
                     <BoxWrapper>
                     {keyType === 2 && (
                         <>
-                            <div style={{ width: '100%' }}>
-                                <div style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold', fontSize: '20px', width:'70%', display:"flex", justifyContent: 'center'}}>
-                                    { userName } 님의 이번 주 “행복 그래프” 예요!
+                                <div style={{ marginTop:'5%', marginBottom:'1.5%', fontSize: '33px', width:'85%', display:"flex"}}>
+                                    { userName } 님의 이번 주  <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}> “행복 그래프”</p> 예요!
                                 </div>
+                            <div style={{ padding:'20px', width: '85%', borderRadius:'15px', backgroundColor:'#FFFEFC' }}>
                                 <GraphWrapper>
                                     <Line data={ happyDataSet } options={ options } />
                                 </GraphWrapper>
                                 
 
                             </div>
-                            <div style={{ width: '100%' }}>
-                                <div style={{ fontFamily: 'IMHyeMin', fontWeight: 'bold', fontSize: '20px', width:'70%', display:"flex", justifyContent: 'center'}}>
-                                    { userName } 님의 이번 주 “우울 그래프” 예요!
+                            <div style={{ marginTop:'10%', marginBottom:'1.5%', fontSize: '33px', width:'85%', display:"flex"}}>
+                                    { userName } 님의 이번 주 <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}>“우울 그래프”</p> 예요!
                                 </div>
+                            <div style={{ padding:'20px', width: '85%', borderRadius:'15px', backgroundColor:'#FFFEFC' }}>
                                 <GraphWrapper>
                                     <Line data={ sadDataSet }  options={ options }/>
                                 </GraphWrapper>
