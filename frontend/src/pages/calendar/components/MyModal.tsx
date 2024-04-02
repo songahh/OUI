@@ -37,8 +37,6 @@ const MyModal = (props) => {
 
   const { schedules, diaryId } = props
 
-  console.log(schedules)
-
   const [ modalContent, setModalContent ] = useState(true);
 
   const { clickDate } = useStore()

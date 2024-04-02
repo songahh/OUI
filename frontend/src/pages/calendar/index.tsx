@@ -3,13 +3,11 @@ import { Drawer } from "src/components/control/Drawer";
 import { addDays, addMonths, format, subMonths } from 'date-fns'
 import { DateList, DayList, MyModal, ShareModal }  from './components'
 import writeDiary from 'src/asset/images/image-icon/write-btn.png'
-import { Button, LeftIcon, RightIcon } from 'src/components'
+import { LeftIcon, RightIcon } from 'src/components'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import useStore from './store';
 import staticStore from 'src/store'
-import loadMyDiary from 'src/asset/images/calendar/loadMyDiary.png'
-import goToWriteDiary from 'src/asset/images/calendar/goToWriteDiary.png'
 import { createPortal } from 'react-dom'
 import useDate from 'src/util/date'
 import { getCalendar, getShareCalendar } from './api';
@@ -68,16 +66,6 @@ const ModalBackground = styled.div`
   bottom: 0;
   z-index: 400;
 `
-
-const WriteModalBackground = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 400;
-  background-color: rgba(0, 0, 0, 0.5);
-`
     
 const Modal = styled.div`
   height: 40%;
@@ -89,25 +77,7 @@ const Modal = styled.div`
   border-radius: 10px 10px 0 0;
 `
 
-const WriteModal = styled.div`
-  height: 30%;
-  width: 40%;
-  background-color: #FFF;
-  box-shadow: 0px -3px 0px 0px rgba(211, 211, 211, 0.2);
-  border-radius: 10px;
-  position: fixed;
-  padding: 10px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`
 
-const ModalImg = styled.img`
-  height: 80%;
-  width: 40%;
-  cursor: pointer;
-  margin: auto;
-`
 
 const Calendar = () =>{
 
@@ -126,10 +96,6 @@ const Calendar = () =>{
       html?.classList.remove( 'scroll-locked' )
   }
 
-  const closeWrite = () => { 
-      setIsDiaryWrite( false )
-      html?.classList.remove( 'scroll-locked' )
-  }
 
   const ModalPortal = ({ children, onClose  }) => { 
     const handleBackgroundClick = (e) => {
@@ -143,35 +109,8 @@ const Calendar = () =>{
     )
   }
 
-  const loadDiary = () => {
-    alert('얘기중..')
-  }
-
-  const goWrite = () => {
-    navigator(`/diary/write/${diaryId}`)
-  }
-
-  const WriteModalPortal = ({ onClose  }) => { 
-    const handleBackgroundClick = (e) => {
-      ( e.target === e.currentTarget ) && onClose()
-    }
-    return createPortal(
-      <WriteModalBackground onClick={ handleBackgroundClick }>
-        <WriteModal>
-          <div style={{display:'flex', height:'100%', justifyContent: 'space-around'}}>
-            <ModalImg src={ loadMyDiary } alt='' onClick={ loadDiary } />
-            <ModalImg src={ goToWriteDiary } alt='' onClick={ goWrite } />
-          </div>
-        </WriteModal>
-      </WriteModalBackground>,
-      document.body
-    )
-  }
-
   const goDiaryWrite = () =>{
     navigator(`/diary/write/${diaryId}`)
-    // type==='개인' ? navigator(`/diary/write/${diaryId}`)
-    //  : setIsDiaryWrite(true)
   }
   
 
@@ -187,7 +126,7 @@ const Calendar = () =>{
   const moveNextMonth = () => { setCurrentMonth( addMonths( currentMonth, 1) ) }
 
   
-  const today = format(currentMonth, 'yyyy-MM-01') //월 데이터 전송 고정
+  const today = format( currentMonth, 'yyyy-MM-01' ) //월 데이터 전송 고정
 
   let queryKey = null; // 개인과 공유 키 분리
   let queryParams = null; // 개인과 공유 파람 분리
@@ -200,7 +139,7 @@ const Calendar = () =>{
     queryParams = () => getShareCalendar({ date: today, diaryId: diaryId })
   }
 
-  const { data: calendars, refetch } = useQuery<any>( queryKey, queryParams );
+  const { data: calendars, refetch } = useQuery<any>( queryKey, queryParams )
 
   useEffect(() => { refetch() }, [ currentMonth, refetch ])
 
@@ -208,8 +147,8 @@ const Calendar = () =>{
     <>
           <Header>
             <Drawer/>
-            <Button/>
-            <Button/>
+            <div/>
+            <div/>
           </Header>
           <CalendarWrapper>
             <CalendarHeaderWrapper>
@@ -239,10 +178,6 @@ const Calendar = () =>{
                   </Modal>
                 </ModalPortal>
             }
-            {/* {
-              isDiaryWrite && 
-              <WriteModalPortal onClose={ closeWrite } />
-            } */}
             <DateList/>
             <DayList list = { days } calendars = { calendars?.data } type = { type }/>
             </CalendarWrapper>
