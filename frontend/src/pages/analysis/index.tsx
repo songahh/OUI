@@ -35,7 +35,8 @@ ChartJS.register(
 const SwitchWrapper = styled(Switch)`
     display: flex;
     margin-left: auto;
-
+    width: 100%;
+    justify-content: center;
     .TitleWrapper{
         align-items: flex-start;
     }
@@ -176,7 +177,7 @@ const Analysis = () => {
                     <Button></Button>
                     <Button></Button>
                 </Header>
-                <SwitchWrapper setKeyType={ setKeyType } keyType={ keyType } ></SwitchWrapper>
+                    <SwitchWrapper setKeyType={ setKeyType } keyType={ keyType } ></SwitchWrapper>
                     <BoxWrapper>
                     {keyType === 2 && (
                         <>
