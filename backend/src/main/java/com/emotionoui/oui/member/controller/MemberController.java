@@ -6,6 +6,7 @@ import com.emotionoui.oui.member.dto.res.SearchMemberRes;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/member")
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
@@ -48,9 +50,14 @@ public class MemberController {
      */
     @PutMapping(consumes = "multipart/form-data")
     public ResponseEntity<Void> updateMember(@AuthenticationPrincipal Member member,
-         @RequestPart MultipartFile file, @RequestParam String memberNickname){
-        UpdateMemberReq updateMemberReq = new UpdateMemberReq(memberNickname, file);
-//        System.out.println("updateMemberReq = " + updateMemberReq.getImgUrl());
+         @RequestPart(required = false) MultipartFile file, @RequestParam String memberNickname){
+        UpdateMemberReq updateMemberReq;
+        if(file == null){
+            updateMemberReq = new UpdateMemberReq(memberNickname);
+        }
+        else{
+            updateMemberReq = new UpdateMemberReq(memberNickname, file);
+        }
         memberService.updateMember(member, updateMemberReq);
         return ResponseEntity.ok().build();
     }
