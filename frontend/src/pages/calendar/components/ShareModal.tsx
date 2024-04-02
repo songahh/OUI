@@ -62,8 +62,8 @@ const ShareModal = (props) => {
 
   const { diaries, diaryId, members } = props
 
-  const [ modalContent, setModalContent ] = useState(true);
-  const [ isSchedule, setIsSchedule ] = useState(true);
+  const [ modalContent, setModalContent ] = useState(false);
+  const [ isSchedule, setIsSchedule ] = useState(false);
 
   const { clickDate } = useStore()
 
@@ -97,8 +97,8 @@ const ShareModal = (props) => {
       { modalContent && isSchedule &&  // 일정 리스트 나열
       <>
       <ModalHeaderWrapper>
-        <HeaderBoxWrapper color= '#FFFEFC' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
         <HeaderBoxWrapper color= 'trans' onClick={ ClickDiary }>일기</HeaderBoxWrapper>
+        <HeaderBoxWrapper color= '#FFFEFC' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
       </ModalHeaderWrapper>
       <div style={{ width: '80%', marginLeft: '10%' }}>
         <DateWrapper>{ format( clickDate, 'yyyy-MM-dd' ) }</DateWrapper>
@@ -112,8 +112,8 @@ const ShareModal = (props) => {
         !modalContent && isSchedule &&  // 일정 작성
         <>
         <ModalHeaderWrapper>
-        <HeaderBoxWrapper color= '#FFFEFC' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
         <HeaderBoxWrapper color= 'trans' onClick={ ClickDiary }>일기</HeaderBoxWrapper>
+        <HeaderBoxWrapper color= '#FFFEFC' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
       </ModalHeaderWrapper>
         <div  style={{ width: '80%', marginLeft: '10%' }}>
           <Todo type='공유' diaryId= { diaryId }/>
@@ -125,8 +125,8 @@ const ShareModal = (props) => {
         !modalContent && !isSchedule &&  //일기 리스트 나열
         <>
         <ModalHeaderWrapper>
-            <HeaderBoxWrapper color= 'trans' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
             <HeaderBoxWrapper color= '#FFFEFC' onClick={ ClickDiary }>일기</HeaderBoxWrapper>
+            <HeaderBoxWrapper color= 'trans' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
         </ModalHeaderWrapper>
         <div style={{ width: '80%', marginLeft: '10%' }}>
           <DateWrapper> { format( clickDate, 'yyyy-MM-dd' ) }</DateWrapper>

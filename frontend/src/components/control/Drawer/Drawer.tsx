@@ -8,7 +8,8 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  IconButton
+  IconButton,
+  Typography
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom'
 import CloseIcon from '@mui/icons-material/Close';
@@ -84,23 +85,25 @@ const Drawer = () => {
             <ListItemIcon>
               <AutoStoriesOutlinedIcon/>
             </ListItemIcon>
-            <ListItemText primary='오늘의 일기' />
+            <ListItemText primary={<Typography fontFamily="DoveMayo">오늘의 일기</Typography>} />
           </ListItemButton>
           <ListItemButton onClick={ goCalendar }>
             <ListItemIcon>
               <CalendarTodayOutlinedIcon/>
             </ListItemIcon>
-            <ListItemText primary='캘린더' />
+            <ListItemText primary={<Typography fontFamily="DoveMayo">캘린더</Typography>} />
           </ListItemButton>
           <ListItemButton onClick={ goAnalysis }>
             <ListItemIcon>
               <ShowChartIcon/>
             </ListItemIcon>
-            <ListItemText primary='감정 통계'/>
+            <ListItemText primary={<Typography fontFamily="DoveMayo">감정 통계</Typography>} />
           </ListItemButton>
           <ListItemButton onClick={ goSetting }>
-            <ListItemIcon><SettingsOutlinedIcon/></ListItemIcon>
-            <ListItemText primary='설정' />
+            <ListItemIcon>
+              <SettingsOutlinedIcon/>
+            </ListItemIcon>
+            <ListItemText primary={<Typography fontFamily="DoveMayo">설정</Typography>} />
           </ListItemButton>
         </List>
       </Box>
