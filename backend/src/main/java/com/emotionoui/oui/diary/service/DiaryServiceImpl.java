@@ -163,29 +163,48 @@ public class DiaryServiceImpl implements DiaryService{
             // objects[0].text 안에 있는 텍스트 파일내용 추출
             text = jsonNode.get("objects").get(0).get("text").asText();
             // 텍스트 내용이 존재하면 AI 서버로 분석 요청하기
-            if(!Objects.equals(text, "")){
-                // 비동기 처리
-                String finalText = text;
+            if(Objects.equals(text, "")||text.length()<10){
+                Emotion emotion;
+                // 일기 작성이면
+                if(type==1){
+                    emotion = Emotion.builder()
+                            .dailyDiary(dailyDiary)
+                            .emotion("neutral")
+                            .date(dailyDate)
+                            .member(member)
+                            .build();
+                }
+                // 일기 수정이면
+                else{
+                    emotion = emotionRepository.findByDailyId(dailyDiary.getId());
+                    emotion.updateEmotion("neutral");
+                }
+                emotionRepository.save(emotion);
+                return;
+            }
 
-                // 1) ChatGPT로 코멘트 기능
-                CompletableFuture<Void> future1 = CompletableFuture.runAsync(() ->
-                        gptComment(finalText, document));
+            // 비동기 처리
+            String finalText = text;
 
-                // 2) 감정분석 후 노래 추천 기능
-                CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+            // 1) ChatGPT로 코멘트 기능
+            CompletableFuture<Void> future1 = CompletableFuture.runAsync(() ->
+                    gptComment(finalText, document));
+
+            // 2) 감정분석 후 노래 추천 기능
+            CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+                try {
+                    // 감정분석 결과 노래추천 json파일 넘어옴
+                    String music = sendDataToAI(finalText, dailyDate, document, dailyDiary, member, type);
+
+                    ObjectMapper objectMapper2 = new ObjectMapper();
+
+                    List<RecommendMusicClass> musicList = null;
                     try {
-                        // 감정분석 결과 노래추천 json파일 넘어옴
-                        String music = sendDataToAI(finalText, dailyDate, document, dailyDiary, member, type);
-
-                        ObjectMapper objectMapper2 = new ObjectMapper();
-
-                        List<RecommendMusicClass> musicList = null;
-                        try {
-                            musicList = objectMapper2.readValue(music, new TypeReference<List<RecommendMusicClass>>() {
-                            });
-                        } catch (IOException e) {
-                            log.error("JSON 변환 중 오류 발생: " + e.getMessage());
-                        }
+                        musicList = objectMapper2.readValue(music, new TypeReference<List<RecommendMusicClass>>() {
+                        });
+                    } catch (IOException e) {
+                        log.error("JSON 변환 중 오류 발생: " + e.getMessage());
+                    }
 
 //                        for(RecommendMusicClass r : musicList) {
 //                            log.info("youtube api 전");
@@ -193,19 +212,19 @@ public class DiaryServiceImpl implements DiaryService{
 //                            log.info("musicList 입니다 " + r.getUri());
 //                        }
 
-                        assert musicList != null;
-                        for (RecommendMusicClass musicOne : musicList) {
-                            // youtube uri가 없으면 youtube api로 검색하기 찾기
-                            if (musicOne.getUri().equals("")) {
-                                String uri = musicService.searchYoutube(musicOne.getSongName(), musicOne.getArtistNameBasket()[0]);
-                                log.info("uri 없을 때 api 돌려본 결과값! uri 값! : " + uri);
-                                musicOne.setUri(uri);
-                                // 몽고디비에 새로 찾은 uri 넣기
-                                SongMetaCollection songDocument = songMetaMongoRepository.findByMusicId(musicOne.getId());
-                                songDocument.setYoutubeUrl(uri);
-                                songMetaMongoRepository.save(songDocument);
-                            }
+                    assert musicList != null;
+                    for (RecommendMusicClass musicOne : musicList) {
+                        // youtube uri가 없으면 youtube api로 검색하기 찾기
+                        if (musicOne.getUri().equals("")) {
+                            String uri = musicService.searchYoutube(musicOne.getSongName(), musicOne.getArtistNameBasket()[0]);
+                            log.info("uri 없을 때 api 돌려본 결과값! uri 값! : " + uri);
+                            musicOne.setUri(uri);
+                            // 몽고디비에 새로 찾은 uri 넣기
+                            SongMetaCollection songDocument = songMetaMongoRepository.findByMusicId(musicOne.getId());
+                            songDocument.setYoutubeUrl(uri);
+                            songMetaMongoRepository.save(songDocument);
                         }
+                    }
 
 //                        for(RecommendMusicClass r : musicList) {
 //                            log.info("youtube api 후");
@@ -213,22 +232,21 @@ public class DiaryServiceImpl implements DiaryService{
 //                            log.info("musicList 입니다 " + r.getUri());
 //                        }
 
-                        // 몽고디비에서 일기 정보를 찾아 추천음악 리스트 넣기
-                        document.setMusic(musicList);
-                        dailyDiaryMongoRepository.save(document);
+                    // 몽고디비에서 일기 정보를 찾아 추천음악 리스트 넣기
+                    document.setMusic(musicList);
+                    dailyDiaryMongoRepository.save(document);
 
-                    } catch (ExecutionException e) {
-                        log.info("Execution Exception");
-                        throw new RuntimeException(e);
-                    } catch (InterruptedException e) {
-                        log.info("InterruptedException");
-                        throw new RuntimeException(e);
-                    } catch (IOException e) {
-                        log.info("IOException");
-                        throw new RuntimeException(e);
-                    }
-                });
-            }
+                } catch (ExecutionException e) {
+                    log.info("Execution Exception");
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    log.info("InterruptedException");
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    log.info("IOException");
+                    throw new RuntimeException(e);
+                }
+            });
         } catch (Exception e){
             e.printStackTrace();
             log.info("텍스트 파일 위치를 찾을 수 없습니다.");
@@ -292,9 +310,7 @@ public class DiaryServiceImpl implements DiaryService{
                     emotion.updateEmotion(newEmotion);
                 }
 
-                log.info("여기까지 왔나?");
                 emotionRepository.save(emotion);
-                log.info("여기서 문제 생긴듯?");
 
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);

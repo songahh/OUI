@@ -21,8 +21,9 @@ public class ScheduledAlarm {
     @Autowired
     private FcmInfoRepository fcmInfoRepository;
 
-//    @Scheduled(cron = "0 0 22 * * *") // 매일 오후 10시에 실행
-    @Scheduled(cron = "0 50 6 * * *")
+
+//    @Scheduled(cron = "0 6 17 * * *")
+    @Scheduled(cron = "0 0 22 * * *") // 매일 오후 10시에 실행
     public void sendScheduledNotification() throws Exception {
 
         // 현재 날짜 얻기
