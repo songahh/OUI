@@ -80,7 +80,7 @@ const Comment = styled.div`
 const Diary = () => {
     const navigator = useNavigate();
     
-    const { diaryId, dailyDiaryId, type  } = useStore(); 
+    const { diaryId, dailyDiaryId, type } = useStore(); 
 
     const emotionTag = {
         'angry': {name: '분노', color: '#F09690'},

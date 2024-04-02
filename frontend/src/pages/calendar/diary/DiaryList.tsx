@@ -42,8 +42,11 @@ const DiaryList = ( props ) => {
     <TodoListWrapper>
       {
         members?.data?.map(( member: DiaryMemberType, index ) => {
+          const isExist = daily?.data?.filter(( diary ) => 
+                    (diary?.dailyDate?.substring( 5, 10 ) === format( clickDate, 'MM-dd')) && 
+                    (diary?.writerId === member?.memberId))
           return(
-            <DiaryCard key={ index } member = { member } diary = { daily?.data } diaryId = { diaryId } />
+            <DiaryCard key={ index } member = { member } diaryId = { diaryId } isExist = { isExist } />
           )
         })
       }
@@ -55,6 +58,6 @@ export default DiaryList
 
 
 type DiaryMemberType = {
-  memberid?: number,
+  memberId?: number,
   nickname?: string
 }
