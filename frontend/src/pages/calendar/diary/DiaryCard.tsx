@@ -106,7 +106,7 @@ const DiaryCard = ( props ) =>{
                     <TodoWrapper onClick={ () => moveDailyDiary( isExist[0]?.dailyDiaryId ) } color='black'>
                     <TodoInside>
                     {
-                            <CardWrapper src={ emotionImg[isExist[0].emotionList[0]] === soso ? emotionImg[isExist[0].emotionList[1]]
+                            <CardWrapper src={ isExist[0].emotionList.length > 1 && emotionImg[isExist[0].emotionList[0]] === soso ? emotionImg[isExist[0].emotionList[1]]
                                 : emotionImg[isExist[0].emotionList[0]]  } alt={ relax } />
                     }
                     <div style={{ width:'100%', height: '100%' }}>
