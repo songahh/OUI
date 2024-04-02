@@ -72,6 +72,7 @@ const Drawer = () => {
     const goSetting = () => {
       navigator( '/setting' )
     }
+
   
     const DrawerList = (
       <Box sx={{ maxWidth: '1024px' }} role="presentation">

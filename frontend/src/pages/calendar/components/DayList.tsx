@@ -1,7 +1,4 @@
-import { format } from 'date-fns';
 import { Day } from '../components';
-import { useQuery } from 'react-query';
-
 import styled from 'styled-components'
 
 

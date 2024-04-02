@@ -22,17 +22,18 @@ const ModalHeaderWrapper = styled.div`
   background-color: #F8E0C5;
 `
 
-const HeaderBoxWrapper = styled.button<{color: string}>`
+const HeaderBoxWrapper = styled.button<{ color: string }>`
   background-color: #fff;
+  font-size: 19px;
   margin-top: 10px;
   margin-left: 20px;
-  width: 10%;
+  width: 14%;
   border: none;
   cursor: pointer;
   transparent: 0.2;
-  border-radius: 5px;
+  border-radius: 5px 5px 0px 0px;
   height: 40px;
-  ${(props) =>
+  ${( props ) =>
     props.color ==='trans' &&
     css`
       background-color: rgba(255, 255, 255, 0.8); 
@@ -43,10 +44,9 @@ const HeaderBoxWrapper = styled.button<{color: string}>`
 const DateWrapper = styled.div`
     display: flex;
     justify-content: flex-end;
-    font-size: 12px;
+    font-size: 16px;
     margin: 2% 2%;
-    font-weight: bold;
-`
+`  
 
 const PlusButton = styled.button`
   border: 1px solid;
@@ -58,12 +58,12 @@ const PlusButton = styled.button`
   cursor: pointer;
 `
 
-const ShareModal = (props) => {
+const ShareModal = ( props ) => {
 
   const { diaries, diaryId, members } = props
 
-  const [ modalContent, setModalContent ] = useState(false);
-  const [ isSchedule, setIsSchedule ] = useState(false);
+  const [ modalContent, setModalContent ] = useState( false );
+  const [ isSchedule, setIsSchedule ] = useState( false );
 
   const { clickDate } = useStore()
 
@@ -72,19 +72,19 @@ const ShareModal = (props) => {
   }
 
   const ClickSchedule = () =>{
-    setIsSchedule(true);
-    setModalContent(true);
+    setIsSchedule( true );
+    setModalContent( true );
   }
 
   const ClickDiary = () =>{
-    setIsSchedule(false);
-    setModalContent(false);
+    setIsSchedule( false );
+    setModalContent( false );
   }
 
   const todos = members?.flatMap( member => member?.schedules )?.filter( schedule => {
-    if ( schedule && schedule.date ) {
+    if ( schedule && schedule?.date ) {
         const currentDate = format( clickDate, 'MM-dd' )
-        const diaryDate = schedule.date.substring( 5, 10 )
+        const diaryDate = schedule?.date.substring( 5, 10 )
 
         return diaryDate === currentDate
     }
@@ -101,7 +101,7 @@ const ShareModal = (props) => {
         <HeaderBoxWrapper color= '#FFFEFC' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
       </ModalHeaderWrapper>
       <div style={{ width: '80%', marginLeft: '10%' }}>
-        <DateWrapper>{ format( clickDate, 'yyyy-MM-dd' ) }</DateWrapper>
+        <DateWrapper>{ format( clickDate, 'yyyy-MM-dd' )}</DateWrapper>
           <PlusButton onClick={ createTodo }>+</PlusButton>
           <TodoList schedules = { todos }/>
       </div>
@@ -129,7 +129,7 @@ const ShareModal = (props) => {
             <HeaderBoxWrapper color= 'trans' onClick={ ClickSchedule }>일정</HeaderBoxWrapper>
         </ModalHeaderWrapper>
         <div style={{ width: '80%', marginLeft: '10%' }}>
-          <DateWrapper> { format( clickDate, 'yyyy-MM-dd' ) }</DateWrapper>
+          <DateWrapper> { format( clickDate, 'yyyy-MM-dd' )}</DateWrapper>
           <DiaryList diaries = { diaries } diaryId = { diaryId }/>
         </div>
         </>
