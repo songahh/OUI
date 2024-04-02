@@ -68,6 +68,10 @@ const Drawer = () => {
     }
 
     const { data: diaryTitle } = useQuery( 'diaryTitle', () => getDiaryTitle( diaryId ))
+
+    const goSetting = () => {
+      navigator( '/setting' )
+    }
   
     const DrawerList = (
       <Box sx={{ maxWidth: '1024px' }} role="presentation">
@@ -95,8 +99,7 @@ const Drawer = () => {
             </ListItemIcon>
             <ListItemText primary={<Typography fontFamily="DoveMayo">감정 통계</Typography>} />
           </ListItemButton>
-          {/* 설정 페이지 생기면 라우팅 */}
-          <ListItemButton>
+          <ListItemButton onClick={ goSetting }>
             <ListItemIcon>
               <SettingsOutlinedIcon/>
             </ListItemIcon>

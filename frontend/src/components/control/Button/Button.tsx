@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faBars, faTrash, faUser, faHouse  } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faTrash, faUser, faHouse  } from '@fortawesome/free-solid-svg-icons';
 import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
+import HamburgerIcon from 'src/asset/images/icon/menu-icon.svg';
 
 const ButtonWrapper = styled.button`
     border: 0;
@@ -18,7 +19,7 @@ const ButtonWrapper = styled.button`
 
 const iconPaths = {
     back: faArrowLeft,
-    hamburger: faBars,
+    hamburger: HamburgerIcon,
     check: faCircleCheck, 
     trash: faTrash,
     user: faUser,
@@ -53,7 +54,11 @@ const Button = ( props: ButtonProps ) => {
 
     return(
         <ButtonWrapper onClick={ eventHandle }>
-            {iconSrc && <FontAwesomeIcon icon={ iconSrc } />} 
+             {btType === 'hamburger' ? (
+                <img src={iconPaths[btType]} alt="Menu" style={{ width: '3vw', height: '3vw' }} />
+            ) : (
+                <FontAwesomeIcon icon={iconPaths[btType]} />
+            )}
         </ButtonWrapper>
 
     );
