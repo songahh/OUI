@@ -1,5 +1,6 @@
 package com.emotionoui.oui.querydsl;
 
+import com.emotionoui.oui.calendar.entity.QEmotion;
 import com.emotionoui.oui.diary.entity.DiaryType;
 import com.emotionoui.oui.diary.entity.QDailyDiary;
 import com.emotionoui.oui.diary.entity.QDiary;
@@ -214,4 +215,31 @@ public class QuerydslRepositoryImpl implements QuerydslRepositoryCustom {
                         .and(memberAlarm.isDeleted.eq(0)))
                 .execute();
     }
+
+    public List<Integer> findByDiaryIdAndDate(Integer diaryId, Date date) {
+        QDailyDiary dailyDiary = QDailyDiary.dailyDiary;
+
+        return queryFactory
+                .select(dailyDiary.id)
+                .from(dailyDiary)
+                .where(dailyDiary.diary.id.eq(diaryId)
+                        .and(dailyDiary.dailyDate.eq(date))
+                        .and(dailyDiary.isDeleted.eq(0)))
+                .fetch();
+    }
+
+    @Override
+    public Integer findByDailyDiaryIdAndDate(Integer dailyDairyId, Integer memberId) {
+        QEmotion emotion = QEmotion.emotion1;
+
+        return queryFactory
+                .select(emotion.emotionId)
+                .from(emotion)
+                .where(emotion.member.memberId.eq(memberId)
+                        .and(emotion.dailyDiary.id.eq(dailyDairyId)))
+
+                .fetchOne();
+    }
+
+
 }
