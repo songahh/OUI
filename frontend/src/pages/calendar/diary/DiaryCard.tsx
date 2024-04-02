@@ -2,6 +2,7 @@ import { format } from 'date-fns'
 import angry from 'src/asset/images/emotion/angry.png'
 import embarrass from 'src/asset/images/emotion/embarrass.png'
 import joy from 'src/asset/images/emotion/joy.png'
+import soso from 'src/asset/images/emotion/soso.png'
 import nervous from 'src/asset/images/emotion/nervous.png'
 import relax from 'src/asset/images/emotion/relax.png'
 import sad from 'src/asset/images/emotion/sad.png'
@@ -68,10 +69,10 @@ const DiaryCard = ( props ) =>{
     const { diary, member, diaryId } = props
 
     
-    const isExist = diary?.filter(( diary ) => (diary?.dailyDate?.substring( 5, 10 ) === format( clickDate, 'MM-dd')) && (diary?.writerId == member?.memberId))
+    const isExist = diary?.filter(( diary ) => 
+                    (diary?.dailyDate?.substring( 5, 10 ) === format( clickDate, 'MM-dd')) && 
+                    (diary?.writerId === member?.memberId))
     
-    // console.log("Diary", diary, member, isExist, (isExist.length > 0))
-
     const goAlarm = useMutation( postUrge )
     const getDiary = useMutation( getDailyDiary )
 
@@ -81,11 +82,11 @@ const DiaryCard = ( props ) =>{
         'happy': joy,
         'doubtful': nervous,
         'comfortable': relax,
-        'sad': sad
+        'sad': sad,
+        'neutral': soso
     }
 
     const moveDailyDiary = async( id ) =>{
-        console.log("ID", id)
         const dailyDiaryId = await getDiary.mutateAsync( id )
         navigator(`/diary/${ dailyDiaryId }`)
     }
@@ -140,7 +141,6 @@ const DiaryCard = ( props ) =>{
                     </TodoInside>
                     </TodoWrapper>
                 </>
-                
                 )}
             </div>
     )
