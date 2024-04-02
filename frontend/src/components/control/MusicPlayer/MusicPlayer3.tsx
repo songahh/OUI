@@ -94,7 +94,7 @@ const TitleWrapper = styled.div<{ length: number }>`
 
     @keyframes slideText {
       from {
-        transform: translateX(100%);
+        transform: translateX(5%);
       }
       to {
         transform: translateX(-100%);
@@ -107,7 +107,7 @@ const AudioVideoPlayer = ( props: MusicListProps ) => {
 
   const { playList } = props;
   
-  const [playing, setPlaying] = useState( false );
+  const [playing, setPlaying] = useState( true );
   const [trackIndex, setTrackIndex] = useState(0);
   const [played, setPlayed] = useState(0);
   const [ recommends, setRecommends ] = useState([])
