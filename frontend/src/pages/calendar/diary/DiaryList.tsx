@@ -24,7 +24,7 @@ const DiaryList = ( props ) => {
     const selectedDiaries= [];
 
 
-    diaries.forEach( item => {
+    diaries?.forEach( item => {
 
       item?.diaries.forEach( diary => {
         const date = diary.date

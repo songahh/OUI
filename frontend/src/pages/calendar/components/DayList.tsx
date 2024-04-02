@@ -19,7 +19,7 @@ const WeekWrapper = styled.div`
   display: flex;
   box-sizing: border-box;
   flex-direction: row;
-  width: 85%
+  width: 90%
 `
 
 const DayList = ( props ) => {
