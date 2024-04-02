@@ -6,3 +6,4 @@ export * from './postDiaryDeco';
 export * from './deleteDiary';
 export * from './getEmotions';
 export * from './getComment';
+export * from './getMusicList';

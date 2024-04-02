@@ -5,7 +5,7 @@ import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from 'react-query';
 import { useNavigate } from "react-router-dom";
-import { getDiary, deleteDiary, getEmotions, getComment } from './api';
+import { getDiary, deleteDiary, getEmotions, getComment, getMusicList } from './api';
 import useStore from 'src/store'
 import styled from 'styled-components';
 
@@ -96,6 +96,7 @@ const Diary = () => {
     const [ isFontLoaded, setIsFontLoaded ] = useState<boolean>(false);
     const [ isDeco, setIsDeco ] = useState<boolean>(true);
     const [ isOnlyNeutral, setIsOnlyNeutral ] = useState<boolean>(false);
+    const [ playList, setPlayList ] = useState<Array<Object>>([]);
 
     const { data: dailyDiary } = useQuery('dailyDiary', () => getDiary(dailyDiaryId), {
         enabled: isFontLoaded
@@ -110,8 +111,15 @@ const Diary = () => {
         enabled: isFontLoaded
     });
 
+    const { data: musics } = useQuery('music', () => getMusicList(dailyDiaryId), {
+        enabled: isFontLoaded
+    });
+
     useEffect(() => {
         if(!canvas) return;
+
+        setPlayList(musics.data);
+
 
         if(emotions?.data?.emotionList.length === 1 && emotions?.data?.emotionList[0] === 'neutral') {
             setIsOnlyNeutral(true);
@@ -197,7 +205,7 @@ const Diary = () => {
                             </>
                         )}
                         <Title>추천 음악</Title>
-                        <MusicPlayer3 />
+                        <MusicPlayer3 playList={ playList }/>
                     </ResultSection>
                 </>
             )}
