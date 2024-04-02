@@ -271,7 +271,7 @@ const CustomModal = ( props:ModalProps ) => {
                 // marginTop:'100px',
               }} 
               onClick={() => {
-                if ( title !== '' && keyImage !== -1 ) {
+                if ( title !== '' && keyImage !== -1 && memberList.length > 0 ) {
                   isFinish({ title:title, key: keyImage, members: memberList });
                 } else {
                   if( title === '' ){
@@ -279,6 +279,9 @@ const CustomModal = ( props:ModalProps ) => {
                   }
                   else if( keyImage ===-1 ){
                     alert( "템플릿" );
+                  }
+                  else if( memberList.length ==0 ){
+                    alert( "친구를 추가해주세요" );
                   }    
                 }
               }}
