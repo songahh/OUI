@@ -138,12 +138,8 @@ const Day = ( props: DayProps ) =>{
     const goMyDiary = ( diary, date ) =>{
         setDailyDiaryId( diary.diary.daily_diary_id )
         if ( type === '개인' ) {
-            // navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
             navigator(`/diary/${diary.diary.daily_diary_id}`)
         } else {
-            
-            // navigator(`/diary/${diary.diary.daily_diary_id}`, {state : { dailyDiaryId: diary.diary.daily_diary_id, type: diary.diary.type }})
-            // navigator(`/diary/${diary.diary.daily_diary_id}`)
             updateDate( date )
             updateModal()
             }
