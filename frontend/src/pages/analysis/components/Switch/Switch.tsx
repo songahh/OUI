@@ -24,7 +24,7 @@ const ButtonWrapper = styled.button<ButtonWrapperProps>`
     padding: 10px; 
     margin: 2px;
     cursor: pointer;
-    font-size: 29px;
+    font-size: 30px;
     // font-weight: bold;
     border: none;
     border-radius: 10px;
@@ -37,10 +37,10 @@ const Switch = ({ keyType, setKeyType }) => {
         <>
         <BoxWrapper>
             <ButtonWrapper onClick={() => setKeyType(1)} selected={keyType === 1}>
-                월간
+                <p style={{marginTop:'10%'}}>월간</p>
             </ButtonWrapper>
             <ButtonWrapper onClick={() => setKeyType(2)} selected={keyType === 2}>
-                주간
+                <p style={{marginTop:'10%'}}>주간</p>
             </ButtonWrapper>
         </BoxWrapper>
         </>
