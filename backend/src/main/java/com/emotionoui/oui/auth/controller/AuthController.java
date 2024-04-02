@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +26,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 public class AuthController {
 
     private final MemberRepository memberRepository;
@@ -43,8 +45,10 @@ public class AuthController {
     @GetMapping("/login/kakao")
     public ResponseEntity<?> kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) {
         try {
+            log.info("들어옴");
             // 카카오에서 사용자 email 받아오기
             KakaoLoginRes kakaoLoginRes = authServiceImpl.kakaoLogin(code, response);
+            log.info("kakaoLoginRes "+ kakaoLoginRes);
             // 받아온 email로 jwt access, refresh 토큰 만들기
             String accessToken = jwtTokenProvider.createAccessToken(kakaoLoginRes.getEmail());
             String refreshToken = jwtTokenProvider.createRefreshToken(kakaoLoginRes.getEmail());
@@ -55,10 +59,14 @@ public class AuthController {
             // refreshToken 쿠키에 담기
             jwtTokenProvider.createRefreshTokenCookie(refreshToken, response);
 
+            log.info("redis 전");
+
             // redis에 토큰 저장
             String key = RedisPrefix.REFRESH_TOKEN.prefix() + kakaoLoginRes.getEmail();
             redisService.setValues(key, refreshToken, Duration.ofDays(3));
             System.out.println("redis : "+redisService.getValues(key));
+
+            log.info("redis 후");
 
             // 새로운 accessToken을 JSON 응답 본문에 담아 반환
             Map<String, String> tokenMap = new HashMap<>();
@@ -68,6 +76,8 @@ public class AuthController {
             // 가입된 유저 확인 & 회원가입
 
             tokenMap.put("signupMSG", signupMSG);
+
+            log.info("보내기 전");
 
             return ResponseEntity.ok().body(tokenMap);
 

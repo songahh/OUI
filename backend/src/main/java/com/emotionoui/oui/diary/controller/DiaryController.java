@@ -3,13 +3,10 @@ package com.emotionoui.oui.diary.controller;
 import com.emotionoui.oui.diary.dto.EmotionClass;
 import com.emotionoui.oui.diary.dto.req.CreateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.DecorateDailyDiaryReq;
-import com.emotionoui.oui.diary.dto.req.UpdateDailyDiaryReq;
 import com.emotionoui.oui.diary.dto.req.UpdateDiarySettingReq;
 import com.emotionoui.oui.diary.dto.res.DecorateDailyDiaryRes;
 import com.emotionoui.oui.diary.dto.res.SearchDailyDiaryRes;
 import com.emotionoui.oui.diary.dto.res.SearchDiarySettingRes;
-import com.emotionoui.oui.diary.entity.Diary;
-import com.emotionoui.oui.diary.exception.NotExitPrivateDiaryException;
 import com.emotionoui.oui.diary.repository.DiaryRepository;
 import com.emotionoui.oui.diary.service.DiaryService;
 import com.emotionoui.oui.member.entity.Member;
@@ -30,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -52,7 +48,7 @@ public class DiaryController {
 
     // 일기 게시글 수정하기
     @PutMapping("/{dailyId}")
-    public ResponseEntity<?> updateDailyDiary(@RequestBody UpdateDailyDiaryReq req, @PathVariable("dailyId") Integer dailyId){
+    public ResponseEntity<?> updateDailyDiary(@RequestBody CreateDailyDiaryReq req, @PathVariable("dailyId") Integer dailyId){
         return new ResponseEntity<Integer>(diaryService.updateDailyDiary(req, dailyId), HttpStatus.OK);
     }
 
@@ -73,6 +69,12 @@ public class DiaryController {
     @GetMapping("/{diaryId}/{date}")
     public ResponseEntity<?> searchDailyDiary(@PathVariable("diaryId") Integer diaryId, @PathVariable("date") String date, @AuthenticationPrincipal Member member){
         return new ResponseEntity<Boolean>(diaryService.searchDailyDiaryByDate(diaryId, date, member.getMemberId()), HttpStatus.OK);
+    }
+
+    // 일기 제목 아이디로 조회하기
+    @GetMapping("/title/{diaryId}")
+    public ResponseEntity<?> searchDiaryTitle(@PathVariable("diaryId") Integer diaryId){
+        return new ResponseEntity<String>(diaryService.searchDiaryTitleById(diaryId), HttpStatus.OK);
     }
 
     // 감정분석 결과 보여주기
@@ -103,8 +105,7 @@ public class DiaryController {
     // 다이어리 설정 수정하기
     @PutMapping("/setting/{diaryId}")
     public ResponseEntity<?> updateDiarySetting(@RequestBody UpdateDiarySettingReq req, @PathVariable("diaryId") Integer diaryId, @AuthenticationPrincipal Member member){
-        Integer memberId = member.getMemberId();
-        diaryService.updateDiarySetting(req, diaryId, memberId);
+        diaryService.updateDiarySetting(req, diaryId, member);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -122,8 +123,12 @@ public class DiaryController {
     public ResponseEntity<?> decorateDailyDiary(@DestinationVariable Integer dailyId, Principal principal,
                                                 @Payload DecorateDailyDiaryReq req) throws IOException, ExecutionException, InterruptedException {
         Member member = (Member)((Authentication) principal).getPrincipal();
-        System.out.println(member.getMemberId());
-        System.out.println(diaryService.decorateDailyDiary(req, member));
+//        System.out.println(member.getMemberId());
+//        System.out.println(diaryService.decorateDailyDiary(req, member));
+
+        // DB에 저장
+        diaryService.decorateSaveDailyDiary(req, dailyId);
+
         return new ResponseEntity<DecorateDailyDiaryRes>(diaryService.decorateDailyDiary(req, member), HttpStatus.OK);
     }
 

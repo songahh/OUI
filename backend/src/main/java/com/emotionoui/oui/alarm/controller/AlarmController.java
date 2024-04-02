@@ -30,11 +30,18 @@ public class AlarmController {
     // 전체 알림리스트 가져오기
     @GetMapping
     public ResponseEntity<?> searchAlarms(@AuthenticationPrincipal Member member){
-        System.out.println(" = " + "들오몸!!!!!!!!!!!!!!!!!!!");
         int memberId = member.getMemberId();
         List<SearchAlarmsRes> alarms = alarmService.searchAlarmList(memberId);
 
         return new ResponseEntity<List<SearchAlarmsRes>>(alarms, HttpStatus.OK);
+    }
+
+    // 전체 알림 삭제하기
+    @PutMapping("/deleteAll")
+    public ResponseEntity<?> deleteAlarms(@AuthenticationPrincipal Member member){
+        int memberId = member.getMemberId();
+        alarmService.deleteAlarms(memberId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // 알림 보내기 테스트용(단일 알림)
@@ -79,10 +86,23 @@ public class AlarmController {
         return ResponseEntity.ok().build();
     }
 
+    @Transactional
+    @PostMapping("/read/{alarmId}")
+    public ResponseEntity<?> readAlarm(@AuthenticationPrincipal Member member, @PathVariable Integer alarmId){
+        alarmService.readAlarm(member, alarmId);
+        return ResponseEntity.ok().build();
+    }
 
     // 실험용
     @GetMapping("/mainPage")
     public String mainPage(){
         return "mainPage";
+    }
+
+    // 랜덤질문csv 파일을 몽고디비에 넣기
+    @PostMapping("/random")
+    public ResponseEntity<?> uploadQuestion() throws IOException {
+        alarmService.uploadRandom();
+        return ResponseEntity.ok().build();
     }
 }
