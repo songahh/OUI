@@ -57,7 +57,7 @@ const Todo = (props) => {
   const { clickDate, setModalContent } = useStore()
   const [ title, setTitle ] = useState('')
   const [ memo, setMemo ] = useState('')
-  const [ todoColor, setTodoColor ] = useState( 'BBDED6' )
+  const [ todoColor, setTodoColor ] = useState( '#BBDED6' )
 
   const colors = [ '#BBDED6', '#FFE17D', '#C0DEFF', '#F7EDE2', '#A1A7C4' ] 
 

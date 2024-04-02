@@ -36,8 +36,6 @@ const MyModal = (props) => {
 
   const { schedules, diaryId } = props
 
-  console.log(schedules)
-
   const [ modalContent, setModalContent ] = useState(true);
 
   const { clickDate } = useStore()
@@ -53,7 +51,7 @@ const MyModal = (props) => {
       { modalContent &&
       <>
       <ModalHeaderWrapper>
-        <div style={{ fontSize:'30px'}}>일정</div>
+        <div style={{ fontSize:'30px' }}>일정</div>
         <div style={{ fontSize: '20px', marginLeft: '2%' }}> { format( clickDate, 'yyyy-MM-dd' )}</div>
       </ModalHeaderWrapper>
         <PlusButton onClick={ createTodo }>+</PlusButton>
