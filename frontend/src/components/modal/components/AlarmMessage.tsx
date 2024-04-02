@@ -20,7 +20,7 @@ const AlarmWrapper = styled.div`
     flex-direction: row;
     align-items: center;
     width: 97%;
-    padding: 15px 10px;
+    padding: 10px;
 `;
 
 const StringWrapper = styled.div`
@@ -39,7 +39,6 @@ const IconWrapper = styled.img`
 
 const ActionsWrapper = styled.div`
     display: flex;
-    flex-direction: column;
     justify-content: flex-end;
     align-items: center;
     gap: 5px; 
@@ -56,7 +55,7 @@ const AcceptButton = styled(Button)`
         border: 0px;
     }
     border: 0px;
-    font-size: 0.85rem; 
+    font-size: 1rem; 
     padding: 6px; 
     box-shadow: none;
     min-width: 50px;
@@ -70,7 +69,7 @@ const RejectButton = styled(Button)`
         border: 0px;
     }
     border: 0px;
-    font-size: 0.85rem; 
+    font-size: 1rem; 
     padding: 6px; 
     box-shadow: none;
     min-width: 50px;
@@ -87,8 +86,8 @@ const SelectedIcon = IconType[ Type ];
                 <div style={{ display:'flex', flexDirection: 'row', marginLeft: '10px', marginRight: '10ox' }}>
                     <IconWrapper src={SelectedIcon} alt="icon"/>
                     <StringWrapper>
-                        <span style={{ fontSize: "20px", fontWeight: "bold", paddingBottom: "5px" }}>{ Title }</span>
-                        <span style={{ width: "100%", textWrap: "wrap" }}>{ Content }</span>
+                        <span style={{ fontSize: "22px", fontWeight: "bold", paddingBottom: "5px", paddingTop: "10px" }}>{ Title }</span>
+                        <span style={{ fontSize: "20px", width: "100%", textWrap: "wrap" }}>{ Content }</span>
                     </StringWrapper>
                 </div>
                 <ActionsWrapper>
@@ -104,7 +103,7 @@ const SelectedIcon = IconType[ Type ];
                     )}
                 </ActionsWrapper>
             </AlarmWrapper>
-            <hr></hr>
+            <hr style={{ color: "#D1D1D1" }}/>
         </>
     );
 

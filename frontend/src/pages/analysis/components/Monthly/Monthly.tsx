@@ -37,7 +37,8 @@ const ChartBoxWrapper = styled.div`
   border-radius: 15px; 
   padding: 20px;
   width: 85%; 
-  margin: 20px 0; 
+  margin-top: 20px; 
+  margin-bottom: 10px; 
   justify-content: center; 
   align-items: center;
   @media (max-width: 768px) {
@@ -52,12 +53,12 @@ const ChartBoxWrapper = styled.div`
 `;
 
 const EmotionTagWrapper = styled.div`
-  font-size: 28px;
+  font-size: 25px;
   color: #333;
 `;
 
 const EmotionScoreWrapper = styled.div`
-  font-size: 25px;
+  font-size: 22px;
   color: #666;
   margin-bottom: 20%;
 `;
@@ -73,10 +74,10 @@ const TitleWrapper = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  width: 80%;
-  font-size: 33px;
+  width: 85%;
+  font-size: 28px;
   text-align: left; 
-  margin-top: 5%;
+  margin-top: 4%;
 `;
 
 const DoughnutWrapper = styled.div`
@@ -97,7 +98,7 @@ const CalendarHeaderMiddleWrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 30px; 
-  width: 80%;
+  width: 85%;
   margin-top: 10px;
   flex: 1;
 `
