@@ -1,8 +1,7 @@
 import logging
 import argparse
 
-from contextlib import asynccontextmanager
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 import uvicorn
 from routers import analysis, recommendation
 from db.mongodb import MongoDB

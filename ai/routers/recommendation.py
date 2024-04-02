@@ -15,8 +15,8 @@ negatives_etc = {"angry", "doubtful", "embarrassed"}
 negatives_sad = {"sad"}
 dim = 6
 k = 3
-inc = 2
-dsc = 0.5
+inc = 0.5
+dsc = 0.3
 
 @router.on_event("startup")
 async def init_faiss():
@@ -58,8 +58,8 @@ async def recommendation(body: SongScore):
     global faiss_index
     
     nparr = np.zeros((1, dim), dtype=np.float32)
-    user_type = body_dict["user_type"]
     body_dict = body.dict()
+    user_type = body_dict["user_type"]
     del body_dict["user_type"]
     
     nparr[0, 0] = body_dict['happy']
@@ -69,24 +69,28 @@ async def recommendation(body: SongScore):
     nparr[0, 4] = body_dict['doubtful']
     nparr[0, 5] = body_dict['comfortable']
 
+    faiss.normalize_L2(nparr)
     # 유저가 표현형일 때,
     if user_type == "COVT":
         max_emotion = max(body_dict, key=body_dict.get)
         
         if max_emotion in negatives_etc:
             nparr[0, 5] += inc
-            nparr[0, 1] += dsc
-            nparr[0, 2] += dsc
-            nparr[0, 3] += dsc
-            nparr[0, 4] += dsc
+            nparr[0, 0] += inc//2
+            
+            nparr[0, 1] -= dsc
+            nparr[0, 2] -= dsc
+            nparr[0, 3] -= dsc
+            nparr[0, 4] -= dsc
         elif max_emotion in negatives_sad:
             nparr[0, 0] += inc
-            nparr[0, 1] += dsc
-            nparr[0, 2] += dsc
-            nparr[0, 3] += dsc
-            nparr[0, 4] += dsc
+            nparr[0, 5] += inc//2
+            
+            nparr[0, 1] -= dsc
+            nparr[0, 2] -= dsc
+            nparr[0, 3] -= dsc
+            nparr[0, 4] -= dsc
     
-    faiss.normalize_L2(nparr)
     _, indexes = faiss_index.search(nparr, 3)
     
     return [uri[i] for i in indexes[0]]
