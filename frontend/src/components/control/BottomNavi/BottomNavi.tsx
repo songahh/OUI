@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
+import alarmIcon from 'src/asset/images/icon/alarm-icon.svg'
+import mypageIcon from 'src/asset/images/icon/mypage-icon.svg'
 import MainLogo from 'src/asset/images/image-icon/logo.png';
 import { useNavigate } from 'react-router-dom';
 import useStore from 'src/store'
@@ -12,11 +12,11 @@ import AlarmModal from 'src/components/modal/AlarmModal';
 const BottomNaviWrapper = styled( BottomNavigation )`
     background-color: white;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     position: fixed;
     bottom: 0;
     left: 50%;
-    height: 8%;
+    height: 7%;
     transform: translateX(-50%);
     max-width: 1024px;
     width: 100%;
@@ -50,9 +50,9 @@ export default function BottomNavi() {
           setValue( newValue );
         }}
       >
-        <BottomNavigationAction icon={<PersonOutlineOutlinedIcon style={{ width: '35%', height: '35%' }} />} onClick={ viewMyPage } />
-        <BottomNavigationAction icon={<img src={ MainLogo } style={{ width: '35%', height: '35%' }} onClick={ goMain } />} />
-        <BottomNavigationAction icon={<NotificationsNoneOutlinedIcon style={{ width: '35%', height: '35%' }} />} onClick={ toggleModal } />
+        <BottomNavigationAction icon={<img style={{ width: '47px', height: '47px' }} src={ mypageIcon } alt="MyPage" />} onClick={ viewMyPage } />
+        <BottomNavigationAction icon={<img src={ MainLogo } style={{ width: '45px', height: '45px' }} onClick={ goMain } alt="Logo" />} />
+        <BottomNavigationAction icon={<img style={{ width: '35px', height: '35px' }} src={ alarmIcon } alt="Alarm" />} onClick={ toggleModal } />
       </BottomNaviWrapper>
       {isModalOpen && <AlarmModal isOpen={isModalOpen} closeModal={ toggleModal } />} 
     </>
