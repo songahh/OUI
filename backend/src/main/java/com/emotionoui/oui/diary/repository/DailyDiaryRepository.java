@@ -20,7 +20,7 @@ public interface DailyDiaryRepository extends JpaRepository<DailyDiary, Integer>
             "WHERE d.diary.id = :diaryId AND d.dailyDate BETWEEN :start AND :end")
     List<WeeklyMongoDto> getMongoIdByDiaryId(Integer diaryId, Date start, Date end);
 
-    @Query("SELECT d FROM DailyDiary d WHERE d.diary.id = :diaryId AND d.dailyDate= :date")
+    @Query("SELECT d FROM DailyDiary d WHERE d.diary.id = :diaryId AND d.dailyDate= :date AND d.isDeleted= 0")
     DailyDiary findByDiaryIdAndDate(@Param("diaryId") Integer diaryId, @Param("date") Date date);
 
     @Query("SELECT d.id FROM DailyDiary d WHERE d.mongoId = :mongoId")
