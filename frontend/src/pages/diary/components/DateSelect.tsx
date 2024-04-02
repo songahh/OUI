@@ -89,7 +89,7 @@ const DateSelect = (props: DateSelectProps) => {
     <div>
       <Select 
         value={ year } 
-        style={{ fontSize: "20px", fontFamily: "Dovemayo" }} 
+        style={{ fontSize: "20px", fontFamily: "JGaegujaengyi" }} 
         onChange={ handleYearChange }
         MenuProps={{
           PaperProps: {
@@ -100,7 +100,7 @@ const DateSelect = (props: DateSelectProps) => {
         }}
       >
         {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((year) => (
-          <MenuItem key={ year } value={ year }>
+          <MenuItem key={ year } value={ year } style={{ fontFamily: "JGaegujaengyi", fontSize: "20px" }}>
             { year }
           </MenuItem>
         ))}
@@ -108,7 +108,7 @@ const DateSelect = (props: DateSelectProps) => {
       <SelectLabel>년</SelectLabel>
       <Select 
         value={ month } 
-        style={{ fontSize: "20px", fontFamily: "Dovemayo" }} 
+        style={{ fontSize: "20px", fontFamily: "JGaegujaengyi" }} 
         onChange={ handleMonthChange }
         MenuProps={{
           PaperProps: {
@@ -119,7 +119,7 @@ const DateSelect = (props: DateSelectProps) => {
         }}
       >
         {Array.from({ length: year === new Date().getFullYear() ? new Date().getMonth() + 1 : 12 }, (_, i) => i + 1).map((month) => (
-          <MenuItem key={ month } value={ month }>
+          <MenuItem key={ month } value={ month } style={{ fontFamily: "JGaegujaengyi", fontSize: "20px" }}>
             { month }
           </MenuItem>
         ))}
@@ -127,7 +127,7 @@ const DateSelect = (props: DateSelectProps) => {
       <SelectLabel>월</SelectLabel>
       <Select 
         value={ day } 
-        style={{ fontSize: "20px", fontFamily: "Dovemayo" }}  
+        style={{ fontSize: "20px", fontFamily: "JGaegujaengyi" }}  
         onChange={ handleDayChange }
         MenuProps={{
           PaperProps: {
@@ -139,7 +139,7 @@ const DateSelect = (props: DateSelectProps) => {
         multiple={ false}
       >
         {daysInMonth.map((day) => (
-          <MenuItem key={ day } value={ day }>
+          <MenuItem key={ day } value={ day } style={{ fontFamily: "JGaegujaengyi", fontSize: "20px" }}>
             { day }
           </MenuItem>
         ))}

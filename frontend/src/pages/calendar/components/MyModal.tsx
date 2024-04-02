@@ -10,6 +10,7 @@ const MyModalWrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  margin-top: 2%;
   margin-left: 10%;
   overflow: auto;
   background-color: #FFFEFC;
@@ -51,8 +52,8 @@ const MyModal = (props) => {
       { modalContent &&
       <>
       <ModalHeaderWrapper>
-        <div style={{ fontSize:'30px' }}>일정</div>
-        <div style={{ fontSize: '20px', marginLeft: '2%' }}> { format( clickDate, 'yyyy-MM-dd' )}</div>
+        <div style={{ fontSize:'30px', marginRight:'20px', marginBottom:'1px'}}>일정</div>
+        <div style={{ fontSize:'16px', marginLeft: '2%', marginBottom:'1px' }}> { format( clickDate, 'yyyy-MM-dd' )}</div>
       </ModalHeaderWrapper>
         <PlusButton onClick={ createTodo }>+</PlusButton>
         <TodoList schedules = { todos }/>
