@@ -21,8 +21,8 @@ const Canvas = ( props: CanvasProps ) => {
 
     // 캔버스 생성
     const newCanvas = new fabric.Canvas(canvasRef.current, {
-      width: 950,
-      height: 1000,
+      width: 750,
+      height: 900,
       backgroundColor: '#FFFEFC'
     });
 
