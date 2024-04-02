@@ -12,6 +12,7 @@ public class EmotionClass {
     private Double angry;
     private Double doubtful;
     private Double sad;
+    private Double neutral;
     private List<String> emotionList;
 
 //    public String getMaxEmotion(){
