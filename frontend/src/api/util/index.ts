@@ -112,9 +112,9 @@ export const postAxios =  async( url: string, data?: any, multi?:any )  =>{
   }
 }
 
-export const putAxios =  async( url: string, data?: any )  =>{
+export const putAxios =  async( url: string, data?: any, multi?: any )  =>{
   try{
-    const response = await useAxios.put( url, data )
+    const response = await useAxios.put( url, data, multi )
     console.log(response)
     return response
   } catch( error ){
