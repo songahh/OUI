@@ -54,7 +54,7 @@ const Kakao = () => {
   }, [ code, kakaoMutations])
 
 
-  return(<div></div>)
+  return(<div>로그인중입니다..</div>)
   
 }
 
