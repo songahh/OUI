@@ -55,7 +55,7 @@ const Button = ( props: ButtonProps ) => {
     return(
         <ButtonWrapper onClick={ eventHandle }>
              {btType === 'hamburger' ? (
-                <img src={iconPaths[btType]} alt="Menu" style={{ width: '3vw', height: '3vw' }} />
+                <img src={iconPaths[btType]} alt="Menu" style={{ width: '5vw', height: '5vw' }} />
             ) : (
                 <FontAwesomeIcon icon={iconPaths[btType]} />
             )}

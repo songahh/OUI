@@ -14,7 +14,7 @@ const ContentWrapper = styled.div`
   box-sizing: border-box;
   padding: 10px 60px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(20%, auto));
+  grid-template-columns: repeat(auto-fill, minmax(25%, auto));
   row-gap: 10px;
   justify-content: center;
   align-items: center;
