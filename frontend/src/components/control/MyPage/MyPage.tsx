@@ -100,7 +100,7 @@ const MyPage = () => {
     const [ email, setEmail ] = useState( myData?.data?.memberEmail )
     const [ nickname, setNickName ] = useState( myData?.data?.nickName )
 
-    const profileImage= ( myData?.data?.img==='' || myData?.data?.img===null ) ? null : myData?.data?.img
+    const profileImage= ( myData?.data?.img==='' || myData?.data?.img===null ) ? UserIcon : myData?.data?.img
     
     const [ uploadedImage, setUploadedImage ] = useState(profileImage)
     const [ flag, setFlag ] = useState(myType?.data==='Blue' ? true : false)
@@ -133,7 +133,10 @@ const MyPage = () => {
     const onChangeImage = (e) => {
         const file = e.target.files[0];
         const imageUrl = URL.createObjectURL(file);
-        setUploadedImage(imageUrl);
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("memberNickname",nickname)
+        setUploadedImage(formData);
     }
 
     return(

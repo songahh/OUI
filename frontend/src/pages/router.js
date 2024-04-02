@@ -18,6 +18,7 @@ export const routes = [
     { path: 'analysis'},
     { path: 'shareanalysis' },
     { path: 'kakao', dynamicPath: 'auth/login/kakao'},
+    { path: 'setting' }
 ]
 
 const lazyModules = routes?.map( ( { path, dynamicPath } ) => useRouter( path, dynamicPath ) )

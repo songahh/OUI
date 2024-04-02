@@ -78,7 +78,7 @@ useAxios.interceptors.response.use(
         }
         
         try{
-          const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/token`, { refreshToken : cookies.refreshToken }, config)
+          const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/auth/token`, { refreshToken : cookies.refreshToken }, config)
           setAccessToken(response?.data?.accessToken)
           setIsLogin(true)
 
