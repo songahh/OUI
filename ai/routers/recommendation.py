@@ -5,10 +5,11 @@ import faiss
 import numpy as np
 import logging
 from models.recommendation import Song, SongScore
+from fastapi import HTTPException
 
 router = APIRouter()
 faiss_index = None
-uri = []
+id = []
 scores = []
 
 negatives_etc = {"angry", "doubtful", "embarrassed"}
@@ -23,13 +24,13 @@ async def init_faiss():
     global faiss_index
     mongodb = MongoDB()
     
-    values = mongodb.database["song_meta"].find({}, {"_id":0, "uri":1, "score":1})
+    values = mongodb.database["song_meta"].find({}, {"_id":0, "id":1, "score":1})
     faiss_index = faiss.IndexFlatIP(dim)
     vectors = await values.to_list(length=None)
     
     nparr = np.zeros((len(vectors), 6), dtype=np.float32)
     for i in range(len(vectors)):
-        uri.append(vectors[i]["uri"])
+        id.append(vectors[i]["id"])
         nparr[i, 0] = vectors[i]['score']['happy']
         nparr[i, 1] = vectors[i]['score']['embarrassed']
         nparr[i, 2] = vectors[i]['score']['sad']
@@ -50,11 +51,16 @@ async def upload_song_meta(body: Song, oui: OuiInference=Depends(), mongodb: Mon
     entity = body_dict
 
     entity["score"] = score
+    
+    result = await mongodb.database["song_meta"].find_one({"id": entity["id"]}, {"_id":0, "id":1})
+    if result:
+        raise HTTPException(status_code=400, detail="{} 존재하는 entity".format(entity["id"]))
+    
     await mongodb.database["song_meta"].insert_one(entity)
     return "{} 저장완료".format(entity["id"])
 
 @router.post("/recommendation")
-async def recommendation(body: SongScore):
+async def recommendation(body: SongScore, mongodb: MongoDB=Depends()):
     global faiss_index
     
     nparr = np.zeros((1, dim), dtype=np.float32)
@@ -93,6 +99,12 @@ async def recommendation(body: SongScore):
     
     _, indexes = faiss_index.search(nparr, 3)
     
-    return [uri[i] for i in indexes[0]]
+    response_ids = indexes[0]    
+    song1 = await mongodb.database["song_meta"].find_one({"id": id[response_ids[0]]}, {"_id":0, "id":1, "uri":1, "song_name":1, "artist_name_basket": 1})
+    song2 = await mongodb.database["song_meta"].find_one({"id": id[response_ids[1]]}, {"_id":0, "id":1, "uri":1, "song_name":1, "artist_name_basket": 1})
+    song3 = await mongodb.database["song_meta"].find_one({"id": id[response_ids[2]]}, {"_id":0, "id":1, "uri":1, "song_name":1, "artist_name_basket": 1})
+    
+    response = [song1, song2, song3]
+    return response
 
 
