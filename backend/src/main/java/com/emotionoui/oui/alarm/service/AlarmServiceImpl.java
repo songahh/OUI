@@ -204,7 +204,7 @@ public class AlarmServiceImpl implements AlarmService{
         title = "너 오늘 일기 안 써?!";
         content = "'" + diaryName + "' 다이어리에서 '" + pusherNickname + "'님이 " + dateSplit[1] + "월 " + dateSplit[2] + "일 일기 쓰기를 재촉했어요!";
         // 캘린더로 이동
-        link = "http://localhost:3000/calendar/" + diaryId;
+        link = "http://localhost:3000/diary/write/" + diaryId;
 
         Alarm alarm = Alarm.builder()
                 .type(AlarmContentType.FriendForcing)
