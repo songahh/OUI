@@ -37,8 +37,8 @@ public class PreferenceController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updatePreference(@RequestBody PreferenceReq preferenceReq){
-        preferenceService.updatePreferenceByMemberId(preferenceReq.getMemberId(), preferenceReq.getType());
+    public ResponseEntity<?> updatePreference(@AuthenticationPrincipal Member member, @RequestBody PreferenceReq preferenceReq){
+        preferenceService.updatePreferenceByMemberId(member.getMemberId(), preferenceReq.getType());
 
         return ResponseEntity.noContent().build();
     }
