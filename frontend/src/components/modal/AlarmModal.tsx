@@ -15,9 +15,9 @@ const PaperWrapper = styled( Paper )`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80%; 
+  width: 75%; 
   max-width: 900px; 
-  height: 80%; 
+  height: 60%; 
   max-height: 90vh; 
   overflow-y: auto; 
   display: flex;
@@ -25,28 +25,34 @@ const PaperWrapper = styled( Paper )`
   align-items: center;
   justify-content: start;
   padding: 20px;
+  border-radius: 15px;
 `;
 
 const StyledPaper = styled(Paper)`
   width: 100%; 
-  height: 90%;
-  margin: auto;
-  padding: 50px; 
+  height: 95%;
+  margin-top: 6%;
+  padding: 20px 40px; 
   box-sizing: border-box;
   overflow-y: auto; 
+  border: none;
+  box-shadow: none;
 `;
+
 const MainWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 20px; 
+  margin-bottom: 10px; 
 `;
 
 const TitleWrapper = styled.div`
   text-align: center;
   flex-grow: 1;
+  font-size: 28px;
+  font-weight: bold;
 `;
 
 const DeleteWrapper = styled.div`
@@ -57,7 +63,16 @@ const DeleteWrapper = styled.div`
   justify-content: flex-end;
   margin-top: 10px;
   margin-bottom: 0px;
+  margin-right: 20px;
   padding-bottom: 0px;
+`;
+
+const AlarmWrapper = styled.div`
+  border-top: 2px solid #262626;
+  border-bottom: 2px solid #262626;
+  height: 84%;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 function AlarmModal({ isOpen, closeModal }) {
@@ -109,16 +124,16 @@ function AlarmModal({ isOpen, closeModal }) {
   return (
     <Modal open={ isOpen } onClose={closeModal}>
       <PaperWrapper>
-        <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 16, top: 8, zIndex: 2 }}>
+        <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 22, top: 20, zIndex: 2 }}>
           <CloseIcon />
         </IconButton>
         <StyledPaper elevation={2}>
           <MainWrapper>
             <div style={{ width: "50px" }}></div>
             <TitleWrapper>알림</TitleWrapper>
-            <DeleteWrapper onClick={() => console.log('삭제삭제')}>전체삭제</DeleteWrapper>          
+            <DeleteWrapper onClick={() => console.log('삭제삭제')}>전체 삭제</DeleteWrapper>          
           </MainWrapper>
-          <hr />
+          <AlarmWrapper>
           {
             alarmList.map((alarm, index) => (
               <AlarmMessage key={index} Type={ alarm.alarmContentType } Title={ alarm.title } Content={ alarm.content } diaryId={alarm.diaryId}
@@ -126,6 +141,7 @@ function AlarmModal({ isOpen, closeModal }) {
               />
             ))
           }
+          </AlarmWrapper>
         </StyledPaper>
       </PaperWrapper>
     </Modal>
