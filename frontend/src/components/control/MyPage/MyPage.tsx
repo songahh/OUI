@@ -2,10 +2,10 @@ import { Divider } from '@mui/material';
 import styled, { css } from 'styled-components'
 import UserIcon from 'src/asset/images/image-icon/User_Icon.png'
 import { useMutation, useQuery } from 'react-query';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useStore from 'src/store'
-import { getMyInfo, getMyType, putMyInfo, putDeleteMember } from './api';
-import { useState } from 'react';
+import { getMyInfo, getMyType, putMyInfo, putDeleteMember, putMyType } from './api';
+import { useState, useEffect } from 'react';
 
 const MyPageModalWrapper = styled.div`
     height: 100%;
@@ -56,7 +56,7 @@ const TypeBtnWrapper = styled.div`
     gap: 6px;
 `
 
-const TypeBtn = styled.button<{ flag: boolean }>`
+const TypeBtn = styled.button<ButtonType>`
     display: flex;
     height: 40px;
     border: none;
@@ -66,11 +66,9 @@ const TypeBtn = styled.button<{ flag: boolean }>`
     background-color: #fff;
     align-items: center;
     width: 80px;
-${(props) => props.flag===true &&
-    css`
-    background-color: #FBD14B;
-  `
-}
+    ${(props) => props.$flag === "true" && css`
+        background-color: #FBD14B;
+    `}
 `
 
 const Button = styled.button`
@@ -94,9 +92,9 @@ const BottomWrapper = styled.div`
 `
 
 const MyPage = () => {
-
+    
     const { data: myData, refetch: refetchMyInfo } = useQuery('myData', getMyInfo);
-    const { data: myType } = useQuery( 'myType', () => getMyType())
+    const { data: myType, refetch: refetchMyType } = useQuery( 'myType', () => getMyType())
 
     const [ edit, setEdit ] = useState<boolean>( false )
     const [ email, setEmail ] = useState( myData?.data?.memberEmail )
@@ -106,11 +104,11 @@ const MyPage = () => {
     const [ uploadedImage, setUploadedImage ] = useState(profileImage)
     const [ newProfileImage, setNewProfileImage ] = useState( profileImage )
     const [ flag, setFlag ] = useState(myType?.data==='Blue' ? true : false)
+    const [ flag2 ] = useState(myType?.data==='Blue' ? true : false)
     const { setAccessToken } = useStore()
-    // const navigator = useNavigate()
 
     const updateInfo = useMutation( putMyInfo )
-
+    const updateType = useMutation( putMyType )
     const typeDic = {
         'Blue': '표현형', 
         'Yellow': '전환형'
@@ -126,9 +124,15 @@ const MyPage = () => {
             return
         }
         // preference변경 api 요청도 같이 날려야 함.
-        await updateInfo.mutateAsync({ memberNickname: nickname, ImgUrl: uploadedImage }).then(()=>{
-            refetchMyInfo();
-        });
+        await updateInfo.mutateAsync({ memberNickname: nickname, ImgUrl: uploadedImage })
+        if(flag !== flag2 ){
+            //변경되면 api 요청
+            let type: string
+            flag === true ? type = "Blue" : type = "Yellow" 
+            await updateType.mutateAsync(type)
+        }
+        refetchMyInfo();
+        refetchMyType();
         setEdit( !edit )
     }
 
@@ -149,9 +153,18 @@ const MyPage = () => {
     const deleteMember = () =>{
         putDeleteMember().then(()=>{
             setAccessToken('')
-            // navigator('/login')
+            window.location.href = '/login';
         })
     }
+
+    useEffect(() => {
+        setEmail( myData?.data?.memberEmail );
+        setNickName( myData?.data?.nickName );
+        const loadedProfileImage = ( myData?.data?.img === '' || myData?.data?.img === null ) ? UserIcon : myData?.data?.img;
+        setNewProfileImage( loadedProfileImage );
+        setFlag( myType?.data === 'Blue' ? true : false );
+    }, [ myData, myType ]); 
+
 
     return(
         <>
@@ -177,8 +190,8 @@ const MyPage = () => {
             <MyInfoWrapper>
                 <InfoTitle>음악취향</InfoTitle>
                 <TypeBtnWrapper>
-                    <TypeBtn flag = { flag }>표현형</TypeBtn>
-                    <TypeBtn flag = { !flag }>전환형</TypeBtn>
+                    <TypeBtn $flag={ flag.toString() }>표현형</TypeBtn>
+                    <TypeBtn $flag={ ( !flag ).toString() }>전환형</TypeBtn>
                 </TypeBtnWrapper>
             </MyInfoWrapper>
             <BottomWrapper >
@@ -218,8 +231,8 @@ const MyPage = () => {
             <MyInfoWrapper>
                 <InfoTitle>음악취향</InfoTitle>
                 <TypeBtnWrapper>
-                    <TypeBtn flag = { flag } onClick={ (e) => setFlag( true )}>표현형</TypeBtn>
-                    <TypeBtn flag = { !flag } onClick={ (e) => setFlag( false )}>전환형</TypeBtn>
+                    <TypeBtn $flag={ flag.toString() } onClick={() => setFlag( true )}>표현형</TypeBtn>
+                    <TypeBtn $flag={( !flag ).toString() } onClick={() => setFlag( false )}>전환형</TypeBtn>
                 </TypeBtnWrapper>
             </MyInfoWrapper>
             <BottomWrapper >
@@ -232,5 +245,9 @@ const MyPage = () => {
     );
 }
 
+
+type ButtonType = {
+    $flag?: string;
+}
 
 export default MyPage;
