@@ -79,29 +79,29 @@ const Thumbnail = styled.img`
 `;
 
 const playlist = [
-    'https://www.youtube.com/watch?v=xzsRBKZh1No',
-    'https://www.youtube.com/watch?v=yL6P7OR5WOM',
-    'https://www.youtube.com/watch?v=Hfep-HihqZo',
-    'https://www.youtube.com/watch?v=k3-BDy55tq4'
-  ];
+  'https://www.youtube.com/watch?v=xzsRBKZh1No',
+  'https://www.youtube.com/watch?v=yL6P7OR5WOM',
+  'https://www.youtube.com/watch?v=Hfep-HihqZo',
+  'https://www.youtube.com/watch?v=k3-BDy55tq4'
+];
 
 const getThumbnailUrl = ( url:string ) => {
-    const videoId = url.split('v=')[1];
-    return `https://img.youtube.com/vi/${ videoId }/default.jpg`;
-  }
-  
+  const videoId = url.split('v=')[1];
+  return `https://img.youtube.com/vi/${ videoId }/default.jpg`;
+}
 
-const AudioVideoPlayer = () => {
+const AudioVideoPlayer = ( props: MusicListProps ) => {
+
+  const { playList } = props;
+
   const [playing, setPlaying] = useState( false );
   const [trackIndex, setTrackIndex] = useState(0);
-  // const [volume, setVolume] = useState(0.8); 
   const [played, setPlayed] = useState(0);
   const playerRef = useRef( null );
 
   const togglePlayPause = () => setPlaying( !playing );
   const playPreviousTrack = () => setTrackIndex(( prevIndex ) => ( prevIndex === 0 ? playlist.length - 1 : prevIndex - 1 ));
   const playNextTrack = () => setTrackIndex(( prevIndex ) => ( prevIndex === playlist.length - 1 ? 0 : prevIndex + 1 ));
-  // const handleVolumeChange = (e: { target: { value: string; }; }) => setVolume(parseFloat( e.target.value ));
   const handleProgress = ( state: { played: SetStateAction<number>; }) => {
     setPlayed( state.played );
   };
@@ -113,14 +113,6 @@ const AudioVideoPlayer = () => {
     playerRef.current.seekTo( seekTime, 'seconds' );
     setPlayed( clickPosition );
   };
-
-  // const onMute = () =>{
-  //   if( volume===0 ){
-  //       setVolume( 0.5 )
-  //   }else{
-  //       setVolume( 0 )
-  //   }
-  // }
 
   return (
     <PlayerWrapper>
@@ -157,3 +149,8 @@ const AudioVideoPlayer = () => {
 };
 
 export default AudioVideoPlayer;
+
+
+type MusicListProps = {
+  playList: Array<Object>,
+}
