@@ -6,6 +6,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Switch from '@mui/material/Switch';
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { Button } from "src/components/control/Button";
+import { Header } from "src/components/control/Header";
 import CheckCircle from 'src/asset/images/image-icon/checkCircle.png';
 import diary1 from 'src/asset/images/diary1.png';
 import diary2 from 'src/asset/images/diary2.png';
@@ -205,7 +207,13 @@ const Setting = () => {
 
   return (
     <>
-      <Drawer />
+      <Header>
+        <span style={{ marginTop: "39px", marginLeft: "8px" }}>
+            <Drawer />
+        </span>
+        <Button></Button>
+        <Button></Button>
+      </Header>
       <div style={{marginTop:'3%',textAlign:'center', fontSize:'40px'}}>설정</div>
       <EntireWrapper>
         <PaperWrapper>
