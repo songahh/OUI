@@ -53,20 +53,16 @@ public class AuthController {
             String accessToken = jwtTokenProvider.createAccessToken(kakaoLoginRes.getEmail());
             String refreshToken = jwtTokenProvider.createRefreshToken(kakaoLoginRes.getEmail());
 
-            System.out.println("AuthController.kakaoLogin- accessToken : "+accessToken);
-            System.out.println("AuthController.kakaoLogin- refreshToken : "+refreshToken);
+//            System.out.println("AuthController.kakaoLogin- accessToken : "+accessToken);
+//            System.out.println("AuthController.kakaoLogin- refreshToken : "+refreshToken);
 
             // refreshToken 쿠키에 담기
             jwtTokenProvider.createRefreshTokenCookie(refreshToken, response);
-
-            log.info("redis 전");
 
             // redis에 토큰 저장
             String key = RedisPrefix.REFRESH_TOKEN.prefix() + kakaoLoginRes.getEmail();
             redisService.setValues(key, refreshToken, Duration.ofDays(3));
             System.out.println("redis : "+redisService.getValues(key));
-
-            log.info("redis 후");
 
             // 새로운 accessToken을 JSON 응답 본문에 담아 반환
             Map<String, String> tokenMap = new HashMap<>();
@@ -77,7 +73,10 @@ public class AuthController {
 
             tokenMap.put("signupMSG", signupMSG);
 
-            log.info("보내기 전");
+            Member member = memberRepository.findByEmail(kakaoLoginRes.getEmail()).orElseThrow(IllegalArgumentException::new);
+            Integer memberId = member.getMemberId();
+
+            tokenMap.put("memberId", String.valueOf(memberId));
 
             return ResponseEntity.ok().body(tokenMap);
 
