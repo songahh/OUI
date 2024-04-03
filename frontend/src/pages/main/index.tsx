@@ -179,7 +179,10 @@ const Main = () => {
   
   const { setDiaryId, setType, setAccessToken, setIsLogin, setDailyDiaryId, isModalOpened, updateModal, isLogin } = useStore()
   
-  !isLogin &&  navigator('/login')
+  useEffect(()=>{
+    !isLogin && navigator('/login')
+  }, [])
+
   
   const [ isModalOpen, setIsModalOpen ] = useState( false );
   const [ diaryList, setDiaryList ] = useState( [] );
