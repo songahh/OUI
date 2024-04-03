@@ -84,11 +84,13 @@ const Calendar = () =>{
 
   const navigator = useNavigate()
 
-  const [ isDiaryWrite, setIsDiaryWrite ] = useState<boolean>( false ); // 일기쓰기 버튼 클릭시 개인/공유 분리
-  const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() // 달력 옆 버튼
-  const { startDate, endDate } = calculateDateRange()
   const { isModalOpened, updateModal } = useStore() // Day 컴포넌트에서 업데이트 된 상태 가져오기
   const { diaryId, type } = staticStore();
+
+
+  const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() // 달력 옆 버튼
+  const { startDate, endDate } = calculateDateRange()
+  
   const html = document.querySelector( 'html' )
 
 
