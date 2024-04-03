@@ -12,17 +12,15 @@ import styled from "@emotion/styled";
 
 
 const IconWrapper = styled.div`
-  max-width: 1024px;
+  width: 100%;
   display: flex;
-  flex-direction: row; 
-  justify-content: space-evenly; 
-  flex-wrap: wrap; 
-  margin: auto; 
+  margin-top: 6%;
 
   img, div {
     flex: 1 1 auto;
-    max-width: 100px; 
-    margin: 10px; 
+    width: 100%; 
+    margin-left: 8px; 
+    margin-right: 8px;
     height: auto; 
 
     @media (max-width: 768px) {
@@ -31,11 +29,12 @@ const IconWrapper = styled.div`
   }
 `;
 const ChartBoxWrapper = styled.div`
-  background-color: white; 
-  border-radius: 10px; 
-  padding: 20px; 
-  margin: 20px 0; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #FFFEFC; 
+  border-radius: 15px; 
+  padding: 20px;
+  width: 100%; 
+  margin-top: 20px; 
+  margin-bottom: 10px; 
   justify-content: center; 
   align-items: center;
   @media (max-width: 768px) {
@@ -50,20 +49,16 @@ const ChartBoxWrapper = styled.div`
 `;
 
 const EmotionTagWrapper = styled.div`
-  font-family: 'IMHyeMin', sans-serif; 
   font-size: 25px;
-  font-weight: bold;
-  color: #333;
-  margin-top: 8px; // 간격 조정 예시
+  color: #262626;
 `;
 
 const EmotionScoreWrapper = styled.div`
-  font-family: 'IMHyeMin', sans-serif; 
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 22px;
   color: #666;
-  margin-bottom: 12px;
+  margin-bottom: 20%;
 `;
+
 
 const ImageWrapper = styled.div`
   display: flex;
@@ -73,12 +68,16 @@ const ImageWrapper = styled.div`
 `;
 
 const DoughnutWrapper = styled.div`
-  width: 100%;
+  width: 75%;
   height: auto;
   margin: auto; 
   display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: center;
+  margin-top: 4%;
+
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 `;
 
 const ChartContainer = styled.div`
@@ -101,39 +100,42 @@ const TextContainer = styled.div`
   justify-content: center; 
   align-items: center; 
   width: 50%;
+  line-height:30px;
 `;
 
 const Text = styled.div<{ isSelected?: boolean }>`
   display: flex;
   justify-content: center; 
   align-items: center; 
-  width: 50%;
+  width: 60%;
   background-color: #F9F3EE;
-  font-size: 16px;
+  font-size: 20px;
+  padding-top: 6px;
   border-radius: 6px;
-  height: 40px;
-  font-weight: bold;
-  color: ${(props) => (props.isSelected ? "#CCCCCC" : "black")};
-`
+  height: 30px;
+  color: ${(props) => (props.isSelected ? "#9E9D9D" : "#262626")};
+`;
+
 const SelectWrapper = styled.select<SelectWrapperProps>`
-  padding: 8px 16px;
-  font-size: 16px;
+  font-size: 20px;
   border-radius: 6px;
-  font-weight: bold;
   text-align-last: center;
   background-color: #F9F3EE;
-  color: black;
-  border: 0px;
-  width: 50%; 
-  height: 40px;
+  border: none;
+  border-radius: 6px;
+  padding-top: 6px;
+  width: 60%; 
+  line-height: 36px;
+  min-height: 36px;
   &:disabled {
     opacity: 1;
   }
-  color: ${(props) => (props.isSelected ? "#CCCCCC" : "black")};
-  ${(props) => props.nameLength === 1 && `
+  color: ${(props) => (props.isSelected ? "#9E9D9D" : "#262626")};
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  // 글자는 다 보이는데 화살표가 안보이는 상황...
+  ${(props) => props.nameLength === 1 && `
   background-image: none; // 화살표 이미지 제거
 `}
 `;
@@ -302,13 +304,15 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
       <>
           <ChartBoxWrapper>
             <NameBox>
-              <TextContainer><Text isSelected={selectedChart !== null && selectedChart !== 0}>{ leftText }</Text></TextContainer>
               <TextContainer>
-              <SelectWrapper onChange={handleNameChange} value={selectedName} nameLength={rightText.length} disabled={rightText.length === 1}
-               isSelected={selectedChart !== null && selectedChart === 0} >
-                {rightText.map((name, index) => (
-                  <option key={index} value={name}> {`${name}${rightText.length > 1 ? "님의 감정" : ""}`} </option>))}
-              </SelectWrapper>
+                <Text isSelected={selectedChart !== null && selectedChart !== 0}>{ leftText }</Text>
+              </TextContainer>
+              <TextContainer>
+                <SelectWrapper onChange={handleNameChange} value={selectedName} nameLength={rightText.length} disabled={rightText.length === 1}
+                  isSelected={selectedChart !== null && selectedChart === 0} >
+                    {rightText.map((name, index) => (
+                      <option style={{fontFamily:'JGaegujaengyi', fontSize:'14px'}} key={index} value={name}> {`${name}${rightText.length > 1 ? " 의 감정" : ""}`} </option>))}
+                </SelectWrapper>
               </TextContainer>
             </NameBox>
             <DoughnutWrapper>
@@ -323,11 +327,13 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
           ))}  
             </DoughnutWrapper>
             <IconWrapper>
-              {Object.entries( images ).map(([ emotion, image ], index ) => (
-                <ImageWrapper  key={ index }>
-                  <img src={ image } alt={ emotion } />
-                  <EmotionTagWrapper>{tags[ emotion ]}</EmotionTagWrapper>
-                  <EmotionScoreWrapper>{emotionScores[ tags[ emotion ]] || 0}%</EmotionScoreWrapper>
+              {Object.entries(images).map(([emotion, image], index) => (
+                <ImageWrapper  key={index}>
+                  <img src={image} alt={emotion} />
+                  <div style={{marginTop:'10%', display:'flex', flexDirection:'column', alignItems:'center'}}>
+                  <EmotionTagWrapper>{tags[emotion]}</EmotionTagWrapper>
+                  <EmotionScoreWrapper>{emotionScores[tags[emotion]] || 0}%</EmotionScoreWrapper>
+                  </div>
                 </ImageWrapper >
               ))}
             </IconWrapper>
