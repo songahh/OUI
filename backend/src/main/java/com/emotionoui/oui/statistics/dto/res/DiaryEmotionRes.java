@@ -26,7 +26,7 @@ public class DiaryEmotionRes {
     //친구 월 감정
     private List<DiaryMemberRes> members;
 
-    public static DiaryEmotionRes of(Member member, Map<Integer, List<EmotionClass>> others, List<EmotionClass> personal){
+    public static DiaryEmotionRes of(Member member, Map<Integer, List<EmotionClass>> others, List<EmotionClass> personal, Map<Integer, String> othersName){
 
         Integer my = member.getMemberId();
         HashMap<String, Double> myEmotionSum = new HashMap<>();
@@ -37,7 +37,7 @@ public class DiaryEmotionRes {
             // other에 key String 꺼내서 EmotionList총합을 계산
             HashMap<String, Double> emotionSum = calculate(emotionList);
 
-            // 꺼낸 키가 mynickname이면 myEmotionSum으로
+            // 꺼낸 키가 mymemberId면 myEmotionSum으로
             if (Objects.equals(memberId, my)) {
                 myEmotionSum.putAll(emotionSum);
             } else {
@@ -45,10 +45,10 @@ public class DiaryEmotionRes {
                 memberResList.add(DiaryMemberRes.builder()
                         .memberId(memberId)
                         .emotion(emotionSum)
+                        .nickname(othersName.get(memberId))
                         .build());
             }
         });
-
 
         return DiaryEmotionRes.builder()
                 .memberName(member.getNickname())
