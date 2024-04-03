@@ -104,7 +104,8 @@ const ShareAnalysis = () => {
             setPersonal( res.data.myPersonalEmotion)
             setMyMonth(res.data.myMonthEmotion)
             if (res.data.members) {
-                const names = res.data.members.map(member => member.memberName+" 님");
+                console.log(res.data.members)
+                const names = res.data.members.map(member => member.nickname+" 님");
                 const emotions = res.data.members.map(member => member.emotion);
                 setFriendNames(names);
                 setFriendEmtioins(emotions);
