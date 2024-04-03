@@ -74,7 +74,7 @@ const DiaryWrite = () => {
     
     const goCalendar = () => {
         Swal.fire({
-            text: "수정한 일기를 저장하지 않고 나가시겠습니까?",
+            text: "작성한 일기를 저장하지 않고 나가시겠습니까?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "네",
@@ -113,11 +113,14 @@ const DiaryWrite = () => {
             dailyContent: diaryToString,
         };
 
-
         const diary = await getDiaryByDate({ diaryId: diaryId, date: selectedDate });
         if(!diary.data) {
             await writeDiary.mutateAsync(data);
-            goCalendar();
+            if(type === '개인') {
+                navigator(`/calendar`);
+            } else {
+                navigator(`/calendar/${diaryId}`);
+            }
         } else {
             // alert('이미 일기가 작성된 날짜입니다.');
             Swal.fire({
