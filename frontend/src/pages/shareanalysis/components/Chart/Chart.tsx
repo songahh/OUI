@@ -7,6 +7,7 @@ import embarrassed from 'src/asset/images/emotion/embarrass.png';
 import happy from 'src/asset/images/emotion/joy.png';
 import doubtful from 'src/asset/images/emotion/nervous.png';
 import comfortable from 'src/asset/images/emotion/relax.png';
+import bottomBtn from 'src/asset/images/image-icon/bottom-btn.png'
 import sad from 'src/asset/images/emotion/sad.png';
 import styled from "@emotion/styled";
 
@@ -33,7 +34,7 @@ const ChartBoxWrapper = styled.div`
   border-radius: 15px; 
   padding: 20px;
   width: 100%; 
-  margin-top: 20px; 
+  margin-top: 5px; 
   margin-bottom: 10px; 
   justify-content: center; 
   align-items: center;
@@ -134,6 +135,10 @@ const SelectWrapper = styled.select<SelectWrapperProps>`
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  background-image: url('${bottomBtn}');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
   // 글자는 다 보이는데 화살표가 안보이는 상황...
   ${(props) => props.nameLength === 1 && `
   background-image: none; // 화살표 이미지 제거
@@ -311,7 +316,7 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
                 <SelectWrapper onChange={handleNameChange} value={selectedName} nameLength={rightText.length} disabled={rightText.length === 1}
                   isSelected={selectedChart !== null && selectedChart === 0} >
                     {rightText.map((name, index) => (
-                      <option style={{fontFamily:'JGaegujaengyi', fontSize:'14px'}} key={index} value={name}> {`${name}${rightText.length > 1 ? " 의 감정" : ""}`} </option>))}
+                      <option style={{fontFamily:'JGaegujaengyi', fontSize:'14px'}} key={index} value={name}> {`${name}${rightText.length > 1 ? "의 감정" : ""}`} </option>))}
                 </SelectWrapper>
               </TextContainer>
             </NameBox>
