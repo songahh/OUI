@@ -6,7 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { AlarmMessage } from "./components";
 import { getAlarm } from "./api";
 import useStore from "src/store";
-import { postAccept, postRefuse, postRead } from './api/'
+import { postAccept, postRefuse, postRead, putDeleteAll } from './api/'
 import styled from "styled-components";
 
 
@@ -132,7 +132,7 @@ function AlarmModal({ isOpen, closeModal }) {
           <MainWrapper>
             <div style={{ width: "50px" }}></div>
             <TitleWrapper>알림</TitleWrapper>
-            <DeleteWrapper onClick={() => console.log('삭제삭제')}>전체 삭제</DeleteWrapper>          
+            <DeleteWrapper onClick={() => putDeleteAll().then(()=>{ fetchAlarms() })}>전체 삭제</DeleteWrapper>          
           </MainWrapper>
           <AlarmWrapper>
           {
