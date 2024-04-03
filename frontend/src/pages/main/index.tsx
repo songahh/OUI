@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Card } from "src/pages/main/components/Card";
 import { Header } from "src/components/control/Header";
-import { CustomModal } from "./components/Modal";
+import MyPage from 'src/components/control/MyPage/MyPage';
 import { AlarmModal } from "src/components/modal";
+import { CustomModal } from "./components/Modal";
 import { getDiary, getMember, postCreateDiary, postDeviceToken, getLogout } from './api';
 import profile from 'src/asset/images/profile.png'
 import logoutBtn from 'src/asset/images/image-icon/logout.png'
@@ -186,6 +187,7 @@ const Main = () => {
   const [ userImage, setUserImage ] = useState( null );
   const [ modalSubmitted, setModalSubmitted ] = useState( false );
   const [ alarmModalOpen, setAlarmModalOpen ] = useState(false);
+  const [ isMyPageOpen, setIsMyPageOpen ] = useState( false );
 
   const openModal = () => setIsModalOpen( true );
   const closeModal = () => {
@@ -277,8 +279,12 @@ const Main = () => {
     })
   }
 
-  const viewMyPage = () =>{
-    updateModal()
+  // const viewMyPage = () =>{
+  //   updateModal()
+  // }
+
+  const toggleMyPage = () => { 
+    setIsMyPageOpen( !isMyPageOpen );
   }
 
   
@@ -309,7 +315,7 @@ const Main = () => {
     <>
     <div style={{paddingRight:'4%', paddingTop:'6%'}}>
       <Header>
-        <ProfileImage onClick={ viewMyPage } src={ userImage || profile } alt="유저 프로필 이미지" />
+        <ProfileImage onClick={ toggleMyPage } src={ userImage || profile } alt="유저 프로필 이미지" />
         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
           <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => Logout()}>
           <img style={{height:'3.3em'}} src={logoutBtn} alt="Logout" />
@@ -343,6 +349,7 @@ const Main = () => {
     </div>
     <AlarmModal isOpen={ alarmModalOpen } closeModal={() => setAlarmModalOpen(false)} />
     <CustomModal isOpen={ isModalOpen } closeModal={ closeModal } isFinish={ addCard } />
+    <MyPage isOpen={ isMyPageOpen } closeModal={ toggleMyPage } />
     </>
   );
 }

@@ -24,7 +24,7 @@ const PaperWrapper = styled( Paper )`
   transform: translate(-50%, -50%);
   width: 80%; 
   max-width: 90%; 
-  height: 70%; 
+  height: 80%; 
   max-height: 90vh; 
   overflow-y: auto; 
   display: flex;
@@ -170,22 +170,22 @@ const CustomModal = ( props:ModalProps ) => {
       <PaperWrapper>
         <ModalContentWrapper>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop:'25px'}}>
-            <h1>다이어리 추가</h1>
+        <div style={{ marginBottom: '8px', marginTop: '15px' ,fontSize:'30px', fontWeight:'bold'}}>다이어리 추가</div>
             <IconButton onClick={ closeModal } sx={{ position: 'absolute', right: 8, top: 8, zIndex: 1 }}>
             <CloseIcon />
             </IconButton>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width:'100%'}}>
-            <h2 style={{marginBottom:'8px', marginTop:'30px'}}>제목</h2>
+          <div style={{ marginBottom: '8px', marginTop: '15px' ,fontSize:'26px', fontWeight:'bold'}}>제목</div>
             <div>
               <TextField id="outlined-basic" variant="outlined" value={ title } onChange={ handleTitleChange } 
               InputProps={{
-                style: { fontFamily:'Dovemayo', fontSize:'20px', borderRadius: '10px'},
+                style: { fontFamily:'JGaegujaengyi',fontSize: '23px', borderRadius: '10px' },
               }}style={{ width:'100%', backgroundColor:'white'}}/>
             </div>
           </div >
           <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width:'100%'}}>
-            <h2 style={{marginBottom:'5px', marginTop:'35px'}}>다이어리 표지</h2>
+          <div style={{ fontSize:'26px', fontWeight:'bold',marginBottom: '10px', marginTop: '50px' }}>다이어리 표지</div>
             <BoxWrapper>
               {[diary1, diary2, diary3, diary4, diary5].map(( diaryImage, index ) => (
                 <ImageContainer key={ index } onClick={() => handleSelection( index )}
@@ -210,7 +210,7 @@ const CustomModal = ( props:ModalProps ) => {
             </BoxWrapper>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width:'100%'}}>
-            <h2 style={{marginBottom:'10px', marginTop:'35px'}}>친구 추가</h2>
+            <div style={{ fontSize:'26px', fontWeight:'bold',marginBottom: '10px', marginTop: '50px' }}>친구 추가</div>
             <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width:'100%'}}>
               <TextField id="outlined-basic" variant="outlined" placeholder="이메일을 입력해주세요."
                 value={ searchName }
@@ -221,10 +221,10 @@ const CustomModal = ( props:ModalProps ) => {
                       <SearchButton onClick={handleSearch} />      
                     </InputAdornment>
                   ),
-                style: { borderRadius: '10px', width:'100%', backgroundColor:'white', fontFamily: 'Dovemayo', fontSize:'21.5px'},
+                  style: { borderRadius: '10px', width: '100%', backgroundColor: 'white', fontFamily:'JGaegujaengyi',fontSize: '23px' },
               }} />
             </div>
-            <div style={{ height:'100px', marginTop:'25px', display: 'flex', flexWrap: 'wrap', alignItems: 'start', gap: '10px' }}>
+            <div style={{ marginTop:'25px', display: 'flex', flexWrap: 'wrap', alignItems: 'start', gap: '10px' }}>
         {
           memberList.length !== 0 ? 
           memberList.map(( member, index ) => (
@@ -267,8 +267,7 @@ const CustomModal = ( props:ModalProps ) => {
                 border: 'none', // 테두리 없음
                 borderRadius: '10px', // 둥근 모서리
                 boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.2)', // 그림자 효과
-                fontSize:'22px',
-                // marginTop:'100px',
+                fontSize:'26px',
               }} 
               onClick={() => {
                 if ( title !== '' && keyImage !== -1 && memberList.length > 0 ) {

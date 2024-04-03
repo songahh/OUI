@@ -197,7 +197,7 @@ const Analysis = () => {
                     {keyType === 2 && (
                         <>
                             <div style={{ marginTop:'5%', marginBottom:'1.5%', fontSize: '28px', width:'85%', display:"flex"}}>
-                                { userName } 님의 이번 주  <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}> “행복 그래프”</p> 예요!
+                            <p style={{whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' ,width:'16%', paddingRight:'0.8%', marginTop:'-1.2%'}}> { userName } </p>님의 이번 주  <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}> “행복 그래프”</p> 예요!
                             </div>
                             <div style={{ padding:'20px', width: '85%', borderRadius:'15px', backgroundColor:'#FFFEFC' }}>
                                 <GraphWrapper>
@@ -206,7 +206,7 @@ const Analysis = () => {
                                 
                             </div>
                             <div style={{ marginTop:'10%', marginBottom:'1.5%', fontSize: '28px', width:'85%', display:"flex"}}>
-                                    { userName } 님의 이번 주 <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}>“우울 그래프”</p> 예요!
+                            <p style={{whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' ,width:'16%', paddingRight:'0.8%', marginTop:'-1.2%'}}> { userName } </p>님의 이번 주 <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}>“우울 그래프”</p> 예요!
                                 </div>
                             <div style={{ padding:'20px', width: '85%', borderRadius:'15px', backgroundColor:'#FFFEFC' }}>
                                 <GraphWrapper>
