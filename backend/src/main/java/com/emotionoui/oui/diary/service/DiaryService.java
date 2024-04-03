@@ -24,6 +24,7 @@ public interface DiaryService {
     EmotionClass searchEmotion(Integer dailyId);
     List<RecommendMusicClass> searchMusic(Integer dailyId);
     String searchComment(Integer dailyId);
+    Integer searchTodayDiary(Integer diaryId, Integer memberId);
     SearchDiarySettingRes searchDiarySetting(Integer diaryId, Integer memberId);
     void updateDiarySetting(UpdateDiarySettingReq req, Integer diaryId, Member member);
     String decorateSaveDailyDiary(DecorateDailyDiaryReq req, Integer dailyId);
