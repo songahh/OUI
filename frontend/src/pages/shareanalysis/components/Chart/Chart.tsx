@@ -156,7 +156,6 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
     comfortable: '느긋',
     happy: '기쁨',
   }
-
   const images = {
     sad: sad,
     doubtful: doubtful,
@@ -197,7 +196,6 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
     } else {
       setSelectedChart(chartIndex);
       const selectedData = chartIndex === 0 ? leftData : selectedRight;
-      console.log(selectedRight)
       const scores = Object.keys(tags).reduce((acc, key) => {
         const tagName = tags[key];
         acc[tagName] = selectedData[key] || 0;
@@ -252,57 +250,44 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
     setEmotionScores(scores);
   }, [leftData, rightData]); 
 
-  useEffect(() => {
-    const backgroundColors = Object.keys(tags).map(key => colors[key]);
-    const orderedLeftData = Object.keys(tags).map(key => leftData[key] || 0);
-    const newLeftChartData = {
+
+useEffect(() => {
+  const backgroundColors = Object.keys(tags).map(key => colors[key]);
+
+  const orderedLeftData = leftData ? Object.keys(tags).map(key => leftData[key] || 0) : [];
+  const newLeftChartData = {
+    labels: Object.keys(tags).map(key => tags[key]),
+    datasets: [{
+      data: orderedLeftData,
+      backgroundColor: backgroundColors,
+    }]
+  };
+
+  setLeftChartData(newLeftChartData);
+
+  let selectedRightData = rightData; 
+  if (rightDataList && rightDataList.length) {
+    const index = selectedName ? rightText.findIndex(name => name === selectedName) : 0;
+    selectedRightData = rightDataList[index >= 0 ? index : 0];
+  }
+
+  if (selectedRightData) {
+    const orderedRightData = Object.keys(tags).map(key => selectedRightData[key] || 0);
+    const newRightChartData = {
       labels: Object.keys(tags).map(key => tags[key]),
       datasets: [{
-        data: orderedLeftData,
+        data: orderedRightData,
         backgroundColor: backgroundColors,
       }]
     };
   
-    setLeftChartData(newLeftChartData);
-  
-    // rightDataList 처리
-    if (!rightData && rightDataList) {
-      let newRightChartData;
-      if (rightDataList.length === 1) { // 길이1 자동으로
-        const selectedFriendData = rightDataList[0]
-        setSelectedRight(selectedFriendData);
-        const orderedRightData = Object.keys(tags).map(key => selectedFriendData[key] || 0);
-        newRightChartData = {
-          labels: Object.keys(tags).map(key => tags[key]),
-          datasets: [{
-            data: orderedRightData,
-            backgroundColor: backgroundColors,
-          }]
-        };
-      } else if (rightDataList.length > 1 && selectedName) {   //되는지 모름
+    setRightChartData(newRightChartData);
+  } else {
+    setRightChartData({ labels: [], datasets: [] });
+  }
+  setSelectedRight(selectedRightData);
 
-        const selectedIndex = rightText.findIndex(name => name === selectedName);  // 인덱스 찾고
-        const selectedFriendData = rightDataList[selectedIndex];   // 해당 인덱스에 해당하는 이모션 찾고
-        const orderedRightData = Object.keys(tags).map(key => selectedFriendData[key] || 0); //key별로 정리하고
-          
-        const newRightChartData = {
-          labels: Object.keys(tags).map(key => tags[key]),
-          datasets: [{
-            data: orderedRightData,
-            backgroundColor: backgroundColors,
-          }]
-        };
-  
-        setRightChartData(newRightChartData);
-        setSelectedRight(selectedFriendData);
-      }
-  
-      // 차트 데이터 설정
-      if (newRightChartData) {
-        setRightChartData(newRightChartData);
-      }
-    }
-  }, [leftData, rightDataList, selectedName, rightText]);
+}, [leftData, rightData, rightDataList, selectedName, rightText]);
   
 
   return(
