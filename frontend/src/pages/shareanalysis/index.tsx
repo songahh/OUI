@@ -131,7 +131,7 @@ const ShareAnalysis = () => {
                         <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
                     <RightIcon size= { 33 } onClick={ moveNextMonth }/>
                 </CalendarHeaderMiddleWrapper>
-                <div style={{ marginLeft:'5%', width:'100%', display:"flex"}}>
+                <div style={{ marginLeft:'5%', width:'95%', display:"flex"}}>
                     { userName && <TitleWrapper><p style={{whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' ,width:'15%', paddingRight:'0.8%', paddingBottom:'1%'}}> { userName } </p>님이 { format( currentMonth, 'M' )}월에 느낀 <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}>“감정 통계”</p> 를 비교해보아요! </TitleWrapper>}
                 </div>
                 <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
@@ -139,7 +139,7 @@ const ShareAnalysis = () => {
                       <Chart leftText={ '공유한 나의 감정' } rightText={['나만 보는 감정']} leftData={ myMonth } rightData={ personal } />
                     </BoxWrapper>
                 </div>
-                    <div style={{ marginLeft:'5%',marginTop: '-9%',width:'100%', display:"flex"}}>
+                    <div style={{ marginLeft:'5%',marginTop: '-9%',width:'95%', display:"flex"}}>
                         { userName && <TitleWrapper><p style={{whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' ,width:'15%', paddingRight:'0.8%',paddingBottom:'1%'}}> { userName } </p> 님과 친구의 { format( currentMonth, 'M' )}월에 느낀 <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}>“감정 통계”</p>  를 비교해보아요! </TitleWrapper>}
                     </div>
                 <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
