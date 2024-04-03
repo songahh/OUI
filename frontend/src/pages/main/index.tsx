@@ -3,6 +3,7 @@ import { Card } from "src/pages/main/components/Card";
 import { Header } from "src/components/control/Header";
 import MyPage from 'src/components/control/MyPage/MyPage';
 import { AlarmModal } from "src/components/modal";
+import { CustomModal } from "./components/Modal";
 import { getDiary, getMember, postCreateDiary, postDeviceToken, getLogout } from './api';
 import profile from 'src/asset/images/profile.png'
 import logoutBtn from 'src/asset/images/image-icon/logout.png'
@@ -344,6 +345,7 @@ const Main = () => {
       {/* </div> */}
     </div>
     <AlarmModal isOpen={ alarmModalOpen } closeModal={() => setAlarmModalOpen(false)} />
+    <CustomModal isOpen={ isModalOpen } closeModal={ closeModal } isFinish={ addCard } />
     <MyPage isOpen={ isMyPageOpen } closeModal={ toggleMyPage } />
     </>
   );
