@@ -71,6 +71,9 @@
 ### ERD
 ![OUI_erd](/uploads/e7ba639b6634c0157a2b86e751a8103a/OUI_erd.png)
 
+### 와이어 프레임
+<img src="./asset/와이어프레임.png">
+
 # 5. 기술 스택
 
 ### FE
