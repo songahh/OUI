@@ -50,6 +50,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -428,6 +430,22 @@ public class DiaryServiceImpl implements DiaryService{
                 .orElseThrow(IllegalArgumentException::new);
 
         return SearchDailyDiaryRes.of(dailyDiaryCollection, dailyDiary, memberId);
+    }
+
+    // 오늘의 일기 작성 확인하기
+    public Integer searchTodayDiary(Integer diaryId, Integer memberId){
+        // 현재 날짜 얻기
+        LocalDate currentDate = LocalDate.now();
+        // 포맷 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // 포맷 적용하여 문자열로 변환
+        String dateStr = currentDate.format(formatter);
+        // 문자열을 Date 객체로 변환
+        Date date = java.sql.Date.valueOf(dateStr);
+
+        // 현재 날짜에 쓴 일기가 있으면 dailyId 반환, 아니면 0 반환
+        Integer dailyId = dailyDiaryRepository.findTodayDailyId(date, memberId, diaryId);
+        return Objects.requireNonNullElse(dailyId, 0);
     }
 
     // 일기 날짜로 조회하기
