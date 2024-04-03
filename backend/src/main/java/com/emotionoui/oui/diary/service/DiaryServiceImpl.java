@@ -184,6 +184,14 @@ public class DiaryServiceImpl implements DiaryService{
                     emotion.updateEmotion("neutral");
                 }
                 emotionRepository.save(emotion);
+
+                EmotionClass emotionClass = new EmotionClass();
+                List<String> emotionList = new ArrayList<>();
+                emotionList.add("neutral");
+                emotionClass.setEmotionList(emotionList);
+                document.setEmotion(emotionClass);
+                dailyDiaryMongoRepository.save(document);
+
                 return;
             }
 

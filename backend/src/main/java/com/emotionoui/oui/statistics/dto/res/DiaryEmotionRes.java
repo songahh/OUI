@@ -16,6 +16,7 @@ import java.util.*;
 public class DiaryEmotionRes {
 
     private String memberName;
+    private Integer memberId;
     //내 월 감정
     private HashMap<String,Double> myMonthEmotion;
 
@@ -25,24 +26,24 @@ public class DiaryEmotionRes {
     //친구 월 감정
     private List<DiaryMemberRes> members;
 
-    public static DiaryEmotionRes of(Member member, Map<String, List<EmotionClass>> others, List<EmotionClass> personal){
+    public static DiaryEmotionRes of(Member member, Map<Integer, List<EmotionClass>> others, List<EmotionClass> personal){
 
-        String my = member.getNickname();
+        Integer my = member.getMemberId();
         HashMap<String, Double> myEmotionSum = new HashMap<>();
         HashMap<String, Double> myPersonalEmotion = calculate(personal);
         List<DiaryMemberRes> memberResList = new ArrayList<>();
 
-        others.forEach((nickname, emotionList) -> {
+        others.forEach((memberId, emotionList) -> {
             // other에 key String 꺼내서 EmotionList총합을 계산
             HashMap<String, Double> emotionSum = calculate(emotionList);
 
             // 꺼낸 키가 mynickname이면 myEmotionSum으로
-            if (Objects.equals(nickname, my)) {
+            if (Objects.equals(memberId, my)) {
                 myEmotionSum.putAll(emotionSum);
             } else {
                 // 다른 사용자의 정보는 memberRes에 추가
                 memberResList.add(DiaryMemberRes.builder()
-                        .memberName(nickname)
+                        .memberId(memberId)
                         .emotion(emotionSum)
                         .build());
             }
@@ -50,7 +51,8 @@ public class DiaryEmotionRes {
 
 
         return DiaryEmotionRes.builder()
-                .memberName(my)
+                .memberName(member.getNickname())
+                .memberId(my)
                 .myMonthEmotion(myEmotionSum)
                 .myPersonalEmotion(myPersonalEmotion)
                 .members(memberResList)
