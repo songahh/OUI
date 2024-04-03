@@ -14,6 +14,7 @@ import java.util.HashMap;
 public class DiaryMemberRes {
 
     private Integer memberId;
+    private String nickname;
     private HashMap<String,Double> emotion;
 
 

@@ -9,6 +9,7 @@ import com.emotionoui.oui.diary.repository.DiaryRepository;
 import com.emotionoui.oui.member.entity.Member;
 import com.emotionoui.oui.member.entity.MemberDiary;
 import com.emotionoui.oui.member.repository.MemberDiaryRepository;
+import com.emotionoui.oui.member.repository.MemberRepository;
 import com.emotionoui.oui.statistics.dto.WeeklyMongoDto;
 import com.emotionoui.oui.statistics.dto.res.DiaryEmotionRes;
 import com.emotionoui.oui.statistics.repository.StatisticsRepository;
@@ -31,6 +32,7 @@ public class StatisticsService{
     private final DailyDiaryMongoRepository dailyDiaryMongoRepository;
     private final DailyDiaryRepository dailyDiaryRepository;
     private final MemberDiaryRepository memberDiaryRepository;
+    private final MemberRepository memberRepository;
 
     //개인 월 감정
     public HashMap<String, Double> getMyMonth(Integer diaryId, LocalDate date) {
@@ -128,6 +130,10 @@ public class StatisticsService{
         //공유 다이어리
         List<WeeklyMongoDto> mongoIdList = dailyDiaryRepository.getMongoIdByDiaryId(diaryId,start,end);
 
+        for (WeeklyMongoDto dto : mongoIdList) {
+            log.info("Mongo ID: " + dto.getMongoId() + ", Date: " + dto.getDate());
+        }
+
         // 작성자id와 해당 월 감정list
         Map<Integer, List<EmotionClass>> temp = mongoIdList.stream()
                 .map(e -> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId())) // 각 ID에 대한 Emotion 정보 조회
@@ -145,6 +151,14 @@ public class StatisticsService{
                             return existingList;
                         }));
 
+        Map<Integer, String> tempNick = new HashMap<>();
+
+        for (Map.Entry<Integer, List<EmotionClass>> entry : temp.entrySet()) {
+            Integer memberId = entry.getKey();
+            String nickname = memberRepository.findNicknameById(memberId);
+            tempNick.put(memberId, nickname);
+        }
+
         // 개인 다이어리
         Optional<MemberDiary> personalDiary = memberDiaryRepository.findPersonalMemberDiary(member.getMemberId(), DiaryType.개인);
         Integer personalDiaryId = -1;
@@ -158,7 +172,7 @@ public class StatisticsService{
                 .map(e -> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId()).getEmotion())
                 .toList();
 
-        return DiaryEmotionRes.of(member,temp,personalEmotionList);
+        return DiaryEmotionRes.of(member,temp,personalEmotionList, tempNick);
 
     }
 
