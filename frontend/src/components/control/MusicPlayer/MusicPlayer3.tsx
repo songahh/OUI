@@ -91,7 +91,7 @@ const TitleWrapper = styled.div<{ length: number }>`
   font-size: 36px;
   font-weight: bold;
   
-  ${props => props.length >= 22 && `
+  ${props => props.length >= 20 && `
     animation: slideText 10s linear infinite;
 
     @keyframes slideText {
@@ -227,10 +227,10 @@ const AudioVideoPlayer = ( props: MusicListProps ) => {
 
   return (
     <PlayerWrapper>
-        {(!playList) && (
+        {(!playList?.length) && (
           <Spinner />
         )}
-        {(playList) && (
+        {(playList?.length) && (
           <>
             <Thumbnail src={ getThumbnailUrl( recommends[ trackIndex ]?.uri)} alt="Video thumbnail" />
             <ControlWrapper>
