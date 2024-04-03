@@ -44,7 +44,7 @@ const queryClient = new QueryClient() // QueryClient 생성
 
 function App() {
 
-  const navigator = useNavigate()
+  // const navigator = useNavigate()
 
   const { isModalOpened, updateModal, memberId } = useStore()
   
@@ -52,9 +52,9 @@ function App() {
   
   const html = document.querySelector( 'html' )
 
-  if( memberId ===null){
-    navigator('/login')
-  }
+  // if( memberId ===null){
+  //   navigator('/login')
+  // }
 
   const closeModal = () => { 
       updateModal();
