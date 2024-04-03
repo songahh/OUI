@@ -4,6 +4,23 @@
 > #### OUI _는 **AI 감정분석을 제공하는 공유일기 웹 앱 서비스**입니다._
 
 # 1. 서비스 구조도
+### 메인화면
+![image](/uploads/2a7e2d8d98f2272a7839b15fe01e907f/image.png)
+
+### 일기 생성
+![readme_생성](/uploads/efcc08ed0c9185357a435c0dc2a47bae/readme_생성.PNG)
+
+### 일기 조회
+![readme_일기](/uploads/efc75d934b265ed12e3c780a094c5d9c/readme_일기.PNG)
+
+### 일정 생성/조회
+![readme_일정](/uploads/d9563ba3999ac355a3b6044a7486abf2/readme_일정.PNG)
+
+### 개인 통계
+![readme_통계](/uploads/7fe2b6d17ece121303ccd1690b57ebe2/readme_통계.PNG)
+
+### 공유 통계
+![readme_공유통계](/uploads/9efe6fd218e97bee45b4f86fb4b52416/readme_공유통계.PNG)
 
 ### 회원가입
 | <img src="./asset/회원가입.gif"> |
@@ -52,7 +69,7 @@
 ![image](/uploads/d90f53ee0a218036db97b7a64132d359/image.png)
 
 ### ERD
-
+![OUI_erd](/uploads/e7ba639b6634c0157a2b86e751a8103a/OUI_erd.png)
 
 # 5. 기술 스택
 
