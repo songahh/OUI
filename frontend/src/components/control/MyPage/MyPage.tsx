@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery } from 'react-query';
 import Modal from "@mui/material/Modal";
 import Paper from "@mui/material/Paper";
-import { IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { IconButton } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 import UserIcon from 'src/asset/images/image-icon/User_Icon.png';
 import UploadIcon from 'src/asset/images/icon/upload-icon.png';
 import { getMyInfo, getMyType, putMyInfo, putDeleteMember, putMyType } from './api';
@@ -219,19 +219,13 @@ const MyPage = ({ isOpen, closeModal }) => {
     
 
     const onChangeImage = ( e ) => {
- {
             const file = e.target.files[0];
             const imageUrl = URL.createObjectURL(file);
             setNewProfileImage(imageUrl);
             const formData = new FormData();
-            formData.append("file", file);
-            formData.append("memberNickname", nickname);
-            formData.forEach((value, key) => {
-                console.log(key, value);
-              });
+            formData.append('file', file);
             setUploadedImage(formData);
-        }
-
+            
     };
 
     const deleteMember = () =>{
