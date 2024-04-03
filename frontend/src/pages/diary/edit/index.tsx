@@ -25,7 +25,11 @@ const Container = styled.div`
 const DiaryEdit = () => {
     const navigator = useNavigate();
 
-    const { dailyDiaryId } = useStore();
+    const { dailyDiaryId, isLogin } = useStore();
+
+    useEffect(()=>{
+        !isLogin && navigator('/login')
+      }, [])
 
     const canvasRef = useRef(null);
     const textboxRef = useRef(null);
