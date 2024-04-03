@@ -7,7 +7,7 @@ const TodoListWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   justify-content: space-around;
-  margin-top: 20px;
+  margin-top: 10px;
   padding-bottom: 12px;
 `
 
