@@ -325,11 +325,11 @@ const Main = () => {
       <Header>
         <ProfileImage onClick={ toggleMyPage } src={ userImage || profile } alt="유저 프로필 이미지" />
         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-          <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => Logout()}>
-          <img style={{height:'3.3em'}} src={logoutBtn} alt="Logout" />
-          </button>
           <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => setAlarmModalOpen(true)}>
-          <img style={{height:'3.7em'}} src={alarmIcon} alt="Alarm" />
+            <img style={{height:'3.7em'}} src={alarmIcon} alt="Alarm" />
+          </button>
+          <button style={{backgroundColor:'transparent', border:'none', marginRight:'10px'}} onClick={() => Logout()}>
+            <img style={{height:'3.3em'}} src={logoutBtn} alt="Logout" />
           </button>
         </div>
       </Header>

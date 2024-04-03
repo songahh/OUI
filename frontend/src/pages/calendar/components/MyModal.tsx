@@ -25,12 +25,13 @@ const ModalHeaderWrapper = styled.div`
 
 const PlusButton = styled.button`
   border: 1px solid;
-  height: 10%;
+  height: 50px;
   width: 100%;
   background-color: white;
   border-radius: 10px;
   font-size: 1.5rem;
   cursor: pointer;
+  padding-top: 10px;
 `
 
 const MyModal = (props) => {
