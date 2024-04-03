@@ -171,7 +171,6 @@ const MyPage = () => {
             const imageUrl = URL.createObjectURL(file);
             setNewProfileImage(imageUrl);
             const formData = new FormData();
-            // formData.append(file, 'file');
             formData.append("file", file);
             setUploadedImage(formData);
         }
