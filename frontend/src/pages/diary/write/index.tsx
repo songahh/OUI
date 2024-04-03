@@ -39,7 +39,8 @@ const DiaryWrite = () => {
         fontWeight: 'normal',
         textAlign: 'left',
         fontColor: '#262626',
-    });
+    })
+
     
     useEffect(() => {
         if(!canvas) return;
@@ -78,14 +79,14 @@ const DiaryWrite = () => {
 
     // 저장
     const saveDiary = async () => {
-        // string으로 전달
-        const textbox = canvas.getObjects()[0].toJSON();
-        const textSize =  textbox["text"].length;
+        // // string으로 전달
+        // const textbox = canvas.getObjects()[0].toJSON();
+        // const textSize =  textbox["text"].length;
 
-        if(textSize <11) {
-            alert('글자를 10글자 이상 입력해주세요.');
-            return;
-        }
+        // if(textSize <11) {
+        //     alert('글자를 10글자 이상 입력해주세요.');
+        //     return;
+        // }
         
         const diaryToString = JSON.stringify(canvas.toJSON());
         

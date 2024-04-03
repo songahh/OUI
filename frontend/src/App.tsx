@@ -74,12 +74,12 @@ function App() {
         <StyledEngineProvider injectFirst>
           <AppWrapper>
             <RouterProvider router={ router } />
-            { 
+            {/* { 
               isModalOpened && 
-                <ModalPortal onClose={ closeModal }>
+              <ModalPortal onClose={ closeModal }>
                   <MyPage/>
                 </ModalPortal>
-            }
+            } */}
           </AppWrapper>
         </StyledEngineProvider>
       </Suspense>
