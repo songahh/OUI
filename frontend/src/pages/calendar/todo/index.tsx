@@ -11,7 +11,8 @@ const TodoHeaderWrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
-  margin-top: 2%;
+  align-items: center;
+  margin-bottom: 15px;
 `
 
 const TodoTitle = styled.div`
@@ -30,17 +31,19 @@ const TodoWrapper = styled.div`
 const ColorBoxWrapper = styled.div`
   border: 1px solid;
   border-radius: 10px;
-  height: 50px;
+  height: 45px;
   display: flex;
   justify-content: start;
   gap: 1rem;
   padding-top: 1.2rem;
   padding-left: 1rem;
+  margin-bottom: 10px;
 `
 
 const ColorBox = styled.button<{ color: string; selected: boolean }>`
   border: none;
   display: flex;
+  align-items: center;
   flex-direction: colume;
   border-radius: 100%;
   height: ${({ selected }) => ( selected ? '70%' : '60%' )}; 
@@ -57,9 +60,9 @@ const Todo = (props) => {
   const { clickDate, setModalContent } = useStore()
   const [ title, setTitle ] = useState('')
   const [ memo, setMemo ] = useState('')
-  const [ todoColor, setTodoColor ] = useState( '#BBDED6' )
+  const [ todoColor, setTodoColor ] = useState( '#F09690' )
 
-  const colors = [ '#BBDED6', '#FFE17D', '#C0DEFF', '#F7EDE2', '#A1A7C4' ] 
+  const colors = [ '#F09690', '#FFE17D', '#BBDED6', '#C0DEFF', '#BDB5FF' ] 
 
   const moveBack = () =>{
     setModalContent()
@@ -97,24 +100,24 @@ const Todo = (props) => {
       <LeftIcon size= { 20 } onClick={ moveBack }/>
     </div>
   <TodoTitle>
-    <div style={{ fontSize:'20px' }}>일정 추가</div>
-    <div style={{ fontSize: '10px', marginLeft: '2%' }}>{ format( clickDate, 'yyyy-MM-dd' )}</div>
+    <div style={{ fontSize:'26px' }}>일정 추가</div>
+    <div style={{ fontSize: '16px' }}>{ format( clickDate, 'yyyy-MM-dd' )}</div>
   </TodoTitle>
   <div style={{ marginTop:'2%' }}>
     <img src={ saveTodo } alt='' style={{ height: '40px', cursor: 'pointer' }} onClick={ RegistTodo }/>
   </div>
   </TodoHeaderWrapper>
   <TodoWrapper>
-    <div style={{ fontSize: '16px', marginBottom:'10px' }}>제목</div>
+    <div style={{ fontSize: '20px', marginBottom:'10px' }}>제목</div>
     <input type="text" 
-        style={{ height:'40px', borderRadius:'10px'}}
+        style={{ height:'40px', borderRadius:'10px', paddingLeft: '20px', paddingRight: '20px', fontSize: '20px' }}
         value= { title }
         onChange={(e) => { setTitle( e.target.value )}}/>
-    <div style={{ fontSize: '16px', marginTop: '20px', marginBottom:'10px' }}>메모 (선택)</div>
+    <div style={{ fontSize: '20px', marginTop: '20px', marginBottom:'10px' }}>메모 (선택)</div>
     <textarea 
-        style={{ height:'40%', borderRadius: '10px' }} 
+        style={{ height:'50px', borderRadius: '10px', padding: '20px' }} 
         value= { memo } onChange={(e) => { setMemo( e.target.value )}}/>
-    <div style={{ fontSize: '16px', marginTop: '20px', marginBottom:'10px' }}>색 선택</div>
+    <div style={{ fontSize: '20px', marginTop: '20px', marginBottom:'10px' }}>색 선택</div>
     <ColorBoxWrapper>
     {
       colors?.map((color, index) => {
