@@ -66,7 +66,7 @@ const DiaryCard = ( props ) =>{
     const navigator = useNavigate()
 
     const { clickDate } = useStore()
-    const { setDailyDiaryId } = MainStore();
+    const { setDailyDiaryId, memberId } = MainStore();
 
     const { member, diaryId, isExist } = props
     
@@ -89,7 +89,8 @@ const DiaryCard = ( props ) =>{
         navigator(`/diary/${ dailyDiaryId?.data }`)
     }
 
-    const postAlarm = async (id) =>{
+    const postAlarm = async ( id ) =>{
+        if(memberId == id) return
 
         await goAlarm.mutateAsync({ 
             diaryId: diaryId,
