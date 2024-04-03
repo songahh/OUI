@@ -16,6 +16,7 @@ import { messaging } from 'src/firebase';
 import { getToken } from "firebase/messaging";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import Swal from 'sweetalert2';
 import styled from "styled-components";
 
 
@@ -159,7 +160,11 @@ const requestPermission = async () => {
 })}}
 
 function showAlertToChangePermission() {
-  alert('알림을 받기 위해서는 브라우저 설정에서 알림 권한을 허용해주세요.');
+  // alert('알림을 받기 위해서는 브라우저 설정에서 알림 권한을 허용해주세요.');
+  Swal.fire({
+    text: '알림을 받기 위해서는 브라우저 설정에서 알림 권한을 허용해주세요.',
+    icon: 'warning',
+  });
 }
 
 
