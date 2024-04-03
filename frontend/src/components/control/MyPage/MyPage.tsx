@@ -14,7 +14,7 @@ const ModalImg = styled.img`
     height: 200px;
     width: 200px;
     border-radius: 50%;
-    border: 3px solid #CDCDCD;
+    border: 2px solid #CDCDCD;
     margin: 40px 30px 10px 30px;
 `
 
@@ -114,7 +114,7 @@ const BottomWrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: end;
-    margin: 50px 20px 10px 30px;
+    margin: 30px 20px 10px 30px;
 `
 
 const PaperWrapper = styled( Paper )`
@@ -137,9 +137,9 @@ const PaperWrapper = styled( Paper )`
 
 const StyledPaper = styled(Paper)`
   width: 100%; 
-  height: 95%;
-  margin-top: 6%;
-  padding: 20px 40px; 
+  height: 100%;
+  margin-top: 10px;
+  padding: 0 20px; 
   box-sizing: border-box;
   overflow-y: auto; 
   border: none;
@@ -157,6 +157,7 @@ const MainWrapper = styled.div`
 
 const TitleWrapper = styled.div`
   text-align: center;
+  margin-top: 25px;
   flex-grow: 1;
   font-size: 32px;
   font-weight: bold;
