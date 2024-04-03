@@ -14,7 +14,7 @@ import java.util.List;
 public interface CalendarRepository extends JpaRepository<Emotion, Integer> {
 
     // 개인 일기 찾기
-    @Query("SELECT e FROM Emotion e WHERE e.member.memberId = :memberId AND YEAR(e.date) = :year AND MONTH(e.date) =:month AND e.dailyDiary.diary.type =com.emotionoui.oui.diary.entity.DiaryType.개인 AND e.dailyDiary.diary.isDeleted = 0  ORDER BY e.date")
+    @Query("SELECT e FROM Emotion e WHERE e.member.memberId = :memberId AND YEAR(e.date) = :year AND MONTH(e.date) =:month AND e.dailyDiary.diary.type =com.emotionoui.oui.diary.entity.DiaryType.개인 AND e.dailyDiary.isDeleted = 0  ORDER BY e.date")
     List<Emotion> findMyDiarybyDate(Integer memberId, Integer year, Integer month);
 
 
