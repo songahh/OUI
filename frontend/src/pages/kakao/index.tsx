@@ -8,7 +8,7 @@ const Kakao = () => {
 
   const navigator = useNavigate()
 
-  const { setAccessToken, setIsLogin } = useStore()
+  const { setAccessToken, setIsLogin, setMemberId } = useStore()
 
   const isPost = useRef<boolean>(false)
 
@@ -21,11 +21,11 @@ const Kakao = () => {
   // useMutation => 비동기 작업 처리
   const kakaoMutations = useMutation( getLogin, {
     onSuccess: (res) => {
-      setAccessToken( res?.data?.accessToken ) // 어떤 속성이 null 또는 undefined일 경우 에러방지하고 그냥 undefined 반환
 
+      setAccessToken( res?.data?.accessToken ) // 어떤 속성이 null 또는 undefined일 경우 에러방지하고 그냥 undefined 반환
+      setMemberId( res?.data.memberId ) 
       setIsLogin( true )
       isNew()
-      // navigator('/main')
 
     },
     onError: ( err ) => {
