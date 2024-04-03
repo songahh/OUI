@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import alarmIcon from 'src/asset/images/icon/alarm-icon.svg'
@@ -34,7 +34,11 @@ export default function BottomNavi() {
   const [ isMyPageOpen, setIsMyPageOpen ] = useState( false );
   const navigator = useNavigate();
 
-  !isLogin && navigator('/login')
+  useEffect(()=>{
+    !isLogin && navigator('/login')
+  }, [])
+
+  
 
   const goMain = () => {
     navigator('/main');

@@ -27,7 +27,7 @@ const DiaryWrite = () => {
 
     const navigator = useNavigate();
 
-    const { diaryId, type } = useStore();
+    const { diaryId, type, isLogin } = useStore();
 
     const canvasRef = useRef(null);
     const textboxRef = useRef<fabric.Textbox>(null);
@@ -40,7 +40,11 @@ const DiaryWrite = () => {
         textAlign: 'left',
         fontColor: '#262626',
     })
-
+    
+    useEffect(()=>{
+        !isLogin && navigator('/login')
+      }, [])
+    
     
     useEffect(() => {
         if(!canvas) return;
