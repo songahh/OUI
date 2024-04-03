@@ -8,7 +8,12 @@ import UserIcon from 'src/asset/images/image-icon/User_Icon.png';
 import UploadIcon from 'src/asset/images/icon/upload-icon.png';
 import { getMyInfo, getMyType, putMyInfo, putDeleteMember, putMyType } from './api';
 import useStore from "src/store";
+import Swal from 'sweetalert2';
 import styled, { css } from "styled-components";
+
+const ModalWrapper = styled( Modal )`
+  z-index: 0;
+`
 
 const ModalImg = styled.img`
     height: 200px;
@@ -222,10 +227,23 @@ const MyPage = ({ isOpen, closeModal }) => {
     };
 
     const deleteMember = () =>{
-        putDeleteMember().then(()=>{
-            setAccessToken('')
-            window.location.href = '/login';
-        })
+        Swal.fire({
+            text: "정말 탈퇴하시겠습니까?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "네",
+            confirmButtonColor: '#88B3E2',
+            cancelButtonText: "아니요",
+            cancelButtonColor: "#F09690",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                putDeleteMember().then(()=>{
+                    setAccessToken('')
+                    window.location.href = '/login';
+                })
+            }
+        });
     }
 
     useEffect(() => {
@@ -239,7 +257,7 @@ const MyPage = ({ isOpen, closeModal }) => {
     return (
         <>
         { !edit && 
-            <Modal open={ isOpen } onClose={closeModal}>
+            <ModalWrapper open={ isOpen } onClose={closeModal}>
                 <PaperWrapper>
                     <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 22, top: 20, zIndex: 2 }}>
                     <CloseIcon />
@@ -276,7 +294,7 @@ const MyPage = ({ isOpen, closeModal }) => {
                         </BottomWrapper>
                     </StyledPaper>
                 </PaperWrapper>
-            </Modal>
+            </ModalWrapper>
         }
         { edit && 
             <Modal open={ isOpen } onClose={closeModal}>

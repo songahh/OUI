@@ -6,7 +6,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from 'react-query';
 import { useNavigate } from "react-router-dom";
 import { getDiary, deleteDiary, getEmotions, getComment, getMusicList } from './api';
-import useStore from 'src/store'
+import useStore from 'src/store';
+import Swal from 'sweetalert2';
 import styled from 'styled-components';
 
 const Header = styled.div`
@@ -149,9 +150,23 @@ const Diary = () => {
     const removeDiary = useMutation( deleteDiary );
 
     const onClick = async () => {
-        await removeDiary.mutateAsync(dailyDiaryId);
-        navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId}});
-    }
+        Swal.fire({
+            text: "정말 이 일기를 삭제하시겠습니까?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "네",
+            confirmButtonColor: '#88B3E2',
+            cancelButtonText: "아니요",
+            cancelButtonColor: "#F09690",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                removeDiary.mutateAsync(dailyDiaryId);
+        
+                navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId}});
+            }
+        });
+}
 
     return (
         <Container>
@@ -185,7 +200,7 @@ const Diary = () => {
             {(!isOnlyNeutral) && (
                 <>
                     <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ marginTop: "20px", marginBottom: "15px" }} />
-                    <div style={{ fontSize: "24px", fontWeight: "bold", width: "auto" }}>분석 결과 보러 가기</div>
+                    <div style={{ fontSize: "24px", fontWeight: "bold", width: "100%", textAlign: "center" }}>분석 결과 보러 가기</div>
                     <ResultSection>
                         <Title>나의 감정은?</Title>
                         {/* '중립'은 감정 태그에서 제외 */}
