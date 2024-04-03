@@ -13,7 +13,7 @@ import java.util.HashMap;
 @AllArgsConstructor
 public class DiaryMemberRes {
 
-    private String memberName;
+    private Integer memberId;
     private HashMap<String,Double> emotion;
 
 

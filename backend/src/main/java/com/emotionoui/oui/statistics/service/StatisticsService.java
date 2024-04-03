@@ -129,10 +129,10 @@ public class StatisticsService{
         List<WeeklyMongoDto> mongoIdList = dailyDiaryRepository.getMongoIdByDiaryId(diaryId,start,end);
 
         // 작성자id와 해당 월 감정list
-        Map<String, List<EmotionClass>> temp = mongoIdList.stream()
+        Map<Integer, List<EmotionClass>> temp = mongoIdList.stream()
                 .map(e -> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId())) // 각 ID에 대한 Emotion 정보 조회
                 .collect(Collectors.toMap(
-                        DailyDiaryCollection::getNickname,
+                        DailyDiaryCollection::getMemberId,
                         e -> {
                             List<EmotionClass> list = new ArrayList<>();
                             if (e.getEmotion() != null) {
@@ -161,6 +161,53 @@ public class StatisticsService{
         return DiaryEmotionRes.of(member,temp,personalEmotionList);
 
     }
+
+
+//    //다이어리 월 감정
+//    public DiaryEmotionRes getDiaryEmotion(Member member, Integer diaryId, LocalDate date){
+//
+//        LocalDate startOfMonth = date.with(TemporalAdjusters.firstDayOfMonth());
+//        LocalDate endOfMonth = date.with(TemporalAdjusters.lastDayOfMonth());
+//
+//        //LocalDate -> Date
+//        Date start = Date.from(startOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+//        Date end = Date.from(endOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+//        //공유 다이어리
+//        List<WeeklyMongoDto> mongoIdList = dailyDiaryRepository.getMongoIdByDiaryId(diaryId,start,end);
+//
+//        // 작성자id와 해당 월 감정list
+//        Map<String, List<EmotionClass>> temp = mongoIdList.stream()
+//                .map(e -> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId())) // 각 ID에 대한 Emotion 정보 조회
+//                .collect(Collectors.toMap(
+//                        DailyDiaryCollection::getNickname,
+//                        e -> {
+//                            List<EmotionClass> list = new ArrayList<>();
+//                            if (e.getEmotion() != null) {
+//                                list.add(e.getEmotion());
+//                            }
+//                            return list;
+//                        },
+//                        (existingList, newList) -> { // 같은 키에 대한 값이 이미 존재할 경우, 리스트를 병합
+//                            existingList.addAll(newList);
+//                            return existingList;
+//                        }));
+//
+//        // 개인 다이어리
+//        Optional<MemberDiary> personalDiary = memberDiaryRepository.findPersonalMemberDiary(member.getMemberId(), DiaryType.개인);
+//        Integer personalDiaryId = -1;
+//        if(personalDiary.isPresent()){
+//            personalDiaryId = personalDiary.get().getDiary().getId();
+//        }
+//        List<WeeklyMongoDto> mongoIdByPersonal = dailyDiaryRepository.getMongoIdByDiaryId(personalDiaryId,start,end);
+//
+//
+//        List<EmotionClass> personalEmotionList = mongoIdByPersonal.stream()
+//                .map(e -> dailyDiaryMongoRepository.findEmotionByDailyId(e.getMongoId()).getEmotion())
+//                .toList();
+//
+//        return DiaryEmotionRes.of(member,temp,personalEmotionList);
+//
+//    }
 
     public static HashMap<String, Double> calculate(List<EmotionClass> emotions) {
         HashMap<String, Double> emotionSums = new HashMap<>();
