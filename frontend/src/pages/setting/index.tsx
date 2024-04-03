@@ -18,6 +18,7 @@ import searchBtn from 'src/asset/images/image-icon/search.png';
 import { getFIndMember, getDiary, putModify, putDelete } from "./api";
 import useStore from "src/store";
 import { BottomNavi, Drawer } from "src/components";
+import Swal from 'sweetalert2';
 
 const PaperWrapper = styled( Paper )`
   width: 80%;
@@ -179,7 +180,11 @@ const Setting = () => {
           if (res !== undefined && !memberList.includes( searchName )) {
             setMemberList([ ...memberList, searchName ]);
           } else {
-            alert("검색 결과 없음");
+            // alert("검색 결과 없음");
+            Swal.fire({
+              text: '검색된 친구가 없습니다.',
+              icon: 'error',
+            });
           }
           setSearchName('');
         })
@@ -195,11 +200,24 @@ const Setting = () => {
       navigator('/main')
     })
   }
-
+  
   const delelte = () =>{
-    putDelete(diaryId).then(( res )=>{
-      navigator('/main')
-    })
+    Swal.fire({
+      text: "정말 이 다이어리에서 나가시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "네",
+      confirmButtonColor: '#88B3E2',
+      cancelButtonText: "아니요",
+      cancelButtonColor: "#F09690",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        putDelete(diaryId).then(( res )=>{
+        })
+        navigator('/main');
+      }
+    });
   }
 
   const handleSwitchChange = ( event ) => {
@@ -357,9 +375,17 @@ const Setting = () => {
                   modify(title, keyImage, memberList, text )
                 } else {
                   if (title === '') {
-                    alert("제목을 입력해주세요.");
+                    // alert("제목을 입력해주세요.");
+                    Swal.fire({
+                      text: '제목을 입력해주세요."',
+                      icon: 'warning',
+                    });
                   } else if ( keyImage === -1  ||  keyImage === null ) {
-                    alert("다이어리 표지를 선택해주세요.");
+                    // alert("다이어리 표지를 선택해주세요.");
+                    Swal.fire({
+                      text: '다이어리 표지를 선택해주세요.',
+                      icon: 'warning',
+                    });
                   }
                 }
               }}

@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useQuery, useMutation } from 'react-query';
 import useStore from 'src/store';
 import { postDiary, getDiaryByDate } from '../api';
+import Swal from 'sweetalert2';
 import styled from 'styled-components';
 
 const Header = styled.div`
@@ -72,15 +73,27 @@ const DiaryWrite = () => {
     const writeDiary = useMutation( postDiary );
     
     const goCalendar = () => {
-        if(type === '개인') {
-            // navigator(`/calendar`, {state: {diaryId: diaryId, type: type}});
-            navigator(`/calendar`);
-        } else {
-            // navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId, type: type}});
-            navigator(`/calendar/${diaryId}`);
-        }
+        Swal.fire({
+            text: "수정한 일기를 저장하지 않고 나가시겠습니까?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "네",
+            confirmButtonColor: '#88B3E2',
+            cancelButtonText: "아니요",
+            cancelButtonColor: "#F09690",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if(type === '개인') {
+                    navigator(`/calendar`);
+                } else {
+                    navigator(`/calendar/${diaryId}`);
+                }
+            }
+        });
     }
-
+    
+    
     // 저장
     const saveDiary = async () => {
         // // string으로 전달
@@ -106,7 +119,11 @@ const DiaryWrite = () => {
             await writeDiary.mutateAsync(data);
             goCalendar();
         } else {
-            alert('이미 일기가 작성된 날짜입니다.');
+            // alert('이미 일기가 작성된 날짜입니다.');
+            Swal.fire({
+                text: '이미 일기가 작성된 날짜입니다.',
+                icon: 'warning',
+              });
         }
     }
 
