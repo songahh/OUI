@@ -192,6 +192,7 @@ const Setting = () => {
 
   const delelte = () =>{
     putDelete(diaryId).then(( res )=>{
+      navigator('/main')
     })
   }
 
