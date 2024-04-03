@@ -19,6 +19,7 @@ const Title = styled.div`
     font-size: 35px;
     font-weight: 600;
     margin-bottom: 5px;
+    padding-top: 15px;
 `
 
 const CalendarWrapper = styled.div`
@@ -34,8 +35,8 @@ const CalendarWrapper = styled.div`
 const CalendarHeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  margin-top:4%;
+  width: 90%;
+  margin-top: 25px;
 `
 
 const CalendarHeaderRightWrapper =styled.button `
@@ -154,14 +155,14 @@ const Calendar = () =>{
           </Header>
           <CalendarWrapper>
             <CalendarHeaderWrapper>
-            <CalendarHeaderMiddleWrapper>
-              <LeftIcon size= { 31 } onClick={ movePrevMonth }/>
-              <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
-              <RightIcon size= { 31 } onClick={ moveNextMonth }/>
-            <CalendarHeaderRightWrapper onClick={ goDiaryWrite }>
-                <img src={ writeDiary } alt='' style={{ height: '50px'}}/>
-            </CalendarHeaderRightWrapper>
-            </CalendarHeaderMiddleWrapper>
+              <CalendarHeaderMiddleWrapper>
+                <LeftIcon size= { 31 } onClick={ movePrevMonth }/>
+                <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
+                <RightIcon size= { 31 } onClick={ moveNextMonth }/>
+              </CalendarHeaderMiddleWrapper>
+              <CalendarHeaderRightWrapper onClick={ goDiaryWrite }>
+                  <img src={ writeDiary } alt='' style={{ height: '50px'}}/>
+              </CalendarHeaderRightWrapper>
             </CalendarHeaderWrapper>
             { 
               isModalOpened && type==='개인' &&

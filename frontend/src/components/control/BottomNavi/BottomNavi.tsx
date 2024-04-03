@@ -21,6 +21,7 @@ const BottomNaviWrapper = styled( BottomNavigation )`
     transform: translateX(-50%);
     max-width: 1024px;
     width: 100%;
+    box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.1);
 `;
 
 export default function BottomNavi() {
@@ -58,7 +59,7 @@ export default function BottomNavi() {
         }}
       >
         <BottomNavigationAction icon={<img style={{ width: '47px', height: '47px' }} src={ mypageIcon } alt="MyPage" />} onClick={ toggleMyPage } />
-        <BottomNavigationAction icon={<img src={ MainLogo } style={{ width: '45px', height: '45px' }} onClick={ goMain } alt="Logo" />} />
+        <BottomNavigationAction icon={<img src={ MainLogo } style={{ width: '60px', height: '45px' }} onClick={ goMain } alt="Logo" />} />
         <BottomNavigationAction icon={<img style={{ width: '35px', height: '35px' }} src={ alarmIcon } alt="Alarm" />} onClick={ toggleModal } />
       </BottomNaviWrapper>
       {isModalOpen && <AlarmModal isOpen={isModalOpen} closeModal={ toggleModal } />} 
