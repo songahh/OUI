@@ -25,13 +25,16 @@ const BottomNaviWrapper = styled( BottomNavigation )`
 `;
 
 export default function BottomNavi() {
+
   const [value, setValue] = useState(0);
 
-  // const { isModalOpened, updateModal } = useStore()
+  const { isModalOpened, updateModal, isLogin } = useStore()
   const [ isModalOpen, setIsModalOpen ] = useState( false );
 
   const [ isMyPageOpen, setIsMyPageOpen ] = useState( false );
   const navigator = useNavigate();
+
+  !isLogin && navigator('/login')
 
   const goMain = () => {
     navigator('/main');

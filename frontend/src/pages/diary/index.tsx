@@ -82,6 +82,7 @@ const Diary = () => {
     
     const { diaryId, dailyDiaryId, type } = useStore(); 
 
+
     const emotionTag = {
         'angry': {name: '분노', color: '#F09690'},
         'embarrassed': {name: '당황', color: '#BBDED6'},
