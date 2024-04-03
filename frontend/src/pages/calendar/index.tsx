@@ -19,6 +19,7 @@ const Title = styled.div`
     font-size: 35px;
     font-weight: 600;
     margin-bottom: 5px;
+    padding-top: 15px;
 `
 
 const CalendarWrapper = styled.div`
@@ -34,8 +35,8 @@ const CalendarWrapper = styled.div`
 const CalendarHeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  margin-top:4%;
+  width: 90%;
+  margin-top: 25px;
 `
 
 const CalendarHeaderRightWrapper =styled.button `
@@ -83,11 +84,13 @@ const Calendar = () =>{
 
   const navigator = useNavigate()
 
-  const [ isDiaryWrite, setIsDiaryWrite ] = useState<boolean>( false ); // 일기쓰기 버튼 클릭시 개인/공유 분리
-  const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() // 달력 옆 버튼
-  const { startDate, endDate } = calculateDateRange()
   const { isModalOpened, updateModal } = useStore() // Day 컴포넌트에서 업데이트 된 상태 가져오기
   const { diaryId, type } = staticStore();
+
+
+  const { currentMonth, setCurrentMonth, calculateDateRange } = useDate() // 달력 옆 버튼
+  const { startDate, endDate } = calculateDateRange()
+  
   const html = document.querySelector( 'html' )
 
 
@@ -154,14 +157,14 @@ const Calendar = () =>{
           </Header>
           <CalendarWrapper>
             <CalendarHeaderWrapper>
-            <CalendarHeaderMiddleWrapper>
-              <LeftIcon size= { 31 } onClick={ movePrevMonth }/>
-              <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
-              <RightIcon size= { 31 } onClick={ moveNextMonth }/>
-            <CalendarHeaderRightWrapper onClick={ goDiaryWrite }>
-                <img src={ writeDiary } alt='' style={{ height: '50px'}}/>
-            </CalendarHeaderRightWrapper>
-            </CalendarHeaderMiddleWrapper>
+              <CalendarHeaderMiddleWrapper>
+                <LeftIcon size= { 31 } onClick={ movePrevMonth }/>
+                <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
+                <RightIcon size= { 31 } onClick={ moveNextMonth }/>
+              </CalendarHeaderMiddleWrapper>
+              <CalendarHeaderRightWrapper onClick={ goDiaryWrite }>
+                  <img src={ writeDiary } alt='' style={{ height: '50px'}}/>
+              </CalendarHeaderRightWrapper>
             </CalendarHeaderWrapper>
             { 
               isModalOpened && type==='개인' &&

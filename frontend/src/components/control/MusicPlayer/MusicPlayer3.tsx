@@ -4,7 +4,7 @@ import NextIcon from 'src/asset/images/icon/next.svg';
 import PrevIcon from 'src/asset/images/icon/prev.svg';
 import PlayIcon from 'src/asset/images/icon/play.svg';
 import ReactPlayer from 'react-player';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 const PlayerWrapper = styled.div`
   box-sizing: border-box;
@@ -20,7 +20,9 @@ const PlayerWrapper = styled.div`
   margin-bottom: 40px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   line-height: 40px;
+  height: 300px;
 `;
+
 const ControlWrapper = styled.div`
   width: 58%;
   display: flex;
@@ -89,7 +91,7 @@ const TitleWrapper = styled.div<{ length: number }>`
   font-size: 36px;
   font-weight: bold;
   
-  ${props => props.length >= 22 && `
+  ${props => props.length >= 20 && `
     animation: slideText 10s linear infinite;
 
     @keyframes slideText {
@@ -101,6 +103,61 @@ const TitleWrapper = styled.div<{ length: number }>`
       }
     }
   `}
+`;
+
+const tape = keyframes`
+  0% {
+    transform: rotate(0deg) scale(0.4);
+  }
+  100% {
+    transform: rotate(-360deg) scale(0.4);
+  }
+`;
+
+const Spinner = styled.span`
+  margin: auto;
+  width: 100px;
+  height: 30px;
+  overflow: hidden;
+  position: relative;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  box-shadow: 0px 35px 0 -5px #aaa, 
+              0 -5px 0 0px #ddd, 
+              0 -25px 0 -5px #fff,
+              -25px -30px 0 0px #ddd, 
+              -25px 30px 0 0px #ddd, 
+              25px -30px 0 0px #ddd,
+              25px 30px 0 0px #ddd, 
+              20px 10px 0 5px #ddd, 
+              20px -10px 0 5px #ddd,
+              -20px -10px 0 5px #ddd, 
+              -20px 10px 0 5px #ddd;
+
+  &::after,
+  &::before {
+    content: "";
+    border-radius: 100%;
+    width: 35px;
+    height: 35px;
+    display: block;
+    position: absolute;
+    border: 4px dashed #fff;
+    bottom: -4px;
+    transform: rotate(0deg);
+    box-sizing: border-box;
+    animation: ${tape} 4s linear infinite;
+  }
+
+  &::before {
+    right: 0;
+    box-shadow: 0 0 0 4px #fff, 0 0 0 34px #000;
+  }
+
+  &::after {
+    left: 0;
+    box-shadow: 0 0 0 4px #fff, 0 0 0 65px #000;
+  }
 `;
 
 const AudioVideoPlayer = ( props: MusicListProps ) => {
@@ -170,23 +227,30 @@ const AudioVideoPlayer = ( props: MusicListProps ) => {
 
   return (
     <PlayerWrapper>
-        <Thumbnail src={ getThumbnailUrl( recommends[ trackIndex ]?.uri)} alt="Video thumbnail" />
-        <ControlWrapper>
-            <TitleContainer>
-              <TitleWrapper length={ Title.length }>{Title || 'title'}</TitleWrapper>
-              <div style={{ fontSize: '28px', padding: '10px'  }}>{Singer || 'singer'}</div>
-            </TitleContainer>
-            <ProgressWrapper onClick={ seekTo }>
-                <ProgressBar style={{ width: `${played * 100}%` }} />
-            </ProgressWrapper>
-            <Controls>
-                <Button onClick={ playPreviousTrack }><img src={ PrevIcon } alt='prev'/></Button>
-                <Button onClick={ togglePlayPause }>
-                    {playing ? <img src={ PauseIcon } alt='pause'/> : <img src={ PlayIcon } alt='play'/> }
-                </Button>
-                <Button onClick={ playNextTrack }> <img src={ NextIcon } alt='next'/></Button>
-            </Controls>
-        </ControlWrapper>
+        {(!playList?.length) && (
+          <Spinner />
+        )}
+        {(playList?.length) && (
+          <>
+            <Thumbnail src={ getThumbnailUrl( recommends[ trackIndex ]?.uri)} alt="Video thumbnail" />
+            <ControlWrapper>
+                <TitleContainer>
+                  <TitleWrapper length={ Title.length }>{Title || 'title'}</TitleWrapper>
+                  <div style={{ fontSize: '28px', padding: '10px'  }}>{Singer || 'singer'}</div>
+                </TitleContainer>
+                <ProgressWrapper onClick={ seekTo }>
+                    <ProgressBar style={{ width: `${played * 100}%` }} />
+                </ProgressWrapper>
+                <Controls>
+                    <Button onClick={ playPreviousTrack }><img src={ PrevIcon } alt='prev'/></Button>
+                    <Button onClick={ togglePlayPause }>
+                        {playing ? <img src={ PauseIcon } alt='pause'/> : <img src={ PlayIcon } alt='play'/> }
+                    </Button>
+                    <Button onClick={ playNextTrack }> <img src={ NextIcon } alt='next'/></Button>
+                </Controls>
+            </ControlWrapper>
+          </>
+        )}
 
         <ReactPlayer
         ref={ playerRef }

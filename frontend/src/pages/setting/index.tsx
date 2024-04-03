@@ -6,6 +6,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Switch from '@mui/material/Switch';
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { Button } from "src/components/control/Button";
+import { Header } from "src/components/control/Header";
 import CheckCircle from 'src/asset/images/image-icon/checkCircle.png';
 import diary1 from 'src/asset/images/diary1.png';
 import diary2 from 'src/asset/images/diary2.png';
@@ -27,8 +29,9 @@ const PaperWrapper = styled( Paper )`
   flex-direction: column;
   align-items: center;
   justify-content: start;
-  padding: 20px;
-  margin-bottom: 10%;
+  padding: 20px 20px 40px 20px;
+  margin-bottom: 17%;
+  margin-top:3%;
   border-radius: 20px;
   background-color: #FFFEFC;
 `;
@@ -42,6 +45,7 @@ const BoxWrapper = styled(Box)`
   border: 1px solid #ccc;
   padding: 10px;
   border-radius: 10px;
+  margin-bottom: 50px;
 `;
 
 const ModalContentWrapper = styled.div`
@@ -102,7 +106,7 @@ const SearchButton = styled.button`
 
 const EntireWrapper = styled.div`
   width: 100%;
-  height: calc(100vh - 120px);
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -113,7 +117,7 @@ const NotificationContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
 `;
 
@@ -124,6 +128,8 @@ const ExitWrapper = styled.div`
   color: #a9a9a9; 
   text-decoration: underline; 
   cursor: pointer;
+  font-size: 18px;
+  margin-top: 5%;
 `;
 
 const Setting = () => {
@@ -202,12 +208,18 @@ const Setting = () => {
 
   return (
     <>
-      <Drawer />
+      <Header>
+        <span style={{ marginTop: "39px", marginLeft: "8px" }}>
+            <Drawer />
+        </span>
+        <Button></Button>
+        <Button></Button>
+      </Header>
+      <div style={{marginTop:'3%',textAlign:'center', fontSize:'40px'}}>설정</div>
       <EntireWrapper>
         <PaperWrapper>
           <ModalContentWrapper>
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '25px' }}>
-              <h1>다이어리 수정</h1>
             </div>
             <NotificationContainer>
               알림
@@ -216,7 +228,7 @@ const Setting = () => {
               </div>
             </NotificationContainer>
             <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width: '100%' }}>
-              <h2 style={{ marginBottom: '8px', marginTop: '15px' }}>제목</h2>
+              <div style={{ marginBottom: '8px', marginTop: '15px' ,fontSize:'26px', fontWeight:'bold'}}>제목</div>
               <div>
                 <TextField
                   id="outlined-basic"
@@ -224,14 +236,14 @@ const Setting = () => {
                   value={title}
                   onChange={ handleTitleChange }
                   InputProps={{
-                    style: { fontFamily: 'Dovemayo', fontSize: '20px', borderRadius: '10px' },
+                    style: { fontFamily:'JGaegujaengyi',fontSize: '23px', borderRadius: '10px' },
                   }}
                   style={{ width: '100%', backgroundColor: 'white' }}
                 />
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width: '100%' }}>
-              <h2 style={{ marginBottom: '5px', marginTop: '35px' }}>다이어리 표지</h2>
+            <div style={{ fontSize:'26px', fontWeight:'bold',marginBottom: '10px', marginTop: '50px' }}>다이어리 표지</div>
               <BoxWrapper>
                 {[ diary1, diary2, diary3, diary4, diary5 ].map(( diaryImage, index ) => (
                   <ImageContainer
@@ -250,7 +262,7 @@ const Setting = () => {
             {type !== '개인' && (
               <>
                 <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width: '100%' }}>
-                  <h2 style={{ marginBottom: '10px', marginTop: '35px' }}>친구 추가</h2>
+                  <div style={{ fontSize:'26px', fontWeight:'bold',marginBottom: '10px' }}>친구 추가</div>
                   <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width: '100%' }}>
                     <TextField
                       id="outlined-basic"
@@ -264,11 +276,11 @@ const Setting = () => {
                             <SearchButton onClick={ handleSearch } />
                           </InputAdornment>
                         ),
-                        style: { borderRadius: '10px', width: '100%', backgroundColor: 'white', fontFamily: 'Dovemayo', fontSize: '21.5px' },
+                        style: { borderRadius: '10px', width: '100%', backgroundColor: 'white', fontFamily:'JGaegujaengyi',fontSize: '23px' },
                       }}
                     />
                   </div>
-                  <div style={{ height: '100px', marginTop: '25px', display: 'flex', flexWrap: 'wrap', alignItems: 'start', gap: '10px' }}>
+                  <div style={{  marginTop: '25px', display: 'flex', flexWrap: 'wrap', alignItems: 'start', gap: '10px' }}>
                     {basicMembers.length !== 0 &&
                       basicMembers.map(( email, index ) => (
                         <div
@@ -290,10 +302,7 @@ const Setting = () => {
                           { email }
                         </div>
                       ))}
-                  </div>
-                  <h3>추가된 친구</h3>
-                  <div style={{ height: '100px', marginTop: '25px', display: 'flex', flexWrap: 'wrap', alignItems: 'start', gap: '10px' }}>
-                    {memberList.length !== 0 &&
+                      {memberList.length !== 0 &&
                       memberList.map(( email, index ) => (
                         <div
                           key={index}
@@ -330,17 +339,16 @@ const Setting = () => {
 
             <button
               style={{
-                width: '90%',
-                height: '60px',
-                marginTop: '5%',
+                width: '100%', 
+                height: '60px', 
                 backgroundColor: '#88B3E2',
-                color: 'white',
-                border: 'none',
-                borderRadius: '10px',
-                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.2)',
-                fontSize: '22px',
-                bottom: '4%',
-              }}
+                color: 'white', // 텍스트 색상을 하얀색으로 지정
+                border: 'none', // 테두리 없음
+                borderRadius: '10px', // 둥근 모서리
+                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.2)', // 그림자 효과
+                fontSize:'26px',
+                marginTop: '3%'
+              }} 
               onClick={() => {
                 if (title !== '' && keyImage !== -1 && keyImage !== null) {
                   let text;
@@ -356,7 +364,7 @@ const Setting = () => {
                 }
               }}
             >
-              완료
+              완  료
             </button>
           </ModalContentWrapper>
         </PaperWrapper>

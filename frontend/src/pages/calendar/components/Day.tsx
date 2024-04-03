@@ -69,7 +69,7 @@ const TodoItemWrapper = styled.div<{ color: string }>`
     opacity: 0.8;
 `
 
-const TodoHeaderWrapper = styled.div<{color: string}>`
+const TodoHeaderWrapper = styled.div<{ color: string }>`
     width: 10px;
     height:10px;    
     background-color: ${(props) => props.color};
@@ -82,13 +82,14 @@ const Day = ( props: DayProps ) =>{
 
     const navigator = useNavigate()
 
-    const { day, calendars, type, diaryId } = props
+    const { day, calendars, type } = props
     const { updateDate, updateModal } = useStore()
     const { setDailyDiaryId } = staticStore()
 
     const emotionPositions = [
-        { top: '0', left: '20%' }, // 첫 번째 이모티콘 위치
-        { top: '10%', left: '30%' }, // 두 번째 이모티콘 위치
+        { top: '10%', left: '30%' }, // 첫 번째 이모티콘 위치
+        { top: '-10%', left: '40%' }, // 두 번째 이모티콘 위치
+        { top: '-5%', left: '20%' }, // 세 번째 이모티콘 위치
     ]
     
 
