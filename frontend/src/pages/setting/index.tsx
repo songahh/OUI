@@ -19,7 +19,7 @@ import { BottomNavi, Drawer } from "src/components";
 
 const PaperWrapper = styled( Paper )`
   width: 80%;
-  height: 90%;
+  height: 80%;
   max-height: 90vh;
   overflow-y: auto;
   margin: 0px;
@@ -28,7 +28,7 @@ const PaperWrapper = styled( Paper )`
   align-items: center;
   justify-content: start;
   padding: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 10%;
   border-radius: 20px;
   background-color: #FFFEFC;
 `;
@@ -184,6 +184,7 @@ const Setting = () => {
   };
 
   const modify = ( title, templateId, memberList, alarm ) => {
+    
     putModify(diaryId, { name: title, templateId: templateId, alarm: alarm, memberList: memberList }).then(( res )=>{
       navigator('/main')
     })
@@ -328,8 +329,7 @@ const Setting = () => {
 
             <button
               style={{
-                width: '70%',
-                maxWidth: '350px',
+                width: '90%',
                 height: '60px',
                 marginTop: '5%',
                 backgroundColor: '#88B3E2',
