@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useStore from 'src/store'
 import styled from 'styled-components';
 import AlarmModal from 'src/components/modal/AlarmModal';
+import MyPage from 'src/components/control/MyPage/MyPage';
 
 const BottomNaviWrapper = styled( BottomNavigation )`
     background-color: white;
@@ -25,8 +26,10 @@ const BottomNaviWrapper = styled( BottomNavigation )`
 export default function BottomNavi() {
   const [value, setValue] = useState(0);
 
-  const { isModalOpened, updateModal } = useStore()
+  // const { isModalOpened, updateModal } = useStore()
   const [ isModalOpen, setIsModalOpen ] = useState( false );
+
+  const [ isMyPageOpen, setIsMyPageOpen ] = useState( false );
   const navigator = useNavigate();
 
   const goMain = () => {
@@ -36,10 +39,14 @@ export default function BottomNavi() {
   const toggleModal = () => { 
     setIsModalOpen( !isModalOpen );
   }
-  
-  const viewMyPage = () =>{
-    updateModal()
+
+  const toggleMyPage = () => { 
+    setIsMyPageOpen( !isMyPageOpen );
   }
+  
+  // const viewMyPage = () =>{
+  //   updateModal()
+  // }
 
   return (
     <>
@@ -50,11 +57,12 @@ export default function BottomNavi() {
           setValue( newValue );
         }}
       >
-        <BottomNavigationAction icon={<img style={{ width: '47px', height: '47px' }} src={ mypageIcon } alt="MyPage" />} onClick={ viewMyPage } />
+        <BottomNavigationAction icon={<img style={{ width: '47px', height: '47px' }} src={ mypageIcon } alt="MyPage" />} onClick={ toggleMyPage } />
         <BottomNavigationAction icon={<img src={ MainLogo } style={{ width: '45px', height: '45px' }} onClick={ goMain } alt="Logo" />} />
         <BottomNavigationAction icon={<img style={{ width: '35px', height: '35px' }} src={ alarmIcon } alt="Alarm" />} onClick={ toggleModal } />
       </BottomNaviWrapper>
       {isModalOpen && <AlarmModal isOpen={isModalOpen} closeModal={ toggleModal } />} 
+      {isMyPageOpen && <MyPage isOpen={isMyPageOpen} closeModal={ toggleMyPage } />} 
     </>
   );
 }
