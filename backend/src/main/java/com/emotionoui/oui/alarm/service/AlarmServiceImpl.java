@@ -57,14 +57,11 @@ public class AlarmServiceImpl implements AlarmService{
     private final MusicService musicService;
     private final RandomQuestionMongoRepository randomQuestionMongoRepository;
 
-    @Value("http://localhost:8080")
-    String domain;
+//    @Value("http://localhost:8080")
+//    String domain;
 
     @Value("https://fcm.googleapis.com/v1/projects/project-oui/messages:send")
     String API_URL;
-
-//    @PersistenceContext
-//    private EntityManager entityManager;
 
     private final ObjectMapper objectMapper;
 
@@ -440,13 +437,13 @@ public class AlarmServiceImpl implements AlarmService{
 
         if(fcmInfo!=null){
             fcmInfo.updateDeviceToken(deviceToken);
+            fcmInfoRepository.save(fcmInfo);
         }
         else{
             FcmInfo info = FcmInfo.builder()
                     .member(member)
                     .deviceToken(deviceToken)
                     .build();
-
             fcmInfoRepository.save(info);
         }
     }
