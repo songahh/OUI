@@ -39,7 +39,8 @@ const DiaryWrite = () => {
         fontWeight: 'normal',
         textAlign: 'left',
         fontColor: '#262626',
-    });
+    })
+
     
     useEffect(() => {
         if(!canvas) return;
