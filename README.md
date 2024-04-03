@@ -1,5 +1,5 @@
 # ✏️ OUI: 너와 나의 공유일기
-![image](/uploads/784bf3b3bcf52f7aafc502d2f80c6aca/image.png)
+![image](/uploads/0cdb433323a2346705c12595770a0e60/image.png)
 
 > #### OUI _는 **AI 감정분석을 제공하는 공유일기 웹 앱 서비스**입니다._
 
