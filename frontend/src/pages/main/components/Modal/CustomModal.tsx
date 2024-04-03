@@ -8,14 +8,18 @@ import InputAdornment from '@mui/material/InputAdornment';
 import CheckCircle from 'src/asset/images/image-icon/checkCircle.png';
 import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import diary1 from 'src/asset/images/diary1.png'
-import diary2 from 'src/asset/images/diary2.png'
-import diary3 from 'src/asset/images/diary3.png'
-import diary4 from 'src/asset/images/diary4.png'
-import diary5 from 'src/asset/images/diary5.png'
-import searchBtn from 'src/asset/images/image-icon/search.png'
+import diary1 from 'src/asset/images/diary1.png';
+import diary2 from 'src/asset/images/diary2.png';
+import diary3 from 'src/asset/images/diary3.png';
+import diary4 from 'src/asset/images/diary4.png';
+import diary5 from 'src/asset/images/diary5.png';
+import searchBtn from 'src/asset/images/image-icon/search.png';
+import Swal from 'sweetalert2';
 import styled from "styled-components";
 
+const ModalWrapper = styled( Modal )`
+  z-index: 0;
+`
 
 const PaperWrapper = styled( Paper )`
   position: absolute;
@@ -143,7 +147,11 @@ const CustomModal = ( props:ModalProps ) => {
             }
           }
           else{
-            alert("검색 결과 없음")
+            // alert("검색 결과 없음")
+            Swal.fire({
+              text: '검색된 친구가 없습니다.',
+              icon: 'error',
+            });
           }
           setSearchName('')
       })  
@@ -166,7 +174,7 @@ const CustomModal = ( props:ModalProps ) => {
 
 
   return (
-    <Modal open={ isOpen } onClose={ closeModal }>
+    <ModalWrapper open={ isOpen } onClose={ closeModal }>
       <PaperWrapper>
         <ModalContentWrapper>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop:'25px'}}>
@@ -274,13 +282,25 @@ const CustomModal = ( props:ModalProps ) => {
                   isFinish({ title:title, key: keyImage, members: memberList });
                 } else {
                   if( title === '' ){
-                    alert( "제목" );
+                    // alert( "제목" );
+                    Swal.fire({
+                      text: '다이어리 제목을 입력하세요.',
+                      icon: 'warning',
+                    });
                   }
                   else if( keyImage ===-1 ){
-                    alert( "템플릿" );
+                    // alert( "템플릿" );
+                    Swal.fire({
+                      text: '다이어리 표지를 선택하세요.',
+                      icon: 'warning',
+                    });
                   }
                   else if( memberList.length ==0 ){
-                    alert( "친구를 추가해주세요" );
+                    // alert( "친구를 추가해주세요" );
+                    Swal.fire({
+                      text: '친구를 추가해주세요.',
+                      icon: 'warning',
+                    });
                   }    
                 }
               }}
@@ -288,7 +308,7 @@ const CustomModal = ( props:ModalProps ) => {
               완  료
             </button>
       </PaperWrapper>
-    </Modal>
+    </ModalWrapper>
   );
 }
 

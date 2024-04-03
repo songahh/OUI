@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import useStore from 'src/store';
 import { getDiary, putDiary } from '../api';
+import Swal from 'sweetalert2';
 import styled from 'styled-components';
 
 const Header = styled.div`
@@ -95,10 +96,27 @@ const DiaryEdit = () => {
         navigator(`/diary/${dailyDiaryId}`);
     }
 
+    const goBack = async() => {
+        Swal.fire({
+            text: "수정한 일기를 저장하지 않고 나가시겠습니까?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "네",
+            confirmButtonColor: '#88B3E2',
+            cancelButtonText: "아니요",
+            cancelButtonColor: "#F09690",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                navigator(`/diary/${dailyDiaryId}`)
+            }
+        });
+    }
+
     return (
         <Container>
             <Header>
-                <BackIcon size={ 40 } onClick={() => { navigator(`/diary/${dailyDiaryId}`)}} />
+                <BackIcon size={ 40 } onClick={ goBack } />
                 <span style={{ fontSize: "30px" }}>{ dailyDiary?.data?.dailyDate.substring(0, 10) }</span>
                 <SaveIcon size={ 70 } onClick={ saveDiary }/>
             </Header>
