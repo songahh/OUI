@@ -180,7 +180,7 @@ const MyPage = ({ isOpen, closeModal }) => {
     const [ uploadedImage, setUploadedImage ] = useState(profileImage)
     const [ newProfileImage, setNewProfileImage ] = useState( profileImage )
     const [ flag, setFlag ] = useState(myType?.data==='Blue' ? true : false)
-    const [ flag2 ] = useState(myType?.data==='Blue' ? true : false)
+    const [ flag2, setFlag2 ] = useState(myType?.data==='Blue' ? true : false)
     const { setAccessToken } = useStore()
 
     const updateInfo = useMutation( putMyInfo )
@@ -200,7 +200,7 @@ const MyPage = ({ isOpen, closeModal }) => {
             return
         }
         // preference변경 api 요청도 같이 날려야 함.
-        await updateInfo.mutateAsync({ memberNickname: nickname, ImgUrl: uploadedImage })
+        await updateInfo.mutateAsync({ memberNickname: nickname, file: uploadedImage })
         if(flag !== flag2 ){
             //변경되면 api 요청
             let type: string
@@ -208,22 +208,30 @@ const MyPage = ({ isOpen, closeModal }) => {
             await updateType.mutateAsync(type)
         }
         refetchMyInfo();
-        refetchMyType();
+        refetchMyType().then((res)=>{
+            console.log()
+            setFlag( res?.data?.data==='Blue' ? true : false )
+            setFlag2( res?.data?.data==='Blue' ? true : false )
+        })
         setEdit( !edit )
     }
 
     
 
     const onChangeImage = ( e ) => {
-        if (e.target.files && e.target.files[0]) {
+ {
             const file = e.target.files[0];
             const imageUrl = URL.createObjectURL(file);
             setNewProfileImage(imageUrl);
             const formData = new FormData();
             formData.append("file", file);
             formData.append("memberNickname", nickname);
+            formData.forEach((value, key) => {
+                console.log(key, value);
+              });
             setUploadedImage(formData);
         }
+
     };
 
     const deleteMember = () =>{
@@ -250,9 +258,9 @@ const MyPage = ({ isOpen, closeModal }) => {
         setEmail( myData?.data?.memberEmail );
         setNickName( myData?.data?.nickName );
         const loadedProfileImage = ( myData?.data?.img === '' || myData?.data?.img === null ) ? UserIcon : myData?.data?.img;
-        setNewProfileImage( loadedProfileImage );
+        // setNewProfileImage( loadedProfileImage );
         setFlag( myType?.data === 'Blue' ? true : false );
-    }, [ myData, myType ]); 
+    }, [ myData, myType]); 
 
     return (
         <>
