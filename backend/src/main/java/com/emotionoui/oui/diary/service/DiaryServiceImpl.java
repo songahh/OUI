@@ -149,6 +149,7 @@ public class DiaryServiceImpl implements DiaryService{
         DailyDiary dailyDiary = dailyDiaryRepository.findById(dailyId)
                 .orElseThrow(IllegalArgumentException::new);
         dailyDiary.updateIsDeleted();
+        dailyDiaryRepository.save(dailyDiary);
     }
 
     private void analyzeData(DailyDiary dailyDiary, Member member, DailyDiaryCollection document, Diary diary, Integer type){
