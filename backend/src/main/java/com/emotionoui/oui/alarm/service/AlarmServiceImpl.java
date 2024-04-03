@@ -71,6 +71,9 @@ public class AlarmServiceImpl implements AlarmService{
         List<SearchAlarmsRes> searchAlarmsResList = new ArrayList<>();
 
         for (MemberAlarm memberAlarm : memberAlarms) {
+            if(memberAlarm.getIsDeleted()==1){
+                continue;
+            }
             Alarm alarm = memberAlarm.getAlarm();
             SearchAlarmsRes searchAlarmsRes = SearchAlarmsRes.builder()
                     .alarmId(alarm.getId())
@@ -92,6 +95,7 @@ public class AlarmServiceImpl implements AlarmService{
 
         for (MemberAlarm memberAlarm : memberAlarms)
             memberAlarm.updateIsDeleted(1);
+        memberRepository.flush();
     }
 
     @Override
