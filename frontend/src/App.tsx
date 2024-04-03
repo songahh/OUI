@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from 'react-query/devtools'
 import routers from './pages/router'
 import { createPortal } from 'react-dom'
 import { CookiesProvider } from 'react-cookie';
+import { useNavigate } from 'react-router-dom'
 import { StyledEngineProvider } from '@mui/material/styles';
 import styled from 'styled-components';
 import useStore from 'src/store'
@@ -43,11 +44,17 @@ const queryClient = new QueryClient() // QueryClient 생성
 
 function App() {
 
-  const { isModalOpened, updateModal } = useStore()
+  const navigator = useNavigate()
+
+  const { isModalOpened, updateModal, memberId } = useStore()
   
   const [ router ] = useState( createBrowserRouter( routers ))
   
   const html = document.querySelector( 'html' )
+
+  if( memberId ===null){
+    navigator('./login')
+  }
 
   const closeModal = () => { 
       updateModal();
