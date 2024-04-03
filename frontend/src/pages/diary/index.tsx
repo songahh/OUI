@@ -107,7 +107,6 @@ const Diary = () => {
         enabled: isFontLoaded
     });
     
-
     const { data: comment } = useQuery('comment', () => getComment(dailyDiaryId), {
         enabled: isFontLoaded
     });
@@ -122,9 +121,6 @@ const Diary = () => {
 
     useEffect(() => {
         if(!canvas) return;
-
-        // setPlayList(musics?.data);
-
 
         if(emotions?.data?.emotionList.length === 1 && emotions?.data?.emotionList[0] === 'neutral') {
             setIsOnlyNeutral(true);
@@ -156,6 +152,7 @@ const Diary = () => {
         await removeDiary.mutateAsync(dailyDiaryId);
         navigator(`/calendar/${diaryId}`, {state: {diaryId: diaryId}});
     }
+
     return (
         <Container>
             <Header>
@@ -190,17 +187,17 @@ const Diary = () => {
                     <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ marginTop: "20px", marginBottom: "15px" }} />
                     <div style={{ fontSize: "24px", fontWeight: "bold", width: "auto" }}>분석 결과 보러 가기</div>
                     <ResultSection>
-                                <Title>나의 감정은?</Title>
-                                {/* '중립'은 감정 태그에서 제외 */}
-                                <div style={{ marginTop: "10px", marginBottom: "60px", display: "flex" }}>
-                                    {emotions && emotions.data.emotionList.map((emotion, index) => 
-                                        (emotion !== 'neutral') ? (
-                                            <Emotion key={index} color={emotionTag[emotion].color}>
-                                                #{emotionTag[emotion].name}
-                                            </Emotion>
-                                        ) : null
-                                    )}
-                                </div>
+                        <Title>나의 감정은?</Title>
+                        {/* '중립'은 감정 태그에서 제외 */}
+                        <div style={{ marginTop: "10px", marginBottom: "60px", display: "flex" }}>
+                            {emotions && emotions?.data?.emotionList.map((emotion, index) => 
+                                (emotion !== 'neutral') ? (
+                                    <Emotion key={index} color={emotionTag[emotion].color}>
+                                        #{emotionTag[emotion].name}
+                                    </Emotion>
+                                ) : null
+                            )}
+                        </div>
                         {(type === '개인') && (
                             <>
                                 <Title>AI 코멘트</Title>
