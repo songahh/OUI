@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import CloseIcon from '@mui/icons-material/Close';
 import useStore from 'src/store'
 import { useQuery } from 'react-query';
+import { getExistDiary } from './api';
 import { getDiaryTitle } from 'src/pages/calendar/api';
 import styled from 'styled-components';
 import todayDiary from 'src/asset/images/image-icon/todayDiary.png'
@@ -54,14 +55,22 @@ const HamburgerBtn = styled.button`
 
 const Drawer = () => {
     const [ open, setOpen ] = React.useState( false );
-    const navigator = useNavigate()
-    const { diaryId, dailyDiaryId, type } = useStore()
+    const navigator = useNavigate();
+    const { diaryId, dailyDiaryId, type, setDailyDiaryId } = useStore()
     const toggleDrawer = ( newOpen: boolean ) => () => {
       setOpen( newOpen );
     };
 
+    
+    const { data: existDiary } = useQuery('existDiary', () => getExistDiary( diaryId ));
+    
     const goWriteDiary = () => {
-      navigator(`/diary/write/${ diaryId }`)
+      if(existDiary?.data) {
+        setDailyDiaryId(existDiary?.data);
+        navigator(`/diary/${ existDiary.data }`);
+      } else {
+        navigator(`/diary/write/${ diaryId }`)
+      }
     }
 
     const goCalendar = () => {
@@ -98,15 +107,15 @@ const Drawer = () => {
               <ListItemText primary={<Typography fontFamily="JGaegujaengyi" fontSize={'23px'} display={'flex'} marginLeft={'2%'} marginTop={'0.8%'}> 오늘의 일기</Typography>} />
           </HamburgerBtn>
           <HamburgerBtn onClick={goCalendar}>
-              <img width={'28px'} src={Calendar} alt='오늘의 일기'/>
+              <img width={'28px'} src={Calendar} alt='캘린더'/>
               <ListItemText primary={<Typography fontFamily="JGaegujaengyi" fontSize={'23px'} display={'flex'} marginLeft={'2%'} marginTop={'0.5%'}> 캘린더</Typography>} />
           </HamburgerBtn>
           <HamburgerBtn onClick={goAnalysis}>
-              <img width={'28px'} src={analysis} alt='오늘의 일기'/>
+              <img width={'28px'} src={analysis} alt='감정 통계'/>
               <ListItemText primary={<Typography fontFamily="JGaegujaengyi" fontSize={'23px'} display={'flex'} marginLeft={'2%'} marginTop={'0.8%'}> 감정 통계</Typography>} />
           </HamburgerBtn>
           <HamburgerBtn onClick={goSetting}>
-              <img width={'28px'} src={setting} alt='오늘의 일기'/>
+              <img width={'28px'} src={setting} alt='설정'/>
               <ListItemText primary={<Typography fontFamily="JGaegujaengyi" fontSize={'23px'} display={'flex'} marginLeft={'2%'} marginTop={'0.8%'}> 설정</Typography>} />
           </HamburgerBtn>
         </List>
