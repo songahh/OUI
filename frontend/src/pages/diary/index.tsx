@@ -182,8 +182,8 @@ const Diary = () => {
             {/* 감정 분석 결과 '중립'만 올 경우 감정 분석 결과부분 아예 X */}
             {(!isOnlyNeutral) && (
                 <>
-                    <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ marginTop: "20px", marginBottom: "10px" }} />
-                    <div style={{ fontSize: "24px", fontWeight: "bold" }}>분석 결과 보러 가기</div>
+                    <ArrowDownwardRoundedIcon sx={{ fontSize: 40 }} style={{ marginTop: "20px", marginBottom: "15px" }} />
+                    <div style={{ fontSize: "24px", fontWeight: "bold", width: "auto" }}>분석 결과 보러 가기</div>
                     <ResultSection>
                                 <Title>나의 감정은?</Title>
                                 {/* '중립'은 감정 태그에서 제외 */}
