@@ -53,7 +53,7 @@ function App() {
   const html = document.querySelector( 'html' )
 
   if( memberId ===null){
-    navigator('./login')
+    navigator('/login')
   }
 
   const closeModal = () => { 
