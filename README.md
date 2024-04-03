@@ -7,7 +7,7 @@
 
 ### 회원가입
 | <img src="./asset/회원가입.gif"> |
-
+|------------|
 
 ### 일기
 | <img src="./asset/일기작성.gif"> | <img src="./asset/동시편집.gif"> |
@@ -21,6 +21,7 @@
 
 ### 공유 다이어리 생성
 | <img src="./asset/공유다이어리생성.gif"> |
+|------------|
 
 ### 분석
 | <img src="./asset/개인통계.gif"> | <img src="./asset/분석결과.gif"> |
