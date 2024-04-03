@@ -156,7 +156,7 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
     comfortable: '느긋',
     happy: '기쁨',
   }
-
+  console.log(rightDataList)
   const images = {
     sad: sad,
     doubtful: doubtful,
@@ -266,7 +266,7 @@ const Chart = ({ leftText, rightText, leftData, rightData, rightDataList }:Chart
     setLeftChartData(newLeftChartData);
   
     // rightDataList 처리
-    if (!rightData && rightDataList) {
+    if ( rightDataList) {
       let newRightChartData;
       if (rightDataList.length === 1) { // 길이1 자동으로
         const selectedFriendData = rightDataList[0]
