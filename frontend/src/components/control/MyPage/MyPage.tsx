@@ -200,7 +200,7 @@ const MyPage = ({ isOpen, closeModal }) => {
             return
         }
         // preference변경 api 요청도 같이 날려야 함.
-        await updateInfo.mutateAsync({ memberNickname: nickname, ImgUrl: uploadedImage })
+        await updateInfo.mutateAsync({ memberNickname: nickname, file: uploadedImage })
         if(flag !== flag2 ){
             //변경되면 api 요청
             let type: string
