@@ -1,0 +1,9 @@
+dataset/
+onnx/
+pytorch/
+openvino/
+
+.cache/
+__pycache__/
+
+application-secrets.json

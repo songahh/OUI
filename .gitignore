@@ -1,0 +1,6 @@
+crawling/data/
+*.csv
+*/__pycache__
+ai/ai/onnx/*
+ai/ai/openvino/*
+ai/ai/pytorch/*
