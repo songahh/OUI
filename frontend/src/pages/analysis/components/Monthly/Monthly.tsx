@@ -202,7 +202,7 @@ const Monthly = () => {
               <Title>{ format( currentMonth, 'yyyy' )}년 { format( currentMonth, 'M' )}월</Title>
               <RightIcon size= { 33 } onClick={ moveNextMonth }/>
           </CalendarHeaderMiddleWrapper>
-           { userName && <TitleWrapper><p style={{whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' ,width:'15%', paddingRight:'0.8%', paddingBottom:'1%'}}> { userName } </p>님이  {format(subMonths(currentMonth, 1), 'M')}월에 느낀 <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}> “감정 통계”</p> 예요! </TitleWrapper>}
+           { userName && <TitleWrapper><p style={{whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden' ,width:'15%', paddingRight:'0.8%', paddingBottom:'1%'}}> { userName } </p>님이  {format(currentMonth, 'M')}월에 느낀 <p style={{fontWeight:'bold', marginLeft: '1.5%' , marginRight:'1.5%'}}> “감정 통계”</p> 예요! </TitleWrapper>}
           <ChartBoxWrapper>
               <DoughnutWrapper>
                 <Doughnut data={chartData}></Doughnut>
