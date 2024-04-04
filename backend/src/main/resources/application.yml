@@ -1,0 +1,107 @@
+spring:
+  encoding: UTF-8
+  config:
+    import:
+      - optional:env/env.yml
+      - optional:env/firebase_service_key.json
+  server:
+    port: 8080
+    servlet:
+      context-path: /
+      encoding:
+        charset: UTF-8
+        force: true
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  jpa:
+    hibernate:
+      #      ddl-auto: create #create update none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    format_sql: true
+    use_sql_comments: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            redirect-uri: ${KAKAO_REDIRECT_URL}
+            client-authentication-method: POST
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            scope: account_email
+            client_name: kakao
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+  datasource:
+    url: ${MARIADB_URL}
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+  data:
+    mongodb:
+      host: ${MONGODB_HOST}
+      port: ${MONGODB_PORT}
+      database: OUI
+      username: ${MONGODB_USERNAME}
+      password: ${MONGODB_PASSWORD}
+      authentication-database: admin
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+jwt:
+  header: Authorization
+  secret: ${JWT_KEY}
+
+spotify:
+  client-id: ${SPOTIFY_CLIENT_ID}
+  client-secret: ${SPOTIFY_CLIENT_SECRET}
+
+youtube:
+  key: ${YOUTUBE_API_KEY}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET} # {버킷명}
+    credentials:
+      access-key: ${S3_ACCESS}
+      secret-key: ${S3_SECRET}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  port: 8080
+  ssl:
+    enabled: true
+    enabled-protocols:
+      - TLSv1.1
+      - TLSv1.2
+    key-store: "classpath:env/keystore.p12"
+    key-store-password: ${SSL_KEY}
+    key-store-type: "PKCS12"
+
+openai:
+  model: gpt-3.5-turbo
+  api:
+    key: ${OPEN_API_KEY}
+    url: ${OPEN_API_URI}
