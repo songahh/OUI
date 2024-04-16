@@ -51,10 +51,10 @@
 
 # 4. 설계
 ### 아키텍처
-![image](/uploads/d90f53ee0a218036db97b7a64132d359/image.png)
+![image](https://github.com/songahh/OUI/assets/77879519/5eef6926-9f44-40bb-b170-3befb79a07fa)
 
 ### ERD
-![OUI_erd](/uploads/e7ba639b6634c0157a2b86e751a8103a/OUI_erd.png)
+![image](https://github.com/songahh/OUI/assets/77879519/c7061ebd-8a7b-4234-ac6b-44e72c6e5f45)
 
 ### 와이어 프레임
 <img src="./asset/와이어프레임.png">
